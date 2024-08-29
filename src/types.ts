@@ -5,6 +5,7 @@ export interface IMiftahDB {
   set<T extends KeyValue>(key: string, value: T, expiresAt?: Date): void;
   delete(key: string): void;
   rename(oldKey: string, newKey: string): void;
+  cleanup(): void;
   vacuum(): void;
   close(): void;
   flush(): void;

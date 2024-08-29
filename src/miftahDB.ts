@@ -74,7 +74,7 @@ class MiftahDB implements IMiftahDB {
     this.db.close();
   }
 
-  private cleanup(): void {
+  public cleanup(): void {
     const now = Date.now();
     this.cleanupStmt.run(now);
   }
