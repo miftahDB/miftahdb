@@ -62,7 +62,7 @@ class MiftahDB implements IMiftahDB {
     this.initDatabase();
 
     this.getStmt = this.db.prepare(
-      "SELECT value, expires_at FROM key_value_store WHERE key = ?"
+      "SELECT value, expires_at FROM key_value_store WHERE key = ? LIMIT 1"
     );
     this.setStmt = this.db.prepare(
       "INSERT OR REPLACE INTO key_value_store (key, value, expires_at) VALUES (?, ?, ?)"
