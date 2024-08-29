@@ -7,6 +7,7 @@ export interface IMiftahDB {
   delete(key: string): void;
   rename(oldKey: string, newKey: string): void;
   expireAt(key: string): Date | null;
+  keys(pattern: string): string[];
   cleanup(): void;
   vacuum(): void;
   close(): void;

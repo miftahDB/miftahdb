@@ -18,4 +18,5 @@ export const SQL_STATEMENTS = {
   FLUSH: "DELETE FROM miftahDB",
   EXISTS: "SELECT EXISTS (SELECT 1 FROM miftahDB WHERE key = ? LIMIT 1)",
   EXPIRE: "SELECT expires_at FROM miftahDB WHERE key = ? LIMIT 1",
+  KEYS: "SELECT key FROM miftahDB WHERE key LIKE ?",
 };
