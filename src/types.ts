@@ -7,6 +7,7 @@ export interface IMiftahDB {
   rename(oldKey: string, newKey: string): void;
   vacuum(): void;
   close(): void;
+  flush(): void;
 }
 
 export interface MiftahDBItem {

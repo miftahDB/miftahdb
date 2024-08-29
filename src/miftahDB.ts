@@ -78,6 +78,10 @@ class MiftahDB implements IMiftahDB {
     const now = Date.now();
     this.cleanupStmt.run(now);
   }
+
+  public flush(): void {
+    this.db.exec(SQL_STATEMENTS.FLUSH);
+  }
 }
 
 export default MiftahDB;
