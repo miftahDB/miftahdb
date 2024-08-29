@@ -16,4 +16,5 @@ export const SQL_STATEMENTS = {
     "CREATE INDEX IF NOT EXISTS idx_expires_at ON miftahDB(expires_at);",
   VACUUM: "VACUUM",
   FLUSH: "DELETE FROM miftahDB",
+  EXISTS: "SELECT EXISTS (SELECT 1 FROM miftahDB WHERE key = ? LIMIT 1)",
 };
