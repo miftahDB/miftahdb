@@ -9,6 +9,8 @@
     "strict": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "declaration": true,
+    "lib": ["es2016", "dom"]
   }
 }
