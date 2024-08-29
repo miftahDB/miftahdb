@@ -29,6 +29,13 @@ interface IMiftahDB {
   delete(key: string): void;
 
   /**
+   * Renames a key in the database.
+   * @param oldKey - The old key to rename.
+   * @param newKey - The new key to rename to.
+   */
+  rename(oldKey: string, newKey: string): void;
+
+  /**
    * Reclaims unused space in the database.
    */
   vacuum(): void;
@@ -55,6 +62,7 @@ class MiftahDB implements IMiftahDB {
   private readonly getStmt: Statement;
   private readonly setStmt: Statement;
   private readonly deleteStmt: Statement;
+  private readonly renameStmt: Statement;
   private readonly cleanupStmt: Statement;
 
   constructor(dbPath: string) {
@@ -72,6 +80,9 @@ class MiftahDB implements IMiftahDB {
     );
     this.cleanupStmt = this.db.prepare(
       "DELETE FROM key_value_store WHERE expires_at IS NOT NULL AND expires_at <= ?"
+    );
+    this.renameStmt = this.db.prepare(
+      "UPDATE OR IGNORE key_value_store SET key = ? WHERE key = ?"
     );
   }
 
@@ -147,6 +158,10 @@ class MiftahDB implements IMiftahDB {
     this.deleteStmt.run(key);
   }
 
+  public rename(oldKey: string, newKey: string): void {
+    this.renameStmt.run(newKey, oldKey);
+  }
+
   public vacuum(): void {
     this.db.exec("VACUUM");
   }
@@ -166,25 +181,6 @@ export default MiftahDB;
 // Example usage
 const db = new MiftahDB("test.db");
 
-db.set("key2", "value", new Date(Date.now() + 60 * 1000));
-
-console.log(db.get<string>("key"));
-
-db.set("string", "Hello, World!");
-db.set("number", 42);
-db.set("float", 3.14);
-db.set("boolean", true);
-db.set("binary", Buffer.from([0x01, 0x02, 0x03]));
-db.set("array", [1, 2, 3, "four"]);
-db.set("object", { name: "Alice", age: 30 });
-db.set("null", null);
-
-// Try retrieving data
-console.log(db.get<string>("string")); // "Hello, World!"
-console.log(db.get<number>("number")); // 42
-console.log(db.get<number>("float")); // 3.14
-console.log(db.get<boolean>("boolean")); // true
-console.log(db.get<Buffer>("binary")); // <Buffer 01 02 03>
-console.log(db.get<any[]>("array")); // [1, 2, 3, "four"]
-console.log(db.get<{ name: string; age: number }>("object")); // { name: "Alice", age: 30 }
-console.log(db.get<any>("null")); // null
+db.set("key12", "value12");
+db.rename("key12", "key13");
+console.log(db.get("key13"));
