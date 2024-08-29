@@ -6,6 +6,7 @@ export interface IMiftahDB {
   exists(key: string): boolean;
   delete(key: string): void;
   rename(oldKey: string, newKey: string): void;
+  expireAt(key: string): Date | null;
   cleanup(): void;
   vacuum(): void;
   close(): void;

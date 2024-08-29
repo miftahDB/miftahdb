@@ -10,6 +10,7 @@ class MiftahDB implements IMiftahDB {
   private readonly existsStmt: Statement;
   private readonly deleteStmt: Statement;
   private readonly renameStmt: Statement;
+  private readonly expireAtStmt: Statement;
   private readonly cleanupStmt: Statement;
 
   constructor(dbPath: string) {
@@ -20,8 +21,9 @@ class MiftahDB implements IMiftahDB {
     this.setStmt = this.db.prepare(SQL_STATEMENTS.SET);
     this.existsStmt = this.db.prepare(SQL_STATEMENTS.EXISTS);
     this.deleteStmt = this.db.prepare(SQL_STATEMENTS.DELETE);
-    this.cleanupStmt = this.db.prepare(SQL_STATEMENTS.CLEANUP);
     this.renameStmt = this.db.prepare(SQL_STATEMENTS.RENAME);
+    this.expireAtStmt = this.db.prepare(SQL_STATEMENTS.EXPIRE);
+    this.cleanupStmt = this.db.prepare(SQL_STATEMENTS.CLEANUP);
   }
 
   private initDatabase(): void {
@@ -70,6 +72,12 @@ class MiftahDB implements IMiftahDB {
 
   public rename(oldKey: string, newKey: string): void {
     this.renameStmt.run(newKey, oldKey);
+  }
+
+  public expireAt(key: string): Date | null {
+    const result = this.expireAtStmt.get(key) as { [key: string]: number };
+    console.log(result);
+    return result?.expires_at ? new Date(result.expires_at) : null;
   }
 
   public vacuum(): void {
