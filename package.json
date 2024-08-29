@@ -1,0 +1,27 @@
+{
+  "name": "miftahdb",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node src",
+    "local": "ts-node src",
+    "dev": "nodemon src -e ts,json --exec 'npm run local'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/msgpack-lite": "^0.1.11",
+    "@types/node": "^22.5.1",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.2.1",
+    "msgpack-lite": "^0.1.26"
+  }
+}
