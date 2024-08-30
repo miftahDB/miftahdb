@@ -21,9 +21,9 @@ class MiftahDB implements IMiftahDB {
 
   /**
    * Creates a MiftahDB instance.
-   * @param path - The path to the SQLite database file.
+   * @param path - The path to the SQLite database file, or ":memory:" to use an in-memory database.
    */
-  constructor(path: string) {
+  constructor(path: string | ":memory:") {
     this.db = new SQLiteDatabase(path, { fileMustExist: false });
     this.initDatabase();
 
