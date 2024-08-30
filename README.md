@@ -1,6 +1,22 @@
+<div align="center">
+
+<a href="https://sqlite3.online/" target="_blank">
+    <img src="https://github.com/user-attachments/assets/9c40c2f7-77de-41d3-b5ba-187d4e01746c" alt="tgram" width="128">
+</a>
+
 # MiftahDB
 
 MiftahDB is a fast and lightweight key-value database library for Node.js using SQLite.
+
+<a href="https://miftahdb.sqlite3.online/docs/intro/">
+    Documentation
+</a>
+•
+<a href="https://www.npmjs.com/package/miftahdb">
+    NPM
+</a>
+    
+</div>
 
 ## Features
 
@@ -18,14 +34,6 @@ npm install miftahdb
 ```
 
 ## Usage
-
-### Installation
-
-Install `miftahdb` using npm:
-
-```bash
-npm install miftahdb
-```
 
 ### CommonJS
 
@@ -239,6 +247,7 @@ Executes a raw SQL statement and returns the result.
 
 - `sql`: The SQL statement to execute.
 - `params`: Optional parameters to bind to the SQL statement.
+- Returns: The result of the SQL statement.
 
 ```javascript
 console.log(miftahDB.execute("SELECT * FROM miftahDB"));
