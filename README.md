@@ -173,7 +173,7 @@ if (expirationDate) {
 
 Retrieves keys matching a pattern.
 
-- `pattern`: SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
+- `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
 - Returns: An array of matching keys.
 
 ```javascript
@@ -194,9 +194,9 @@ const logKeys = db.keys("log__:%");
 
 Retrieves a paginated list of keys matching a pattern.
 
-- `pattern`: SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
 - `limit`: The maximum number of keys to return per page.
 - `page`: The page number to retrieve (1-based index).
+- `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
 - Returns: An array of matching keys.
 
 ```javascript

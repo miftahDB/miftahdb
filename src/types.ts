@@ -65,7 +65,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Retrieves keys matching a pattern.
-   * @param {string} [pattern="%"] - SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
+   * @param {string} [pattern="%"] - Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
    *                                 Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns {string[]} An array of matching keys.
    * @example
@@ -85,18 +85,21 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Retrieves a paginated list of keys matching a pattern.
-   * @param pattern - SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @param limit - The maximum number of keys to return per page.
    * @param page - The page number to retrieve (1-based index).
+   * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns An array of keys that match the pattern, limited to the specified number per page.
    * @example
-   * // Get the first 10 keys matching "user:%" (keys starting with "user:")
-   * const firstPageKeys = db.pagination('user:%', 10, 1);
+   * // Get the first 5 keys from the database
+   * const firstPageKeys = db.pagination(5, 1);
    *
-   * // Get the next 10 keys matching "log__:%" (keys starting with "log" followed by exactly two characters)
-   * const secondPageKeys = db.pagination('log__:%', 10, 2);
+   * // Get the first 10 keys matching "user:%" (keys starting with "user:")
+   * const firstPageKeys = db.pagination(10, 1, 'user:%');
+   *
+   * // Get the next 10 keys matching "user:%" (keys starting with "user:")
+   * const nextPageKeys = db.pagination(10, 2, "user:%");
    */
-  pagination(pattern: string, limit: number, page: number): string[];
+  pagination(limit: number, page: number, pattern: string): string[];
 
   /**
    * Counts the number of keys in the database.

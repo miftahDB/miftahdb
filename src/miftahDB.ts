@@ -135,9 +135,9 @@ class MiftahDB implements IMiftahDB {
   }
 
   public pagination(
-    pattern: string = "%",
     limit: number,
-    page: number
+    page: number,
+    pattern: string = "%"
   ): string[] {
     const result = this.statements.pagination.all(pattern, limit, page) as {
       key: string;
