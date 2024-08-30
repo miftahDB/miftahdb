@@ -47,7 +47,7 @@ import MiftahDB from "miftahdb";
 
 ```javascript
 // Create a new disk-based database instance
-const db = new MiftahDB("path/to/database.sqlite");
+const db = new MiftahDB("database.db");
 
 // Or create an in-memory database
 const memDB = new MiftahDB(":memory:");
@@ -83,7 +83,7 @@ Retrieves a value from the database by its key.
 - Returns: The value associated with the key, or null if not found or expired.
 
 ```javascript
-const value = db.get < string > "user:1234";
+const value = db.get("user:1234");
 if (value) {
   console.log(`User: ${value.name}`);
 } else {
