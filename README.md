@@ -19,10 +19,33 @@ npm install miftahdb
 
 ## Usage
 
+### Installation
+
+Install `miftahdb` using npm:
+
+```bash
+npm install miftahdb
+```
+
+### CommonJS
+
+For CommonJS modules:
+
 ```javascript
 const MiftahDB = require("miftahdb");
-// Or import MiftahDB from "miftahdb"; for ES modules
+```
 
+### ES Modules
+
+For ES modules:
+
+```javascript
+import MiftahDB from "miftahdb";
+```
+
+### Example Usage
+
+```javascript
 // Create a new disk-based database instance
 const db = new MiftahDB("path/to/database.sqlite");
 
@@ -32,10 +55,7 @@ const memDB = new MiftahDB(":memory:");
 // Use the database
 db.set("user:1234", { name: "John Doe" });
 const user = db.get("user:1234");
-console.log(user); // { name: 'John Doe' }
-
-// Close the database when done
-db.close();
+console.log(user); // { name
 ```
 
 ## Synchronous API
@@ -125,7 +145,7 @@ Renames a key in the database.
 db.rename("user:old_id", "user:new_id");
 ```
 
-### `expireAt(key: string): Date | null`
+### `expireAt`
 
 Gets the expiration date of a key.
 
