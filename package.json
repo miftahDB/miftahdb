@@ -1,6 +1,6 @@
 {
   "name": "miftahdb",
-  "version": "0.0.3",
+  "version": "1.0.1",
   "description": "Fast and lightweight key-value database library for Node.js using SQLite",
   "main": "src/index.ts",
   "scripts": {
@@ -26,6 +26,11 @@
   "author": "vwh",
   "license": "MIT",
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/github": "^10.1.7",
+    "@semantic-release/npm": "^12.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.1",
     "@types/better-sqlite3": "^7.6.11",
     "@types/msgpack-lite": "^0.1.11",
     "@types/node": "^22.5.1",
