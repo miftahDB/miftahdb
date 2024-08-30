@@ -18,6 +18,7 @@ class MiftahDB implements IMiftahDB {
     rename: Statement;
     expireAt: Statement;
     keys: Statement;
+    pagination: Statement;
     cleanup: Statement;
     count: Statement;
     vacuum: Statement;
@@ -40,6 +41,7 @@ class MiftahDB implements IMiftahDB {
       rename: this.db.prepare(SQL_STATEMENTS.RENAME),
       expireAt: this.db.prepare(SQL_STATEMENTS.EXPIRE),
       keys: this.db.prepare(SQL_STATEMENTS.KEYS),
+      pagination: this.db.prepare(SQL_STATEMENTS.PAGINATION),
       cleanup: this.db.prepare(SQL_STATEMENTS.CLEANUP),
       count: this.db.prepare(SQL_STATEMENTS.COUNT),
       vacuum: this.db.prepare(SQL_STATEMENTS.VACUUM),
@@ -132,6 +134,17 @@ class MiftahDB implements IMiftahDB {
     return result.map((item) => item.key);
   }
 
+  public pagination(
+    pattern: string = "%",
+    limit: number,
+    page: number
+  ): string[] {
+    const result = this.statements.pagination.all(pattern, limit, page) as {
+      key: string;
+    }[];
+    return result.map((item) => item.key);
+  }
+
   /**
    * @inheritdoc
    */
@@ -170,6 +183,19 @@ class MiftahDB implements IMiftahDB {
    */
   public flush(): void {
     this.db.exec(SQL_STATEMENTS.FLUSH);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public execute(sql: string, params: any[] = []): any | null {
+    const stmt = this.db.prepare(sql);
+    if (sql.trim().toUpperCase().startsWith("SELECT")) {
+      return stmt.all(...params);
+    } else {
+      stmt.run(...params);
+      return null;
+    }
   }
 }
 

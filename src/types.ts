@@ -84,6 +84,21 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
   keys(pattern: string): string[];
 
   /**
+   * Retrieves a paginated list of keys matching a pattern.
+   * @param pattern - SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
+   * @param limit - The maximum number of keys to return per page.
+   * @param page - The page number to retrieve (1-based index).
+   * @returns An array of keys that match the pattern, limited to the specified number per page.
+   * @example
+   * // Get the first 10 keys matching "user:%" (keys starting with "user:")
+   * const firstPageKeys = db.pagination('user:%', 10, 1);
+   *
+   * // Get the next 10 keys matching "log__:%" (keys starting with "log" followed by exactly two characters)
+   * const secondPageKeys = db.pagination('log__:%', 10, 2);
+   */
+  pagination(pattern: string, limit: number, page: number): string[];
+
+  /**
    * Counts the number of keys in the database.
    * @returns The number of keys in the database.
    * @example
@@ -118,6 +133,20 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
    * db.flush();
    */
   flush(): void;
+
+  /**
+   * Executes a raw SQL statement and returns the result.
+   * @param sql - The SQL statement to execute. Be cautious with raw SQL to avoid SQL injection vulnerabilities.
+   * @param params - Optional parameters to bind to the SQL statement.
+   * @returns The result of the SQL query. If the statement is a `SELECT` query, it returns the query result. Otherwise, it returns the database instance.
+   * @example
+   * // Execute a SELECT statement and get results
+   * const rows = db.execute('SELECT * FROM users');
+   *
+   * // Execute an INSERT or UPDATE statement
+   * db.execute('INSERT INTO users (name) VALUES (?)', ['John Doe']);
+   */
+  execute(sql: string, params?: any[]): void;
 }
 
 /**

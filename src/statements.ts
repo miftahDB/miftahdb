@@ -43,6 +43,9 @@ export const SQL_STATEMENTS = {
   // Returns all keys that match the given pattern
   KEYS: "SELECT key FROM miftahDB WHERE key LIKE ?",
 
+  // Returns all keys that match the given pattern with pagination
+  PAGINATION: "SELECT key FROM miftahDB WHERE key LIKE ? LIMIT ? OFFSET ?",
+
   // Counts the total number of rows in the table
   COUNT: "SELECT COUNT(*) FROM miftahDB",
 };

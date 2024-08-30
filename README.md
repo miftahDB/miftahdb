@@ -55,7 +55,7 @@ const memDB = new MiftahDB(":memory:");
 // Use the database
 db.set("user:1234", { name: "John Doe" });
 const user = db.get("user:1234");
-console.log(user); // { name
+console.log(user);
 ```
 
 ## Synchronous API
@@ -71,7 +71,7 @@ Creates a new MiftahDB instance.
 - `path`: The path to the SQLite database file, or `:memory:` for an in-memory database.
 
 ```javascript
-const diskDB = new MiftahDB("path/to/database.sqlite");
+const diskDB = new MiftahDB("database.db");
 const memoryDB = new MiftahDB(":memory:");
 ```
 
@@ -182,6 +182,23 @@ const fiveCharKeys = db.keys("_____");
 const logKeys = db.keys("log__:%");
 ```
 
+### `Pagination`
+
+Retrieves a paginated list of keys matching a pattern.
+
+- `pattern`: SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
+- `limit`: The maximum number of keys to return per page.
+- `page`: The page number to retrieve (1-based index).
+- Returns: An array of matching keys.
+
+```javascript
+// Get the first 10 keys matching "user:%" (keys starting with "user:")
+const firstPageKeys = db.pagination("user:%", 10, 1);
+
+// Get the next 10 keys matching "log__:%" (keys starting with "log" followed by exactly two characters)
+const secondPageKeys = db.pagination("log__:%", 10, 2);
+```
+
 ### `Count`
 
 Counts the number of keys in the database.
@@ -208,20 +225,31 @@ Optimizes the database file, reducing its size.
 db.vacuum();
 ```
 
-### `Close`
-
-Closes the database connection.
-
-```javascript
-db.close();
-```
-
 ### `Flush`
 
 Ensures all the changes are written to disk.
 
 ```javascript
 db.flush();
+```
+
+### `Execute`
+
+Executes a raw SQL statement and returns the result.
+
+- `sql`: The SQL statement to execute.
+- `params`: Optional parameters to bind to the SQL statement.
+
+```javascript
+console.log(miftahDB.execute("SELECT * FROM miftahDB"));
+```
+
+### `Close`
+
+Closes the database connection.
+
+```javascript
+db.close();
 ```
 
 ## Supported Value Types
