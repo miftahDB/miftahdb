@@ -21,6 +21,7 @@ npm install miftahdb
 
 ```javascript
 const MiftahDB = require("miftahdb");
+// Or import MiftahDB from "miftahdb"; for ES modules
 
 // Create a new disk-based database instance
 const db = new MiftahDB("path/to/database.sqlite");
