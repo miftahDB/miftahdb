@@ -64,7 +64,7 @@ MiftahDB uses a synchronous API, which may seem counterintuitive but actually pr
 
 ## API Reference
 
-### `constructor`
+### `Constructor`
 
 Creates a new MiftahDB instance.
 
@@ -75,7 +75,7 @@ const diskDB = new MiftahDB("path/to/database.sqlite");
 const memoryDB = new MiftahDB(":memory:");
 ```
 
-### `get`
+### `Get`
 
 Retrieves a value from the database by its key.
 
@@ -91,7 +91,7 @@ if (value) {
 }
 ```
 
-### `set`
+### `Set`
 
 Sets a value in the database with an optional expiration.
 
@@ -109,7 +109,7 @@ expirationDate.setDate(expirationDate.getDate() + 30); // Expires in 30 days
 db.set("session:5678", { token: "abc123" }, expirationDate);
 ```
 
-### `exists`
+### `Exists`
 
 Checks if a key exists in the database.
 
@@ -124,7 +124,7 @@ if (db.exists("user:1234")) {
 }
 ```
 
-### `delete`
+### `Delete`
 
 Deletes a key-value pair from the database.
 
@@ -134,7 +134,7 @@ Deletes a key-value pair from the database.
 db.delete("user:1234");
 ```
 
-### `rename`
+### `Rename`
 
 Renames a key in the database.
 
@@ -145,7 +145,7 @@ Renames a key in the database.
 db.rename("user:old_id", "user:new_id");
 ```
 
-### `expireAt`
+### `ExpireAt`
 
 Gets the expiration date of a key.
 
@@ -161,7 +161,7 @@ if (expirationDate) {
 }
 ```
 
-### `keys`
+### `Keys`
 
 Retrieves keys matching a pattern.
 
@@ -182,7 +182,7 @@ const fiveCharKeys = db.keys("_____");
 const logKeys = db.keys("log__:%");
 ```
 
-### `count`
+### `Count`
 
 Counts the number of keys in the database.
 
@@ -192,7 +192,7 @@ Counts the number of keys in the database.
 const count = db.count();
 ```
 
-### `cleanup()`
+### `Cleanup`
 
 Removes expired key-value pairs from the database.
 
@@ -200,7 +200,7 @@ Removes expired key-value pairs from the database.
 db.cleanup();
 ```
 
-### `vacuum()`
+### `Vacuum`
 
 Optimizes the database file, reducing its size.
 
@@ -208,7 +208,7 @@ Optimizes the database file, reducing its size.
 db.vacuum();
 ```
 
-### `close()`
+### `Close`
 
 Closes the database connection.
 
@@ -216,7 +216,7 @@ Closes the database connection.
 db.close();
 ```
 
-### `flush(): void`
+### `Flush`
 
 Ensures all the changes are written to disk.
 
@@ -226,71 +226,26 @@ db.flush();
 
 ## Supported Value Types
 
-`miftahDB` supports a variety of value types for storing and retrieving data. Here are the supported types with examples for each:
+MiftahDB supports various value types:
 
-### 1. String
+1. String
+2. Number
+3. Boolean
+4. Array
+5. Object
+6. Buffer (Binary Data)
+7. Date
 
-Store and retrieve string values:
+Example for each type:
 
-```typescript
-await db.set("string", "Hello!");
-console.log(db.get<string>("string"));
-```
-
-### 2. Number
-
-Store and retrieve numeric values:
-
-```typescript
-await db.set("number", 42);
-console.log(db.get<number>("number"));
-```
-
-### 3. Boolean
-
-Store and retrieve boolean values:
-
-```typescript
-await db.set("boolean", true);
-console.log(db.get<boolean>("boolean"));
-```
-
-### 4. Array
-
-Store and retrieve arrays:
-
-```typescript
-await db.set("array", [1, 2, 3, 4, 5]);
-console.log(db.get<number[]>("array"));
-```
-
-### 5. Object
-
-Store and retrieve objects:
-
-```typescript
-await db.set("object", { name: "Alice", age: 30 });
-console.log(db.get<{ name: string; age: number }>("object"));
-```
-
-### 6. Buffer (Binary Data)
-
-Store and retrieve binary data:
-
-```typescript
-const buffer = Buffer.from("binary data");
-await db.set("buffer", buffer);
-console.log(db.get<Buffer>("buffer"));
-```
-
-### 7. Date
-
-Store and retrieve date objects:
-
-```typescript
-const date = new Date();
-await db.set("date", date);
-console.log(db.get<Date>("date"));
+```javascript
+db.set("string", "Hello!");
+db.set("number", 42);
+db.set("boolean", true);
+db.set("array", [1, 2, 3, 4, 5]);
+db.set("object", { name: "Alice", age: 30 });
+db.set("buffer", Buffer.from("binary data"));
+db.set("date", new Date());
 ```
 
 ## Performance Considerations
