@@ -1,6 +1,6 @@
 {
   "name": "miftahdb",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Fast and lightweight key-value database library for Node.js using SQLite",
   "main": "src/index.ts",
   "scripts": {
