@@ -1,13 +1,13 @@
 {
   "name": "miftahdb",
-  "version": "1.0.2",
+  "version": "1.1.1",
   "description": "Fast and lightweight key-value database library for Node.js using SQLite",
-  "main": "src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsup",
     "start": "node dist/index.js",
-    "local": "ts-node src/index.ts",
-    "dev": "nodemon src -e ts,json --exec 'npm run local'",
     "semantic-release": "semantic-release"
   },
   "keywords": [
@@ -34,9 +34,8 @@
     "@types/better-sqlite3": "^7.6.11",
     "@types/msgpack-lite": "^0.1.11",
     "@types/node": "^22.5.1",
-    "nodemon": "^3.1.4",
     "semantic-release": "^24.1.0",
-    "ts-node": "^10.9.2",
+    "tsup": "^8.2.4",
     "typescript": "^5.5.4"
   },
   "dependencies": {
