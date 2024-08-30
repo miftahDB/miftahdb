@@ -1,20 +1,123 @@
+/**
+ * Represents the possible types of values that can be stored in MiftahDB.
+ */
 export type KeyValue = string | number | boolean | object | Buffer | null;
 
-export interface IMiftahDB {
-  get<T>(key: string): T | null;
-  set<T extends KeyValue>(key: string, value: T, expiresAt?: Date): void;
+/**
+ * Interface for the MiftahDB class, defining its public methods.
+ */
+export interface IMiftahDB<T extends KeyValue = KeyValue> {
+  /**
+   * Retrieves a value from the database by its key.
+   * @param key - The key to look up.
+   * @returns The value associated with the key, or null if not found or expired.
+   * @example
+   * const value = db.get('user:1234');
+   */
+  get(key: string): T | null;
+
+  /**
+   * Sets a value in the database with an optional expiration.
+   * @param key - The key under which to store the value.
+   * @param value - The value to store.
+   * @param expiresAt - Optional expiration date for the key-value pair.
+   * @example
+   * db.set('user:1234', { name: 'John Doe' }, new Date('2023-12-31'));
+   */
+  set(key: string, value: T, expiresAt?: Date): void;
+
+  /**
+   * Checks if a key exists in the database.
+   * @param key - The key to check.
+   * @returns True if the key exists and hasn't expired, false otherwise.
+   * @example
+   * if (db.exists('user:1234')) {
+   *   console.log('User exists');
+   * }
+   */
   exists(key: string): boolean;
+
+  /**
+   * Deletes a key-value pair from the database.
+   * @param key - The key to delete.
+   * @example
+   * db.delete('user:1234');
+   */
   delete(key: string): void;
+
+  /**
+   * Renames a key in the database.
+   * @param oldKey - The current key name.
+   * @param newKey - The new key name.
+   * @example
+   * db.rename('user:old_id', 'user:new_id');
+   */
   rename(oldKey: string, newKey: string): void;
+
+  /**
+   * Gets the expiration date of a key.
+   * @param key - The key to check.
+   * @returns The expiration date of the key, or null if the key doesn't exist or has no expiration.
+   * @example
+   * const expirationDate = db.expireAt('user:1234');
+   */
   expireAt(key: string): Date | null;
+
+  /**
+   * Retrieves keys matching a pattern.
+   * @param {string} [pattern="%"] - SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
+   *                                 Use "%" to match any sequence of characters and "_" to match any single character.
+   * @returns {string[]} An array of matching keys.
+   * @example
+   * // Get all keys
+   * const allKeys = db.keys();
+   *
+   * // Get keys starting with "user:"
+   * const userKeys = db.keys('user:%');
+   *
+   * // Get keys with exactly 5 characters
+   * const fiveCharKeys = db.keys('_____');
+   *
+   * // Get keys starting with "log", followed by exactly two characters, and ending with any number of characters
+   * const logKeys = db.keys('log__:%');
+   */
   keys(pattern: string): string[];
+
+  /**
+   * Removes expired key-value pairs from the database.
+   * @example
+   * db.cleanup();
+   */
   cleanup(): void;
+
+  /**
+   * Optimizes the database file, reducing its size.
+   * @example
+   * db.vacuum();
+   */
   vacuum(): void;
+
+  /**
+   * Closes the database connection.
+   * @example
+   * db.close();
+   */
   close(): void;
+
+  /**
+   * Ensures all the changes written to disk.
+   * @example
+   * db.flush();
+   */
   flush(): void;
 }
 
+/**
+ * Represents an item stored in the MiftahDB.
+ */
 export interface MiftahDBItem {
+  /** The stored value as a Buffer. */
   value: Buffer;
+  /** The expiration timestamp in milliseconds, or null if no expiration. */
   expires_at: number | null;
 }
