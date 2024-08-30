@@ -123,6 +123,16 @@ class MiftahDB implements IMiftahDB {
   /**
    * @inheritdoc
    */
+  public count(): number {
+    const result = this.db.prepare(SQL_STATEMENTS.COUNT).get() as {
+      [key: string]: number;
+    };
+    return Object.values(result)[0];
+  }
+
+  /**
+   * @inheritdoc
+   */
   public vacuum(): void {
     this.db.exec(SQL_STATEMENTS.VACUUM);
   }

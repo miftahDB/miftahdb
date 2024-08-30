@@ -84,6 +84,14 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
   keys(pattern: string): string[];
 
   /**
+   * Counts the number of keys in the database.
+   * @returns The number of keys in the database.
+   * @example
+   * const count = db.count();
+   */
+  count(): number;
+
+  /**
    * Removes expired key-value pairs from the database.
    * @example
    * db.cleanup();

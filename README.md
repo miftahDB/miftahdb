@@ -161,6 +161,16 @@ const fiveCharKeys = db.keys("_____");
 const logKeys = db.keys("log__:%");
 ```
 
+### `count`
+
+Counts the number of keys in the database.
+
+- Returns: The number of keys in the database.
+
+```javascript
+const count = db.count();
+```
+
 ### `cleanup()`
 
 Removes expired key-value pairs from the database.
