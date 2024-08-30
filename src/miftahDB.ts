@@ -190,12 +190,8 @@ class MiftahDB implements IMiftahDB {
    */
   public execute(sql: string, params: any[] = []): any | null {
     const stmt = this.db.prepare(sql);
-    if (sql.trim().toUpperCase().startsWith("SELECT")) {
-      return stmt.all(...params);
-    } else {
-      stmt.run(...params);
-      return null;
-    }
+
+    return stmt.all(...params);
   }
 }
 
