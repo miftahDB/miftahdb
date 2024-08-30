@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2016",
-    "module": "commonjs",
+    "module": "ESNext",
     "rootDir": "./src",
     "outDir": "./dist",
     "esModuleInterop": true,
@@ -10,7 +10,8 @@
     "noImplicitAny": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "declaration": true,
-    "lib": ["es2016", "dom"]
-  }
+    "declaration": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

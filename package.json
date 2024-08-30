@@ -8,7 +8,7 @@
     "start": "node dist/index.js",
     "local": "ts-node src/index.ts",
     "dev": "nodemon src -e ts,json --exec 'npm run local'",
-    "prepublishOnly": "npm run build"
+    "semantic-release": "semantic-release"
   },
   "keywords": [
     "sqlite",
@@ -30,11 +30,16 @@
     "@types/msgpack-lite": "^0.1.11",
     "@types/node": "^22.5.1",
     "nodemon": "^3.1.4",
+    "semantic-release": "^24.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   },
   "dependencies": {
     "better-sqlite3": "^11.2.1",
     "msgpack-lite": "^0.1.26"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
 }
