@@ -1,12 +1,17 @@
 <div align="center">
 
-<a href="https://sqlite3.online/" target="_blank">
+<a href="https://miftahdb.sqlite3.online/docs/intro/" target="_blank">
     <img src="https://github.com/user-attachments/assets/9c40c2f7-77de-41d3-b5ba-187d4e01746c" alt="tgram" width="128">
 </a>
 
 # MiftahDB
 
-MiftahDB is a fast and lightweight key-value database library for Node.js using SQLite.
+Fast and lightweight key-value database library for Node.js using SQLite.
+
+[![NPM Version](https://img.shields.io/npm/v/miftahdb?label=NPM)](https://www.npmjs.com/package/miftahdb)
+[![NPM Type Definitions](https://img.shields.io/npm/types/miftahdb?label=Types)](https://github.com/miftahDB/miftahDB/blob/main/LICENSE)
+[![NPM License](https://img.shields.io/npm/l/miftahdb?label=License)](https://app.codacy.com/gh/vwh/sqlite-viewer/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Release](https://github.com/miftahDB/miftahDB/actions/workflows/release.yml/badge.svg)](https://github.com/miftahDB/miftahDB/actions/workflows/release.yml)
 
 <a href="https://miftahdb.sqlite3.online/docs/intro/">
     Documentation
