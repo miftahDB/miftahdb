@@ -200,11 +200,14 @@ Retrieves a paginated list of keys matching a pattern.
 - Returns: An array of matching keys.
 
 ```javascript
-// Get the first 10 keys matching "user:%" (keys starting with "user:")
-const firstPageKeys = db.pagination("user:%", 10, 1);
+// Get the first 5 keys from the database
+const firstPageKeys = db.pagination(5, 1);
 
-// Get the next 10 keys matching "log__:%" (keys starting with "log" followed by exactly two characters)
-const secondPageKeys = db.pagination("log__:%", 10, 2);
+// Get the first 10 keys with pattern
+const firstPageKeys = db.pagination(10, 1, "user:%");
+
+// Get the next 10 keys with pattern
+const secondPageKeys = db.pagination(10, 2, "user:%");
 ```
 
 ### `Count`
