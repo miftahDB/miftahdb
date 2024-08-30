@@ -224,6 +224,75 @@ Ensures all the changes are written to disk.
 db.flush();
 ```
 
+## Supported Value Types
+
+`miftahDB` supports a variety of value types for storing and retrieving data. Here are the supported types with examples for each:
+
+### 1. String
+
+Store and retrieve string values:
+
+```typescript
+await db.set("string", "Hello!");
+console.log(db.get<string>("string"));
+```
+
+### 2. Number
+
+Store and retrieve numeric values:
+
+```typescript
+await db.set("number", 42);
+console.log(db.get<number>("number"));
+```
+
+### 3. Boolean
+
+Store and retrieve boolean values:
+
+```typescript
+await db.set("boolean", true);
+console.log(db.get<boolean>("boolean"));
+```
+
+### 4. Array
+
+Store and retrieve arrays:
+
+```typescript
+await db.set("array", [1, 2, 3, 4, 5]);
+console.log(db.get<number[]>("array"));
+```
+
+### 5. Object
+
+Store and retrieve objects:
+
+```typescript
+await db.set("object", { name: "Alice", age: 30 });
+console.log(db.get<{ name: string; age: number }>("object"));
+```
+
+### 6. Buffer (Binary Data)
+
+Store and retrieve binary data:
+
+```typescript
+const buffer = Buffer.from("binary data");
+await db.set("buffer", buffer);
+console.log(db.get<Buffer>("buffer"));
+```
+
+### 7. Date
+
+Store and retrieve date objects:
+
+```typescript
+const date = new Date();
+await db.set("date", date);
+console.log(db.get<Date>("date"));
+```
+
 ## Performance Considerations
 
 MiftahDB is designed for high performance:
