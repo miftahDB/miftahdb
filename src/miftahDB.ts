@@ -10,14 +10,19 @@ import { SQL_STATEMENTS } from "./statements";
  */
 class MiftahDB implements IMiftahDB {
   private readonly db: Database;
-  private readonly getStmt: Statement;
-  private readonly setStmt: Statement;
-  private readonly existsStmt: Statement;
-  private readonly deleteStmt: Statement;
-  private readonly renameStmt: Statement;
-  private readonly expireAtStmt: Statement;
-  private readonly keysStmt: Statement;
-  private readonly cleanupStmt: Statement;
+  private readonly statements: {
+    get: Statement;
+    set: Statement;
+    exists: Statement;
+    delete: Statement;
+    rename: Statement;
+    expireAt: Statement;
+    keys: Statement;
+    cleanup: Statement;
+    count: Statement;
+    vacuum: Statement;
+    flush: Statement;
+  };
 
   /**
    * Creates a MiftahDB instance.
@@ -27,14 +32,19 @@ class MiftahDB implements IMiftahDB {
     this.db = new SQLiteDatabase(path, { fileMustExist: false });
     this.initDatabase();
 
-    this.getStmt = this.db.prepare(SQL_STATEMENTS.GET);
-    this.setStmt = this.db.prepare(SQL_STATEMENTS.SET);
-    this.existsStmt = this.db.prepare(SQL_STATEMENTS.EXISTS);
-    this.deleteStmt = this.db.prepare(SQL_STATEMENTS.DELETE);
-    this.renameStmt = this.db.prepare(SQL_STATEMENTS.RENAME);
-    this.expireAtStmt = this.db.prepare(SQL_STATEMENTS.EXPIRE);
-    this.keysStmt = this.db.prepare(SQL_STATEMENTS.KEYS);
-    this.cleanupStmt = this.db.prepare(SQL_STATEMENTS.CLEANUP);
+    this.statements = {
+      get: this.db.prepare(SQL_STATEMENTS.GET),
+      set: this.db.prepare(SQL_STATEMENTS.SET),
+      exists: this.db.prepare(SQL_STATEMENTS.EXISTS),
+      delete: this.db.prepare(SQL_STATEMENTS.DELETE),
+      rename: this.db.prepare(SQL_STATEMENTS.RENAME),
+      expireAt: this.db.prepare(SQL_STATEMENTS.EXPIRE),
+      keys: this.db.prepare(SQL_STATEMENTS.KEYS),
+      cleanup: this.db.prepare(SQL_STATEMENTS.CLEANUP),
+      count: this.db.prepare(SQL_STATEMENTS.COUNT),
+      vacuum: this.db.prepare(SQL_STATEMENTS.VACUUM),
+      flush: this.db.prepare(SQL_STATEMENTS.FLUSH),
+    };
   }
 
   /**
@@ -56,7 +66,7 @@ class MiftahDB implements IMiftahDB {
    * @inheritdoc
    */
   public get<T>(key: string): T | null {
-    const result = this.getStmt.get(key) as MiftahDBItem | undefined;
+    const result = this.statements.get.get(key) as MiftahDBItem | undefined;
 
     if (!result) return null;
 
@@ -79,14 +89,14 @@ class MiftahDB implements IMiftahDB {
     const encodedValue = encodeValue(value);
     const expiresAtMs = expiresAt ? expiresAt.getTime() : null;
 
-    this.setStmt.run(key, encodedValue, expiresAtMs);
+    this.statements.set.run(key, encodedValue, expiresAtMs);
   }
 
   /**
    * @inheritdoc
    */
   public exists(key: string): boolean {
-    const result = this.existsStmt.get(key) as { [key: string]: number };
+    const result = this.statements.exists.get(key) as { [key: string]: number };
     return !!Object.values(result)[0];
   }
 
@@ -94,21 +104,23 @@ class MiftahDB implements IMiftahDB {
    * @inheritdoc
    */
   public delete(key: string): void {
-    this.deleteStmt.run(key);
+    this.statements.delete.run(key);
   }
 
   /**
    * @inheritdoc
    */
   public rename(oldKey: string, newKey: string): void {
-    this.renameStmt.run(newKey, oldKey);
+    this.statements.rename.run(newKey, oldKey);
   }
 
   /**
    * @inheritdoc
    */
   public expireAt(key: string): Date | null {
-    const result = this.expireAtStmt.get(key) as { [key: string]: number };
+    const result = this.statements.expireAt.get(key) as {
+      [key: string]: number;
+    };
     return result?.expires_at ? new Date(result.expires_at) : null;
   }
 
@@ -116,7 +128,7 @@ class MiftahDB implements IMiftahDB {
    * @inheritdoc
    */
   public keys(pattern: string = "%"): string[] {
-    const result = this.keysStmt.all(pattern) as { key: string }[];
+    const result = this.statements.keys.all(pattern) as { key: string }[];
     return result.map((item) => item.key);
   }
 
@@ -150,7 +162,7 @@ class MiftahDB implements IMiftahDB {
    */
   public cleanup(): void {
     const now = Date.now();
-    this.cleanupStmt.run(now);
+    this.statements.cleanup.run(now);
   }
 
   /**
