@@ -14,8 +14,8 @@ export function encodeValue(value: KeyValue): Buffer {
 
 export function decodeValue<T>(buffer: Buffer): T | null {
   try {
-    const marker = buffer[0];
-    const actualValue = buffer.slice(1);
+    const marker = buffer.readUInt8(0);
+    const actualValue = buffer.subarray(1);
 
     if (marker === 0x01) {
       return actualValue as T;
