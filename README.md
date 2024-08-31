@@ -158,7 +158,7 @@ Renames a key in the database.
 db.rename("user:old_id", "user:new_id");
 ```
 
-### `ExpireAt`
+### `getExpire`
 
 Gets the expiration date of a key.
 
@@ -166,7 +166,7 @@ Gets the expiration date of a key.
 - Returns: The expiration date of the key, or null if the key doesn't exist or has no expiration.
 
 ```javascript
-const expirationDate = db.expireAt("session:5678");
+const expirationDate = db.getExpire("session:5678");
 if (expirationDate) {
   console.log(`Session expires at: ${expirationDate}`);
 } else {

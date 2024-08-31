@@ -16,7 +16,7 @@ class MiftahDB implements IMiftahDB {
     exists: Statement;
     delete: Statement;
     rename: Statement;
-    expireAt: Statement;
+    getExpire: Statement;
     keys: Statement;
     pagination: Statement;
     cleanup: Statement;
@@ -39,7 +39,7 @@ class MiftahDB implements IMiftahDB {
       exists: this.db.prepare(SQL_STATEMENTS.EXISTS),
       delete: this.db.prepare(SQL_STATEMENTS.DELETE),
       rename: this.db.prepare(SQL_STATEMENTS.RENAME),
-      expireAt: this.db.prepare(SQL_STATEMENTS.EXPIRE),
+      getExpire: this.db.prepare(SQL_STATEMENTS.EXPIRE),
       keys: this.db.prepare(SQL_STATEMENTS.KEYS),
       pagination: this.db.prepare(SQL_STATEMENTS.PAGINATION),
       cleanup: this.db.prepare(SQL_STATEMENTS.CLEANUP),
@@ -119,8 +119,8 @@ class MiftahDB implements IMiftahDB {
   /**
    * @inheritdoc
    */
-  public expireAt(key: string): Date | null {
-    const result = this.statements.expireAt.get(key) as {
+  public getExpire(key: string): Date | null {
+    const result = this.statements.getExpire.get(key) as {
       [key: string]: number;
     };
     return result?.expires_at ? new Date(result.expires_at) : null;

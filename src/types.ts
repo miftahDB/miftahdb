@@ -27,6 +27,15 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
   set(key: string, value: T, expiresAt?: Date): void;
 
   /**
+   * Gets the expiration date of a key.
+   * @param key - The key to check.
+   * @returns The expiration date of the key, or null if the key doesn't exist or has no expiration.
+   * @example
+   * const expirationDate = db.getExpire('user:1234');
+   */
+  getExpire(key: string): Date | null;
+
+  /**
    * Checks if a key exists in the database.
    * @param key - The key to check.
    * @returns True if the key exists and hasn't expired, false otherwise.
@@ -53,15 +62,6 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
    * db.rename('user:old_id', 'user:new_id');
    */
   rename(oldKey: string, newKey: string): void;
-
-  /**
-   * Gets the expiration date of a key.
-   * @param key - The key to check.
-   * @returns The expiration date of the key, or null if the key doesn't exist or has no expiration.
-   * @example
-   * const expirationDate = db.expireAt('user:1234');
-   */
-  expireAt(key: string): Date | null;
 
   /**
    * Retrieves keys matching a pattern.
