@@ -36,6 +36,15 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
   getExpire(key: string): Date | null;
 
   /**
+   * Sets the expiration date of a key.
+   * @param key - The key to set the expiration date for.
+   * @param expiresAt - The expiration date to set.
+   * @example
+   * db.setExpire('user:1234', new Date('2028-12-31'));
+   */
+  setExpire(key: string, expiresAt: Date): void;
+
+  /**
    * Checks if a key exists in the database.
    * @param key - The key to check.
    * @returns True if the key exists and hasn't expired, false otherwise.

@@ -174,6 +174,17 @@ if (expirationDate) {
 }
 ```
 
+### `setExpire`
+
+Sets the expiration date of a key.
+
+- `key`: The key to set the expiration date for.
+- `expiresAt`: The expiration date to set.
+
+```javascript
+db.setExpire("user:1234", new Date("2028-12-31"));
+```
+
 ### `Keys`
 
 Retrieves keys matching a pattern.

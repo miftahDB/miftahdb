@@ -38,7 +38,10 @@ export const SQL_STATEMENTS = {
   EXISTS: "SELECT EXISTS (SELECT 1 FROM miftahDB WHERE key = ? LIMIT 1)",
 
   // Returns the expiration date for the given key
-  EXPIRE: "SELECT expires_at FROM miftahDB WHERE key = ? LIMIT 1",
+  GET_EXPIRE: "SELECT expires_at FROM miftahDB WHERE key = ? LIMIT 1",
+
+  // Updates the expiration date for the given key
+  SET_EXPIRE: "UPDATE miftahDB SET expires_at = ? WHERE key = ?",
 
   // Returns all keys that match the given pattern
   KEYS: "SELECT key FROM miftahDB WHERE key LIKE ?",
