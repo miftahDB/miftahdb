@@ -119,6 +119,14 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
   count(): number;
 
   /**
+   * Counts the number of expired keys in the database.
+   * @returns The number of expired keys in the database.
+   * @example
+   * const count = db.countExpired();
+   */
+  countExpired(): number;
+
+  /**
    * Removes expired key-value pairs from the database.
    * @example
    * db.cleanup();
@@ -159,6 +167,19 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
    * db.execute('INSERT INTO users (name) VALUES (?)', ['John Doe']);
    */
   execute(sql: string, params?: any[]): void;
+
+  /**
+   * Gets the status of the database.
+   * @returns A object containing the status of the database.
+   * @example
+   * const status = db.getStats();
+   */
+  getStats(): {
+    totalRecords: number;
+    expiredRecords: number;
+    dbSize: number;
+    dbName: string;
+  };
 }
 
 /**

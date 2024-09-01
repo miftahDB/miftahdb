@@ -2,6 +2,7 @@ import SQLiteDatabase, { Database, Statement } from "better-sqlite3";
 import { IMiftahDB, KeyValue, MiftahDBItem } from "./types";
 import { encodeValue, decodeValue } from "./encoding";
 import { SQL_STATEMENTS } from "./statements";
+import * as fs from "fs";
 
 /**
  * MiftahDB - A key-value store built on top of SQLite.
@@ -22,6 +23,7 @@ class MiftahDB implements IMiftahDB {
     pagination: Statement;
     cleanup: Statement;
     count: Statement;
+    countExpired: Statement;
     vacuum: Statement;
     flush: Statement;
   };
@@ -45,7 +47,8 @@ class MiftahDB implements IMiftahDB {
       keys: this.db.prepare(SQL_STATEMENTS.KEYS),
       pagination: this.db.prepare(SQL_STATEMENTS.PAGINATION),
       cleanup: this.db.prepare(SQL_STATEMENTS.CLEANUP),
-      count: this.db.prepare(SQL_STATEMENTS.COUNT),
+      count: this.db.prepare(SQL_STATEMENTS.COUNT_KEYS),
+      countExpired: this.db.prepare(SQL_STATEMENTS.COUNT_EXPIRED),
       vacuum: this.db.prepare(SQL_STATEMENTS.VACUUM),
       flush: this.db.prepare(SQL_STATEMENTS.FLUSH),
     };
@@ -156,7 +159,17 @@ class MiftahDB implements IMiftahDB {
    * @inheritdoc
    */
   public count(): number {
-    const result = this.db.prepare(SQL_STATEMENTS.COUNT).get() as {
+    const result = this.db.prepare(SQL_STATEMENTS.COUNT_KEYS).get() as {
+      [key: string]: number;
+    };
+    return Object.values(result)[0];
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public countExpired(): number {
+    const result = this.db.prepare(SQL_STATEMENTS.COUNT_EXPIRED).get() as {
       [key: string]: number;
     };
     return Object.values(result)[0];
@@ -199,6 +212,23 @@ class MiftahDB implements IMiftahDB {
     const stmt = this.db.prepare(sql);
 
     return stmt.all(...params);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public getStats() {
+    const totalRecords = this.count();
+    const expiredRecords = this.countExpired();
+    const dbName = this.db.name;
+    const dbSize = fs.statSync(dbName).size;
+
+    return {
+      totalRecords,
+      expiredRecords,
+      dbSize,
+      dbName,
+    };
   }
 }
 

@@ -236,6 +236,16 @@ Counts the number of keys in the database.
 const count = db.count();
 ```
 
+### `Count`
+
+Counts the number of expired keys in the database.
+
+- Returns: The number of expired keys in the database.
+
+```javascript
+const countExpired = db.countExpired();
+```
+
 ### `Cleanup`
 
 Removes expired key-value pairs from the database.
@@ -267,6 +277,16 @@ Executes a raw SQL statement and returns the result.
 - `sql`: The SQL statement to execute.
 - `params`: Optional parameters to bind to the SQL statement.
 - Returns: The result of the SQL statement.
+
+```javascript
+console.log(miftahDB.execute("SELECT * FROM miftahDB"));
+```
+
+### `Get Stats`
+
+Gets the status of the database.
+
+- Returns: A object containing the status of the database.
 
 ```javascript
 console.log(miftahDB.execute("SELECT * FROM miftahDB"));
