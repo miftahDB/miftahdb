@@ -1,6 +1,6 @@
 {
   "name": "miftahdb",
-  "description": "Fast and lightweight key-value database library for Node.js using SQLite",
+  "description": "Fast and lightweight key-value database library for Node.js",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -10,18 +10,25 @@
     "semantic-release": "semantic-release"
   },
   "keywords": [
-    "sqlite",
     "database",
     "key-value",
-    "key value database",
-    "sqlite key value database",
-    "kvsqlite",
-    "miftah"
+    "SQLite",
+    "fast",
+    "lightweight",
+    "Node.js",
+    "miftahdb",
+    "kv-store",
+    "data storage",
+    "kvsqlite"
   ],
+  "bugs": {
+    "url": "https://github.com/miftahdb/miftahdb/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/miftahDB/miftahDB"
   },
+  "homepage": "https://miftahdb.sqlite3.online/docs/intro",
   "author": "vwh",
   "license": "MIT",
   "devDependencies": {
