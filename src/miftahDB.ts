@@ -216,11 +216,7 @@ class MiftahDB implements IMiftahDB {
   /**
    * @inheritdoc
    */
-  public getStats() {
-    const totalRecords = this.count();
-    const expiredRecords = this.countExpired();
-    const dbName = this.db.name;
-
+  public size() {
     const pageCount = this.db
       .prepare("PRAGMA page_count")
       .pluck()
@@ -229,14 +225,8 @@ class MiftahDB implements IMiftahDB {
       .prepare("PRAGMA page_size")
       .pluck()
       .get() as number;
-    const dbSize = pageCount * pageSize;
 
-    return {
-      totalRecords,
-      expiredRecords,
-      dbSize,
-      dbName,
-    };
+    return pageCount * pageSize;
   }
 }
 

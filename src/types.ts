@@ -169,17 +169,12 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
   execute(sql: string, params?: any[]): void;
 
   /**
-   * Gets the status of the database.
-   * @returns A object containing the status of the database.
+   * Gets the size of the database in bytes.
+   * @returns The size of the database in bytes.
    * @example
-   * const status = db.getStats();
+   * const size = db.size();
    */
-  getStats(): {
-    totalRecords: number;
-    expiredRecords: number;
-    dbSize: number;
-    dbName: string;
-  };
+  size(): number;
 }
 
 /**

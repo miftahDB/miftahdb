@@ -285,13 +285,12 @@ const rows = db.execute("SELECT * FROM users");
 
 ### `Get Stats`
 
-Gets the status of the database.
+Gets the size of the database in bytes.
 
-- Returns: A object containing the status of the database.
+- Returns: The size of the database in bytes.
 
 ```javascript
-const status = db.getStats();
-console.log(status.size);
+const size = db.size();
 ```
 
 ### `Close`
