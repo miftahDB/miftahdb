@@ -100,13 +100,13 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
    * @returns An array of keys that match the pattern, limited to the specified number per page.
    * @example
    * // Get the first 5 keys from the database
-   * const firstPageKeys = db.pagination(5, 1);
+   * const firstPage = db.pagination(5, 1);
    *
    * // Get the first 10 keys matching "user:%" (keys starting with "user:")
-   * const firstPageKeys = db.pagination(10, 1, 'user:%');
+   * const firstUsersPage = db.pagination(10, 1, 'user:%');
    *
    * // Get the next 10 keys matching "user:%" (keys starting with "user:")
-   * const nextPageKeys = db.pagination(10, 2, "user:%");
+   * const secondUsersPage = db.pagination(10, 2, "user:%");
    */
   pagination(limit: number, page: number, pattern: string): string[];
 
@@ -122,7 +122,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
    * Counts the number of expired keys in the database.
    * @returns The number of expired keys in the database.
    * @example
-   * const count = db.countExpired();
+   * const countExpired = db.countExpired();
    */
   countExpired(): number;
 

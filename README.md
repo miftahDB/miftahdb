@@ -66,7 +66,7 @@ const db = new MiftahDB("database.db");
 const memDB = new MiftahDB(":memory:");
 
 // Use the database
-db.set("user:1234", { name: "John Doe" });
+db.set("user:1234", { name: "Ahmad Aburob" });
 const user = db.get("user:1234");
 console.log(user);
 ```
@@ -114,7 +114,7 @@ Sets a value in the database with an optional expiration.
 
 ```javascript
 // Set a value without expiration
-db.set("user:1234", { name: "John Doe" });
+db.set("user:1234", { name: "Ahmad Aburob" });
 
 // Set a value with expiration
 const expirationDate = new Date();
@@ -158,7 +158,7 @@ Renames a key in the database.
 db.rename("user:old_id", "user:new_id");
 ```
 
-### `getExpire`
+### `Get Expire`
 
 Gets the expiration date of a key.
 
@@ -174,7 +174,7 @@ if (expirationDate) {
 }
 ```
 
-### `setExpire`
+### `Set Expire`
 
 Sets the expiration date of a key.
 
@@ -217,13 +217,13 @@ Retrieves a paginated list of keys matching a pattern.
 
 ```javascript
 // Get the first 5 keys from the database
-const firstPageKeys = db.pagination(5, 1);
+const firstPage = db.pagination(5, 1);
 
 // Get the first 10 keys with pattern
-const firstPageKeys = db.pagination(10, 1, "user:%");
+const firstUsersPage = db.pagination(10, 1, "user:%");
 
 // Get the next 10 keys with pattern
-const secondPageKeys = db.pagination(10, 2, "user:%");
+const secondUsersPage = db.pagination(10, 2, "user:%");
 ```
 
 ### `Count`
@@ -236,7 +236,7 @@ Counts the number of keys in the database.
 const count = db.count();
 ```
 
-### `Count`
+### `Count Expired`
 
 Counts the number of expired keys in the database.
 
@@ -279,7 +279,8 @@ Executes a raw SQL statement and returns the result.
 - Returns: The result of the SQL statement.
 
 ```javascript
-console.log(miftahDB.execute("SELECT * FROM miftahDB"));
+// Execute a SELECT statement and get results
+const rows = db.execute("SELECT * FROM users");
 ```
 
 ### `Get Stats`
@@ -289,7 +290,8 @@ Gets the status of the database.
 - Returns: A object containing the status of the database.
 
 ```javascript
-console.log(miftahDB.execute("SELECT * FROM miftahDB"));
+const status = db.getStats();
+console.log(status.size);
 ```
 
 ### `Close`
@@ -319,7 +321,7 @@ db.set("string", "Hello!");
 db.set("number", 42);
 db.set("boolean", true);
 db.set("array", [1, 2, 3, 4, 5]);
-db.set("object", { name: "Alice", age: 30 });
+db.set("object", { name: "Ahmad", age: 15 });
 db.set("buffer", Buffer.from("binary data"));
 db.set("date", new Date());
 ```
