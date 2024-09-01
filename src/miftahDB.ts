@@ -2,7 +2,6 @@ import SQLiteDatabase, { Database, Statement } from "better-sqlite3";
 import { IMiftahDB, KeyValue, MiftahDBItem } from "./types";
 import { encodeValue, decodeValue } from "./encoding";
 import { SQL_STATEMENTS } from "./statements";
-import * as fs from "fs";
 
 /**
  * MiftahDB - A key-value store built on top of SQLite.
