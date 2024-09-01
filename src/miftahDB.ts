@@ -221,7 +221,16 @@ class MiftahDB implements IMiftahDB {
     const totalRecords = this.count();
     const expiredRecords = this.countExpired();
     const dbName = this.db.name;
-    const dbSize = fs.statSync(dbName).size;
+
+    const pageCount = this.db
+      .prepare("PRAGMA page_count")
+      .pluck()
+      .get() as number;
+    const pageSize = this.db
+      .prepare("PRAGMA page_size")
+      .pluck()
+      .get() as number;
+    const dbSize = pageCount * pageSize;
 
     return {
       totalRecords,
