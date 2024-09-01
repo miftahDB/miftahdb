@@ -22,7 +22,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
    * @param value - The value to store.
    * @param expiresAt - Optional expiration date for the key-value pair.
    * @example
-   * db.set('user:1234', { name: 'John Doe' }, new Date('2023-12-31'));
+   * db.set('user:1234', { name: 'Ahmad' }, new Date('2023-12-31'));
    */
   set(key: string, value: T, expiresAt?: Date): void;
 
@@ -164,7 +164,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
    * const rows = db.execute('SELECT * FROM users');
    *
    * // Execute an INSERT or UPDATE statement
-   * db.execute('INSERT INTO users (name) VALUES (?)', ['John Doe']);
+   * db.execute('INSERT INTO users (name) VALUES (?)', ['Ahmad']);
    */
   execute(sql: string, params?: any[]): void;
 
