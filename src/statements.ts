@@ -55,4 +55,8 @@ export const SQL_STATEMENTS = {
   // Counts the number of expired rows in the table
   COUNT_EXPIRED:
     "SELECT COUNT(*) as expired FROM miftahDB WHERE expires_at IS NOT NULL AND expires_at <= strftime('%s', 'now') * 1000",
+
+  // Creates the PRAGMA statements
+  CREATE_PRAGMA:
+    "PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL; PRAGMA temp_store = MEMORY; PRAGMA cache_size = -64000; PRAGMA mmap_size = 30000000000;",
 };

@@ -1,7 +1,7 @@
 import SQLiteDatabase, { Database, Statement } from "better-sqlite3";
-import { IMiftahDB, KeyValue, MiftahDBItem } from "./types";
 import { encodeValue, decodeValue } from "./encoding";
 import { SQL_STATEMENTS } from "./statements";
+import type { IMiftahDB, KeyValue, MiftahDBItem } from "./types.ts";
 
 /**
  * MiftahDB - A key-value store built on top of SQLite.
@@ -21,10 +21,6 @@ class MiftahDB implements IMiftahDB {
     keys: Statement;
     pagination: Statement;
     cleanup: Statement;
-    count: Statement;
-    countExpired: Statement;
-    vacuum: Statement;
-    flush: Statement;
   };
 
   /**
@@ -32,7 +28,7 @@ class MiftahDB implements IMiftahDB {
    * @param path - The path to the SQLite database file, or ":memory:" to use an in-memory database.
    */
   constructor(path: string | ":memory:") {
-    this.db = new SQLiteDatabase(path, { fileMustExist: false });
+    this.db = new SQLiteDatabase(path);
     this.initDatabase();
 
     this.statements = {
@@ -46,10 +42,6 @@ class MiftahDB implements IMiftahDB {
       keys: this.db.prepare(SQL_STATEMENTS.KEYS),
       pagination: this.db.prepare(SQL_STATEMENTS.PAGINATION),
       cleanup: this.db.prepare(SQL_STATEMENTS.CLEANUP),
-      count: this.db.prepare(SQL_STATEMENTS.COUNT_KEYS),
-      countExpired: this.db.prepare(SQL_STATEMENTS.COUNT_EXPIRED),
-      vacuum: this.db.prepare(SQL_STATEMENTS.VACUUM),
-      flush: this.db.prepare(SQL_STATEMENTS.FLUSH),
     };
   }
 
@@ -58,12 +50,7 @@ class MiftahDB implements IMiftahDB {
    * @private
    */
   private initDatabase(): void {
-    this.db.pragma("journal_mode = WAL");
-    this.db.pragma("synchronous = NORMAL");
-    this.db.pragma("temp_store = MEMORY");
-    this.db.pragma("cache_size = -64000"); // 64MB cache
-    this.db.pragma("mmap_size = 30000000000"); // 30GB mmap
-
+    this.db.exec(SQL_STATEMENTS.CREATE_PRAGMA);
     this.db.exec(SQL_STATEMENTS.CREATE_TABLE);
     this.db.exec(SQL_STATEMENTS.CREATE_INDEX);
   }
@@ -123,35 +110,53 @@ class MiftahDB implements IMiftahDB {
   /**
    * @inheritdoc
    */
-  public getExpire(key: string): Date | null {
-    const result = this.statements.getExpire.get(key) as {
-      [key: string]: number;
-    };
-    return result?.expires_at ? new Date(result.expires_at) : null;
-  }
-
   public setExpire(key: string, expiresAt: Date): void {
     const expiresAtMs = expiresAt.getTime();
-    this.statements.setExpire.run(expiresAtMs, key);
+    this.statements.setExpire.run(key, expiresAtMs);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public getExpire(key: string): Date | null {
+    const result = this.statements.getExpire.get(key) as {
+      expires_at: number | null;
+    };
+    return result.expires_at ? new Date(result.expires_at) : null;
   }
 
   /**
    * @inheritdoc
    */
   public keys(pattern: string = "%"): string[] {
-    const result = this.statements.keys.all(pattern) as { key: string }[];
-    return result.map((item) => item.key);
+    const result = this.statements.keys.all(pattern) as {
+      key: string;
+    }[];
+    const keys: string[] = new Array(result.length);
+    for (let i = 0; i < result.length; i++) {
+      keys[i] = result[i].key;
+    }
+
+    return keys;
   }
 
+  /**
+   * @inheritdoc
+   */
   public pagination(
     limit: number,
     page: number,
     pattern: string = "%"
   ): string[] {
-    const result = this.statements.pagination.all(pattern, limit, page) as {
+    const offset = (page - 1) * limit;
+    const result = this.statements.pagination.all(pattern, limit, offset) as {
       key: string;
     }[];
-    return result.map((item) => item.key);
+    const keys: string[] = new Array(result.length);
+    for (let i = 0; i < result.length; i++) {
+      keys[i] = result[i].key;
+    }
+    return keys;
   }
 
   /**
@@ -216,15 +221,12 @@ class MiftahDB implements IMiftahDB {
   /**
    * @inheritdoc
    */
-  public size() {
-    const pageCount = this.db
-      .prepare("PRAGMA page_count")
-      .pluck()
-      .get() as number;
-    const pageSize = this.db
-      .prepare("PRAGMA page_size")
-      .pluck()
-      .get() as number;
+  public size(): number {
+    // @ts-ignore it will always be a number
+    const pageCount = this.db.prepare("PRAGMA page_count").value() as number;
+
+    // @ts-ignore it will always be a number
+    const pageSize = this.db.prepare("PRAGMA page_size").value() as number;
 
     return pageCount * pageSize;
   }

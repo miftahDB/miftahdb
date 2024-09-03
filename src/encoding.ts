@@ -1,5 +1,5 @@
 import msgpack from "msgpack-lite";
-import { KeyValue } from "./types";
+import type { KeyValue } from "./types";
 
 export function encodeValue(value: KeyValue): Buffer {
   if (Buffer.isBuffer(value)) {
