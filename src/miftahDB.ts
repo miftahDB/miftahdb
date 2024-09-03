@@ -112,7 +112,7 @@ class MiftahDB implements IMiftahDB {
    */
   public setExpire(key: string, expiresAt: Date): void {
     const expiresAtMs = expiresAt.getTime();
-    this.statements.setExpire.run(key, expiresAtMs);
+    this.statements.setExpire.run(expiresAtMs, key);
   }
 
   /**
