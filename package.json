@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/miftahDB/miftahDB"
+    "url": "https://github.com/miftahDB/miftahDB-node"
   },
   "homepage": "https://miftahdb.sqlite3.online/docs/intro",
   "author": "vwh",
