@@ -6,7 +6,7 @@
 
 # MiftahDB
 
-Fast and lightweight key-value database library for Node.js using SQLite.
+Fast and lightweight key-value database library for Node.js.
 
 [![NPM Version](https://img.shields.io/npm/v/miftahdb?label=NPM)](https://www.npmjs.com/package/miftahdb)
 [![NPM Type Definitions](https://img.shields.io/npm/types/miftahdb?label=Types)](https://github.com/miftahDB/miftahDB/blob/main/LICENSE)
@@ -20,7 +20,10 @@ Fast and lightweight key-value database library for Node.js using SQLite.
 <a href="https://www.npmjs.com/package/miftahdb">
     NPM
 </a>
-    
+•
+<a href="https://github.com/miftahDB/miftahDB-deno">
+    Deno
+</a>  
 </div>
 
 ## Features
@@ -283,7 +286,7 @@ Executes a raw SQL statement and returns the result.
 const rows = db.execute("SELECT * FROM users");
 ```
 
-### `Get Stats`
+### `Size`
 
 Gets the size of the database in bytes.
 
