@@ -63,7 +63,7 @@ class MiftahDB implements IMiftahDB {
 
     if (!result) return null;
 
-    if (result.expires_at && result.expires_at <= Date.now()) {
+    if (result?.expires_at && result.expires_at <= Date.now()) {
       this.delete(key);
       return null;
     }
@@ -122,7 +122,7 @@ class MiftahDB implements IMiftahDB {
     const result = this.statements.getExpire.get(key) as {
       expires_at: number | null;
     };
-    return result.expires_at ? new Date(result.expires_at) : null;
+    return result?.expires_at ? new Date(result.expires_at) : null;
   }
 
   /**
