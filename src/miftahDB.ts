@@ -157,16 +157,18 @@ class MiftahDB implements IMiftahDB {
   /**
    * @inheritdoc
    */
-  public count(): number {
-    const result = this.statements.countKeys.get() as { count: number };
+  public count(pattern = "%"): number {
+    const result = this.statements.countKeys.get(pattern) as { count: number };
     return result.count;
   }
 
   /**
    * @inheritdoc
    */
-  public countExpired(): number {
-    const result = this.statements.countExpired.get() as { count: number };
+  public countExpired(pattern = "%"): number {
+    const result = this.statements.countExpired.get(pattern) as {
+      count: number;
+    };
     return result.count;
   }
 

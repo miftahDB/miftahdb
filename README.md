@@ -233,20 +233,30 @@ const secondUsersPage = db.pagination(10, 2, "user:%");
 
 Counts the number of keys in the database.
 
+- `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
 - Returns: The number of keys in the database.
 
 ```javascript
+// Get the total number of keys
 const count = db.count();
+
+// Get the number of keys matching "user:%"
+const userCount = db.count("user:%");
 ```
 
 ### `Count Expired`
 
 Counts the number of expired keys in the database.
 
+- `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
 - Returns: The number of expired keys in the database.
 
 ```javascript
+// Get the total number of expired keys
 const countExpired = db.countExpired();
+
+// Get the number of expired keys matching "user:%"
+const userCountExpired = db.countExpired("user:%");
 ```
 
 ### `Cleanup`

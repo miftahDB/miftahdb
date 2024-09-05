@@ -112,19 +112,29 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Counts the number of keys in the database.
+   * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The number of keys in the database.
    * @example
+   * // Get the total number of keys
    * const count = db.count();
+   *
+   * // Get the number of keys matching "user:%"
+   * const userCount = db.count('user:%');
    */
-  count(): number;
+  count(pattern?: string): number;
 
   /**
    * Counts the number of expired keys in the database.
+   * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The number of expired keys in the database.
    * @example
+   * // Get the total number of expired keys
    * const countExpired = db.countExpired();
+   *
+   * // Get the number of expired keys matching "user:%"
+   * const userCountExpired = db.countExpired('user:%');
    */
-  countExpired(): number;
+  countExpired(pattern?: string): number;
 
   /**
    * Removes expired key-value pairs from the database.
