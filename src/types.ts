@@ -177,14 +177,6 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
    * db.execute('INSERT INTO users (name) VALUES (?)', ['Ahmad']);
    */
   execute(sql: string, params?: any[]): void;
-
-  /**
-   * Gets the size of the database in bytes.
-   * @returns The size of the database in bytes.
-   * @example
-   * const size = db.size();
-   */
-  size(): number;
 }
 
 /**

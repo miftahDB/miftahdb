@@ -296,16 +296,6 @@ Executes a raw SQL statement and returns the result.
 const rows = db.execute("SELECT * FROM users");
 ```
 
-### `Size`
-
-Gets the size of the database in bytes.
-
-- Returns: The size of the database in bytes.
-
-```javascript
-const size = db.size();
-```
-
 ### `Close`
 
 Closes the database connection.

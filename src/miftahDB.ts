@@ -208,19 +208,6 @@ class MiftahDB implements IMiftahDB {
     const stmt = this.db.prepare(sql);
     return stmt.all(...params);
   }
-
-  /**
-   * @inheritdoc
-   */
-  public size(): number {
-    const pageCount = this.db.prepare("PRAGMA page_count").get() as {
-      value: number;
-    };
-    const pageSize = this.db.prepare("PRAGMA page_size").get() as {
-      value: number;
-    };
-    return pageCount.value * pageSize.value;
-  }
 }
 
 export default MiftahDB;
