@@ -1,7 +1,7 @@
-import SQLiteDatabase, { Database, Statement } from "better-sqlite3";
+import SQLiteDatabase, { type Database, type Statement } from "better-sqlite3";
 import { encodeValue, decodeValue } from "./encoding";
 import { SQL_STATEMENTS } from "./statements";
-import type { IMiftahDB, KeyValue, MiftahDBItem } from "./types.ts";
+import type { IMiftahDB, KeyValue, MiftahDBItem } from "./types";
 
 /**
  * MiftahDB - A key-value store built on top of SQLite.
@@ -10,18 +10,7 @@ import type { IMiftahDB, KeyValue, MiftahDBItem } from "./types.ts";
  */
 class MiftahDB implements IMiftahDB {
   private readonly db: Database;
-  private readonly statements: {
-    get: Statement;
-    set: Statement;
-    exists: Statement;
-    delete: Statement;
-    rename: Statement;
-    getExpire: Statement;
-    setExpire: Statement;
-    keys: Statement;
-    pagination: Statement;
-    cleanup: Statement;
-  };
+  private readonly statements: Record<string, Statement>;
 
   /**
    * Creates a MiftahDB instance.
@@ -30,19 +19,7 @@ class MiftahDB implements IMiftahDB {
   constructor(path: string | ":memory:") {
     this.db = new SQLiteDatabase(path);
     this.initDatabase();
-
-    this.statements = {
-      get: this.db.prepare(SQL_STATEMENTS.GET),
-      set: this.db.prepare(SQL_STATEMENTS.SET),
-      exists: this.db.prepare(SQL_STATEMENTS.EXISTS),
-      delete: this.db.prepare(SQL_STATEMENTS.DELETE),
-      rename: this.db.prepare(SQL_STATEMENTS.RENAME),
-      getExpire: this.db.prepare(SQL_STATEMENTS.GET_EXPIRE),
-      setExpire: this.db.prepare(SQL_STATEMENTS.SET_EXPIRE),
-      keys: this.db.prepare(SQL_STATEMENTS.KEYS),
-      pagination: this.db.prepare(SQL_STATEMENTS.PAGINATION),
-      cleanup: this.db.prepare(SQL_STATEMENTS.CLEANUP),
-    };
+    this.statements = this.prepareStatements();
   }
 
   /**
@@ -56,18 +33,39 @@ class MiftahDB implements IMiftahDB {
   }
 
   /**
+   * Prepares SQL statements for the database operations.
+   * @private
+   * @returns {Record<string, Statement>}
+   */
+  private prepareStatements(): Record<string, Statement> {
+    return {
+      get: this.db.prepare(SQL_STATEMENTS.GET),
+      set: this.db.prepare(SQL_STATEMENTS.SET),
+      exists: this.db.prepare(SQL_STATEMENTS.EXISTS),
+      delete: this.db.prepare(SQL_STATEMENTS.DELETE),
+      rename: this.db.prepare(SQL_STATEMENTS.RENAME),
+      getExpire: this.db.prepare(SQL_STATEMENTS.GET_EXPIRE),
+      setExpire: this.db.prepare(SQL_STATEMENTS.SET_EXPIRE),
+      keys: this.db.prepare(SQL_STATEMENTS.KEYS),
+      pagination: this.db.prepare(SQL_STATEMENTS.PAGINATION),
+      cleanup: this.db.prepare(SQL_STATEMENTS.CLEANUP),
+      countKeys: this.db.prepare(SQL_STATEMENTS.COUNT_KEYS),
+      countExpired: this.db.prepare(SQL_STATEMENTS.COUNT_EXPIRED),
+      vacuum: this.db.prepare(SQL_STATEMENTS.VACUUM),
+      flush: this.db.prepare(SQL_STATEMENTS.FLUSH),
+    };
+  }
+
+  /**
    * @inheritdoc
    */
   public get<T>(key: string): T | null {
     const result = this.statements.get.get(key) as MiftahDBItem | undefined;
-
     if (!result) return null;
-
     if (result?.expires_at && result.expires_at <= Date.now()) {
       this.delete(key);
       return null;
     }
-
     return decodeValue(result.value);
   }
 
@@ -80,8 +78,7 @@ class MiftahDB implements IMiftahDB {
     expiresAt?: Date
   ): void {
     const encodedValue = encodeValue(value);
-    const expiresAtMs = expiresAt ? expiresAt.getTime() : null;
-
+    const expiresAtMs = expiresAt?.getTime() ?? null;
     this.statements.set.run(key, encodedValue, expiresAtMs);
   }
 
@@ -90,7 +87,7 @@ class MiftahDB implements IMiftahDB {
    */
   public exists(key: string): boolean {
     const result = this.statements.exists.get(key) as { [key: string]: number };
-    return !!Object.values(result)[0];
+    return Boolean(Object.values(result)[0]);
   }
 
   /**
@@ -119,16 +116,18 @@ class MiftahDB implements IMiftahDB {
    * @inheritdoc
    */
   public getExpire(key: string): Date | null {
-    const result = this.statements.getExpire.get(key) as {
-      expires_at: number | null;
-    };
+    const result = this.statements.getExpire.get(key) as
+      | {
+          expires_at: number | null;
+        }
+      | undefined;
     return result?.expires_at ? new Date(result.expires_at) : null;
   }
 
   /**
    * @inheritdoc
    */
-  public keys(pattern: string = "%"): string[] {
+  public keys(pattern = "%"): string[] {
     const result = this.statements.keys.all(pattern) as {
       key: string;
     }[];
@@ -143,11 +142,7 @@ class MiftahDB implements IMiftahDB {
   /**
    * @inheritdoc
    */
-  public pagination(
-    limit: number,
-    page: number,
-    pattern: string = "%"
-  ): string[] {
+  public pagination(limit: number, page: number, pattern = "%"): string[] {
     const offset = (page - 1) * limit;
     const result = this.statements.pagination.all(pattern, limit, offset) as {
       key: string;
@@ -163,27 +158,23 @@ class MiftahDB implements IMiftahDB {
    * @inheritdoc
    */
   public count(): number {
-    const result = this.db.prepare(SQL_STATEMENTS.COUNT_KEYS).get() as {
-      [key: string]: number;
-    };
-    return Object.values(result)[0];
+    const result = this.statements.countKeys.get() as { count: number };
+    return result.count;
   }
 
   /**
    * @inheritdoc
    */
   public countExpired(): number {
-    const result = this.db.prepare(SQL_STATEMENTS.COUNT_EXPIRED).get() as {
-      [key: string]: number;
-    };
-    return Object.values(result)[0];
+    const result = this.statements.countExpired.get() as { count: number };
+    return result.count;
   }
 
   /**
    * @inheritdoc
    */
   public vacuum(): void {
-    this.db.exec(SQL_STATEMENTS.VACUUM);
+    this.statements.vacuum.run();
   }
 
   /**
@@ -198,15 +189,14 @@ class MiftahDB implements IMiftahDB {
    * @inheritdoc
    */
   public cleanup(): void {
-    const now = Date.now();
-    this.statements.cleanup.run(now);
+    this.statements.cleanup.run(Date.now());
   }
 
   /**
    * @inheritdoc
    */
   public flush(): void {
-    this.db.exec(SQL_STATEMENTS.FLUSH);
+    this.statements.flush.run();
   }
 
   /**
@@ -214,7 +204,6 @@ class MiftahDB implements IMiftahDB {
    */
   public execute(sql: string, params: any[] = []): any | null {
     const stmt = this.db.prepare(sql);
-
     return stmt.all(...params);
   }
 
@@ -222,13 +211,13 @@ class MiftahDB implements IMiftahDB {
    * @inheritdoc
    */
   public size(): number {
-    // @ts-ignore it will always be a number
-    const pageCount = this.db.prepare("PRAGMA page_count").value() as number;
-
-    // @ts-ignore it will always be a number
-    const pageSize = this.db.prepare("PRAGMA page_size").value() as number;
-
-    return pageCount * pageSize;
+    const pageCount = this.db.prepare("PRAGMA page_count").get() as {
+      value: number;
+    };
+    const pageSize = this.db.prepare("PRAGMA page_size").get() as {
+      value: number;
+    };
+    return pageCount.value * pageSize.value;
   }
 }
 

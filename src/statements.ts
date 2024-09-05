@@ -50,11 +50,11 @@ export const SQL_STATEMENTS = {
   PAGINATION: "SELECT key FROM miftahDB WHERE key LIKE ? LIMIT ? OFFSET ?",
 
   // Counts the total number of rows in the table
-  COUNT_KEYS: "SELECT COUNT(*) FROM miftahDB",
+  COUNT_KEYS: "SELECT COUNT(*) AS count FROM miftahDB",
 
   // Counts the number of expired rows in the table
   COUNT_EXPIRED:
-    "SELECT COUNT(*) as expired FROM miftahDB WHERE expires_at IS NOT NULL AND expires_at <= strftime('%s', 'now') * 1000",
+    "SELECT COUNT(*) as count FROM miftahDB WHERE expires_at IS NOT NULL AND expires_at <= strftime('%s', 'now') * 1000",
 
   // Creates the PRAGMA statements
   CREATE_PRAGMA:
