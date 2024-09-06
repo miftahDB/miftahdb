@@ -324,7 +324,7 @@ db.set("number", 42);
 db.set("boolean", true);
 db.set("array", [1, 2, 3, 4, 5]);
 db.set("object", { name: "Ahmad", age: 15 });
-db.set("buffer", Buffer.from("binary data"));
+db.set("buffer", new Uint8Array([1, 2, 3, 4, 5]));
 db.set("date", new Date());
 ```
 

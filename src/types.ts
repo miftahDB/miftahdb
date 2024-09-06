@@ -1,7 +1,14 @@
 /**
  * Represents the possible types of values that can be stored in MiftahDB.
  */
-export type KeyValue = string | number | boolean | object | Buffer | null;
+export type KeyValue =
+  | string
+  | number
+  | boolean
+  | object
+  | Uint8Array
+  | Buffer
+  | null;
 
 /**
  * Interface for the MiftahDB class, defining its public methods.
@@ -184,7 +191,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
  */
 export interface MiftahDBItem {
   /** The stored value as a Buffer. */
-  value: Buffer;
+  value: Uint8Array;
   /** The expiration timestamp in milliseconds, or null if no expiration. */
   expires_at: number | null;
 }
