@@ -6,10 +6,11 @@
 
 # MiftahDB
 
-Fast and lightweight key-value database library for Node.js.
+Fast and lightweight key-value database library.
 
 [![NPM Version](https://img.shields.io/npm/v/miftahdb?label=NPM)](https://www.npmjs.com/package/miftahdb)
 [![NPM Type Definitions](https://img.shields.io/npm/types/miftahdb?label=Types)](https://github.com/miftahDB/miftahDB/blob/main/LICENSE)
+[![NPM Downloads](https://img.shields.io/npm/d18m/miftahdb?label=Downloads)](https://www.npmjs.com/package/miftahdb)
 [![NPM License](https://img.shields.io/npm/l/miftahdb?label=License)](https://app.codacy.com/gh/vwh/sqlite-viewer/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Release](https://github.com/miftahDB/miftahDB/actions/workflows/release.yml/badge.svg)](https://github.com/miftahDB/miftahDB/actions/workflows/release.yml)
 
@@ -20,10 +21,6 @@ Fast and lightweight key-value database library for Node.js.
 <a href="https://www.npmjs.com/package/miftahdb">
     NPM
 </a>
-•
-<a href="https://github.com/miftahDB/miftahDB-deno">
-    Deno
-</a>  
 </div>
 
 ## Features
@@ -48,7 +45,7 @@ npm install miftahdb
 For CommonJS modules:
 
 ```javascript
-const MiftahDB = require("miftahdb");
+const { MiftahDB } = require("miftahdb");
 ```
 
 ### ES Modules
@@ -56,7 +53,7 @@ const MiftahDB = require("miftahdb");
 For ES modules:
 
 ```javascript
-import MiftahDB from "miftahdb";
+import { MiftahDB } from "miftahdb";
 ```
 
 ### Example Usage
