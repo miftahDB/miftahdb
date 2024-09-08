@@ -29,31 +29,29 @@ Fast and lightweight key-value database library.
 - Support for expiration of keys
 - Disk and in-memory database support
 - Synchronous API for better performance and concurrency
-- Built on top of better-sqlite3 for robust SQLite operations
+- Built on top of `better-sqlite3` for optimal Node.js performance
+- Utilizes `bun:sqlite` for seamless Bun integration
 - Pattern-based key retrieval
+- **Supports both Bun and Node.js environments**
 
 ## Installation
 
 ```bash
+# With NPM
 npm install miftahdb
+
+# With bun
+bun add miftahdb
 ```
 
 ## Usage
 
-### CommonJS
-
-For CommonJS modules:
-
 ```javascript
-const { MiftahDB } = require("miftahdb");
-```
-
-### ES Modules
-
-For ES modules:
-
-```javascript
+// For Node.js
 import { MiftahDB } from "miftahdb";
+
+// For Bun
+import { MiftahDB } from "miftahdb/bun";
 ```
 
 ### Example Usage
@@ -290,7 +288,7 @@ Executes a raw SQL statement and returns the result.
 
 ```javascript
 // Execute a SELECT statement and get results
-const rows = db.execute("SELECT * FROM users");
+const rows = db.execute("SELECT * FROM miftahdb");
 ```
 
 ### `Close`

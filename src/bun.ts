@@ -1,4 +1,4 @@
-import DB, { type Database, type Statement } from "better-sqlite3";
+import DB, { type Database, type Statement } from "bun:sqlite";
 import { BaseMiftahDB } from "./base";
 import { SQL_STATEMENTS } from "./statements";
 
