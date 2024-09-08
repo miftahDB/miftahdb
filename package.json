@@ -18,7 +18,8 @@
   "scripts": {
     "build": "tsup",
     "start": "node dist/index.js",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "test": "bun test ./tests/bun.ts"
   },
   "keywords": [
     "database",
