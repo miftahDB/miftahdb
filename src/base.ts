@@ -1,15 +1,26 @@
 import { encodeValue, decodeValue } from "./encoding";
 import { SQL_STATEMENTS } from "./statements";
 import type { IMiftahDB, KeyValue, MiftahDBItem } from "./types";
+import cron from "node-cron";
 
 export abstract class BaseMiftahDB implements IMiftahDB {
   protected db: any;
   protected statements: Record<string, any>;
+  private cleanup_cronjob: any;
 
-  constructor(path: string | ":memory:") {
+  constructor(path: string | ":memory:", auto_clean = true, timeout = 5) {
     this.initializeDB(path);
     this.initDatabase();
     this.statements = this.prepareStatements();
+    if (auto_clean) {
+      this.auto_clean(timeout);
+    }
+  }
+  private auto_clean(timeout: number = 5) {
+    // cleanup expired keys every n minutes (default 5 minutes)
+     this.cleanup_cronjob = cron.schedule(`*/${timeout} * * * *`, () => {
+      this.cleanup();
+    });
   }
 
   protected abstract initializeDB(path: string | ":memory:"): void;
@@ -35,7 +46,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   public set<T extends KeyValue>(
     key: string,
     value: T,
-    expiresAt?: Date
+    expiresAt?: Date,
   ): void {
     const encodedValue = encodeValue(value);
     const expiresAtMs = expiresAt?.getTime() ?? null;
@@ -103,6 +114,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   public close(): void {
     this.cleanup();
     this.db.close();
+    this.cleanup_cronjob.stop();
   }
 
   public cleanup(): void {

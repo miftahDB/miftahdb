@@ -49,16 +49,18 @@
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.1",
     "@types/better-sqlite3": "^7.6.11",
+    "@types/bun": "latest",
     "@types/msgpack-lite": "^0.1.11",
     "@types/node": "^22.5.1",
+    "@types/node-cron": "^3.0.11",
     "semantic-release": "^24.1.0",
     "tsup": "^8.2.4",
-    "typescript": "^5.5.4",
-    "@types/bun": "latest"
+    "typescript": "^5.5.4"
   },
   "dependencies": {
     "better-sqlite3": "^11.2.1",
-    "msgpack-lite": "^0.1.26"
+    "msgpack-lite": "^0.1.26",
+    "node-cron": "^3.0.3"
   },
   "files": [
     "dist",
