@@ -8,9 +8,22 @@ import { BaseMiftahDB } from "./base";
 // import type { Database } from "bun:sqlite";
 import type { Database } from "better-sqlite3";
 
+/**
+ * MiftahDB is a wrapper around `bun:sqlite`.
+ * @example
+ * // Create a new MiftahDB instance with disk-based database
+ * const db = new MiftahDB("test.db");
+ *
+ * // Create a new MiftahDB instance with in-memory database
+ * const memoryDB = new MiftahDB(":memory:");
+ */
 export class MiftahDB extends BaseMiftahDB {
   protected declare db: Database;
-  protected initializeDB(path: string | ":memory:"): void {
+  protected initializeDB(path = ":memory:"): void {
     this.db = new DB(path) as unknown as Database;
   }
 }
+
+const db = new MiftahDB(":memory:");
+db.keys();
+db.get("key");

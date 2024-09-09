@@ -7,7 +7,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   protected declare db: Database;
   private statements: Record<string, Statement>;
 
-  constructor(path: string | ":memory:") {
+  constructor(path = ":memory:") {
     this.initializeDB(path);
     this.initDatabase();
     this.statements = this.prepareStatements();
