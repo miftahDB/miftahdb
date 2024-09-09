@@ -16,6 +16,7 @@ export type KeyValue =
 export interface IMiftahDB<T extends KeyValue = KeyValue> {
   /**
    * Retrieves a value from the database by its key.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/get
    * @param key - The key to look up.
    * @returns The value associated with the key, or null if not found or expired.
    * @example
@@ -25,6 +26,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Sets a value in the database with an optional expiration.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/set
    * @param key - The key under which to store the value.
    * @param value - The value to store.
    * @param expiresAt - Optional expiration date for the key-value pair.
@@ -35,6 +37,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Gets the expiration date of a key.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/getexpire
    * @param key - The key to check.
    * @returns The expiration date of the key, or null if the key doesn't exist or has no expiration.
    * @example
@@ -44,6 +47,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Sets the expiration date of a key.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/setexpire
    * @param key - The key to set the expiration date for.
    * @param expiresAt - The expiration date to set.
    * @example
@@ -53,6 +57,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Checks if a key exists in the database.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/exists
    * @param key - The key to check.
    * @returns True if the key exists and hasn't expired, false otherwise.
    * @example
@@ -64,6 +69,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Deletes a key-value pair from the database.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/delete
    * @param key - The key to delete.
    * @example
    * db.delete('user:1234');
@@ -72,6 +78,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Renames a key in the database.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/rename
    * @param oldKey - The current key name.
    * @param newKey - The new key name.
    * @example
@@ -81,6 +88,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Retrieves keys matching a pattern.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/keys
    * @param {string} [pattern="%"] - Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
    *                                 Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns {string[]} An array of matching keys.
@@ -101,6 +109,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Retrieves a paginated list of keys matching a pattern.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/pagination
    * @param limit - The maximum number of keys to return per page.
    * @param page - The page number to retrieve (1-based index).
    * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
@@ -119,6 +128,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Counts the number of keys in the database.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/count
    * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The number of keys in the database.
    * @example
@@ -132,6 +142,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Counts the number of expired keys in the database.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/countexpired
    * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The number of expired keys in the database.
    * @example
@@ -145,6 +156,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Removes expired key-value pairs from the database.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/cleanup
    * @example
    * db.cleanup();
    */
@@ -152,6 +164,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Optimizes the database file, reducing its size.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/vacuum
    * @example
    * db.vacuum();
    */
@@ -159,6 +172,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Closes the database connection.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/close
    * @example
    * db.close();
    */
@@ -166,6 +180,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Ensures all the changes written to disk.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/flush
    * @example
    * db.flush();
    */
@@ -173,6 +188,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
 
   /**
    * Executes a raw SQL statement and returns the result.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/execute
    * @param sql - The SQL statement to execute. Be cautious with raw SQL to avoid SQL injection vulnerabilities.
    * @param params - Optional parameters to bind to the SQL statement.
    * @returns The result of the SQL query. If the statement is a `SELECT` query, it returns the query result. Otherwise, it returns the database instance.
