@@ -1,4 +1,4 @@
-name: Bun test
+name: TSC lint
 
 on:
   push:
@@ -26,6 +26,6 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      # Run the tests using Bun
+      # Run the linter using Bun
       - name: Run Tests
-        run: bun run test
+        run: bun run lint

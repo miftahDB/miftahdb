@@ -19,7 +19,8 @@
     "build": "tsup",
     "start": "node dist/index.js",
     "semantic-release": "semantic-release",
-    "test": "bun test ./tests/bun.ts"
+    "test": "bun test ./tests/bun.ts",
+    "lint": "tsc --noEmit"
   },
   "keywords": [
     "database",
