@@ -12,7 +12,9 @@ Fast and lightweight key-value database library.
 [![NPM Type Definitions](https://img.shields.io/npm/types/miftahdb?label=Types)](https://github.com/miftahDB/miftahDB/blob/main/LICENSE)
 [![NPM Downloads](https://img.shields.io/npm/d18m/miftahdb?label=Downloads)](https://www.npmjs.com/package/miftahdb)
 [![NPM License](https://img.shields.io/npm/l/miftahdb?label=License)](https://app.codacy.com/gh/vwh/sqlite-viewer/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 [![Release](https://github.com/miftahDB/miftahDB/actions/workflows/release.yml/badge.svg)](https://github.com/miftahDB/miftahDB/actions/workflows/release.yml)
+[![Release](https://github.com/miftahDB/miftahDB/actions/workflows/test.yml/badge.svg)](https://github.com/miftahDB/miftahDB/actions/workflows/test.yml)
 
 <a href="https://miftahdb.sqlite3.online/docs/intro/">
     Documentation
