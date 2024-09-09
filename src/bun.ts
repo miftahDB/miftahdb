@@ -23,7 +23,3 @@ export class MiftahDB extends BaseMiftahDB {
     this.db = new DB(path) as unknown as Database;
   }
 }
-
-const db = new MiftahDB(":memory:");
-db.keys();
-db.get("key");
