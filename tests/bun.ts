@@ -54,6 +54,7 @@ test("pagination", () => {
 
 test("count keys", () => {
   const db = createDB();
+  db.flush();
   db.set("key1", "value1");
   db.set("key2", "value2");
   expect(db.count()).toBe(2);
@@ -84,7 +85,9 @@ test("flush database", () => {
 
 test("execute raw SQL", () => {
   const db = createDB();
-  db.execute("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+  db.execute(
+    "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
+  );
   db.execute("INSERT INTO test (value) VALUES (?)", ["test_value"]);
   const result = db.execute("SELECT value FROM test WHERE id = 1") as {
     value: string;

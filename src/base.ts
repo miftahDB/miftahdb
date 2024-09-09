@@ -1,10 +1,11 @@
 import { encodeValue, decodeValue } from "./encoding";
 import { SQL_STATEMENTS } from "./statements";
 import type { IMiftahDB, KeyValue, MiftahDBItem } from "./types";
+import type { Database, Statement } from "better-sqlite3";
 
 export abstract class BaseMiftahDB implements IMiftahDB {
-  protected db: any;
-  protected statements: Record<string, any>;
+  protected declare db: Database;
+  private statements: Record<string, Statement>;
 
   constructor(path: string | ":memory:") {
     this.initializeDB(path);
@@ -14,7 +15,24 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   protected abstract initializeDB(path: string | ":memory:"): void;
 
-  protected abstract prepareStatements(): Record<string, any>;
+  private prepareStatements(): Record<string, Statement> {
+    return {
+      get: this.db.prepare(SQL_STATEMENTS.GET),
+      set: this.db.prepare(SQL_STATEMENTS.SET),
+      exists: this.db.prepare(SQL_STATEMENTS.EXISTS),
+      delete: this.db.prepare(SQL_STATEMENTS.DELETE),
+      rename: this.db.prepare(SQL_STATEMENTS.RENAME),
+      getExpire: this.db.prepare(SQL_STATEMENTS.GET_EXPIRE),
+      setExpire: this.db.prepare(SQL_STATEMENTS.SET_EXPIRE),
+      keys: this.db.prepare(SQL_STATEMENTS.KEYS),
+      pagination: this.db.prepare(SQL_STATEMENTS.PAGINATION),
+      cleanup: this.db.prepare(SQL_STATEMENTS.CLEANUP),
+      countKeys: this.db.prepare(SQL_STATEMENTS.COUNT_KEYS),
+      countExpired: this.db.prepare(SQL_STATEMENTS.COUNT_EXPIRED),
+      vacuum: this.db.prepare(SQL_STATEMENTS.VACUUM),
+      flush: this.db.prepare(SQL_STATEMENTS.FLUSH),
+    };
+  }
 
   private initDatabase(): void {
     this.db.exec(SQL_STATEMENTS.CREATE_PRAGMA);

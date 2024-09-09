@@ -1,31 +1,16 @@
-import DB, { type Database, type Statement } from "bun:sqlite";
+import DB from "bun:sqlite";
 import { BaseMiftahDB } from "./base";
-import { SQL_STATEMENTS } from "./statements";
+
+// Intentionally using a type assertion here to align `bun:sqlite`'s `Database` type with `better-sqlite3`.
+// Although `bun:sqlite` and `better-sqlite3` have different implementations, their API is similar enough for our purposes.
+// This trick helps avoid TypeScript errors while maintaining compatibility across both environments.
+// Also run `bun run test` for double-checking.
+// import type { Database } from "bun:sqlite";
+import type { Database } from "better-sqlite3";
 
 export class MiftahDB extends BaseMiftahDB {
   protected declare db: Database;
-  protected declare statements: Record<string, Statement>;
-
   protected initializeDB(path: string | ":memory:"): void {
-    this.db = new DB(path);
-  }
-
-  protected prepareStatements(): Record<string, Statement> {
-    return {
-      get: this.db.prepare(SQL_STATEMENTS.GET),
-      set: this.db.prepare(SQL_STATEMENTS.SET),
-      exists: this.db.prepare(SQL_STATEMENTS.EXISTS),
-      delete: this.db.prepare(SQL_STATEMENTS.DELETE),
-      rename: this.db.prepare(SQL_STATEMENTS.RENAME),
-      getExpire: this.db.prepare(SQL_STATEMENTS.GET_EXPIRE),
-      setExpire: this.db.prepare(SQL_STATEMENTS.SET_EXPIRE),
-      keys: this.db.prepare(SQL_STATEMENTS.KEYS),
-      pagination: this.db.prepare(SQL_STATEMENTS.PAGINATION),
-      cleanup: this.db.prepare(SQL_STATEMENTS.CLEANUP),
-      countKeys: this.db.prepare(SQL_STATEMENTS.COUNT_KEYS),
-      countExpired: this.db.prepare(SQL_STATEMENTS.COUNT_EXPIRED),
-      vacuum: this.db.prepare(SQL_STATEMENTS.VACUUM),
-      flush: this.db.prepare(SQL_STATEMENTS.FLUSH),
-    };
+    this.db = new DB(path) as unknown as Database;
   }
 }
