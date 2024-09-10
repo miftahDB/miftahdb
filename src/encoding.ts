@@ -1,5 +1,5 @@
 import msgpack from "msgpack-lite";
-import type { KeyValue } from "./types";
+import type { Value } from "./types";
 
 function concatUint8Arrays(arrays: Uint8Array[]): Uint8Array {
   const totalLength = arrays.reduce((sum, arr) => sum + arr.length, 0);
@@ -12,7 +12,7 @@ function concatUint8Arrays(arrays: Uint8Array[]): Uint8Array {
   return result;
 }
 
-export function encodeValue(value: KeyValue): Uint8Array {
+export function encodeValue(value: Value): Uint8Array {
   if (value instanceof Uint8Array) {
     const marker = new Uint8Array([0x01]);
     return concatUint8Arrays([marker, value]);

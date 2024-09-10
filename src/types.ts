@@ -1,11 +1,13 @@
 /**
  * Represents the possible types of values that can be stored in MiftahDB.
  */
-export type KeyValue =
+export type Value =
   | string
   | number
   | boolean
-  | object
+  | Record<string, unknown>
+  | Array<unknown>
+  | Date
   | Uint8Array
   | Buffer
   | null;
@@ -13,7 +15,7 @@ export type KeyValue =
 /**
  * Interface for the MiftahDB class, defining its public methods.
  */
-export interface IMiftahDB<T extends KeyValue = KeyValue> {
+export interface IMiftahDB<T extends Value = Value> {
   /**
    * Retrieves a value from the database by its key.
    * - https://miftahdb.sqlite3.online/docs/api-reference/get
@@ -199,7 +201,7 @@ export interface IMiftahDB<T extends KeyValue = KeyValue> {
    * // Execute an INSERT or UPDATE statement
    * db.execute('INSERT INTO users (name) VALUES (?)', ['Ahmad']);
    */
-  execute(sql: string, params?: any[]): void;
+  execute(sql: string, params?: unknown[]): void;
 }
 
 /**

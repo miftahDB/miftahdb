@@ -1,6 +1,6 @@
 import { encodeValue, decodeValue } from "./encoding";
 import { SQL_STATEMENTS } from "./statements";
-import type { IMiftahDB, KeyValue, MiftahDBItem } from "./types";
+import type { IMiftahDB, Value, MiftahDBItem } from "./types";
 import type { Database, Statement } from "better-sqlite3";
 
 export abstract class BaseMiftahDB implements IMiftahDB {
@@ -50,11 +50,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     return decodeValue(result.value);
   }
 
-  public set<T extends KeyValue>(
-    key: string,
-    value: T,
-    expiresAt?: Date
-  ): void {
+  public set<T extends Value>(key: string, value: T, expiresAt?: Date): void {
     const encodedValue = encodeValue(value);
     const expiresAtMs = expiresAt?.getTime() ?? null;
     this.statements.set.run(key, encodedValue, expiresAtMs);
@@ -131,7 +127,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     this.statements.flush.run();
   }
 
-  public execute(sql: string, params: any[] = []): any | null {
+  public execute(sql: string, params: unknown[] = []): unknown | null {
     const stmt = this.db.prepare(sql);
     return stmt.all(...params);
   }

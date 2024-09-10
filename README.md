@@ -310,20 +310,24 @@ MiftahDB supports various value types:
 2. Number
 3. Boolean
 4. Array
-5. Object
-6. Buffer (Binary Data)
-7. Date
+5. Record (Object)
+6. Date
+7. Buffer (Binary Data)
+8. Uint8Array (Binary Data)
+9. Null
 
 Example for each type:
 
 ```javascript
-db.set("string", "Hello!");
-db.set("number", 42);
-db.set("boolean", true);
-db.set("array", [1, 2, 3, 4, 5]);
-db.set("object", { name: "Ahmad", age: 15 });
-db.set("buffer", new Uint8Array([1, 2, 3, 4, 5]));
+db.set("String", "Hello!");
+db.set("Number", 42);
+db.set("Boolean", true);
+db.set("Array", [1, 2, 3, 4, 5]);
+db.set("Record", { name: "Ahmad", age: 15 });
 db.set("date", new Date());
+db.set("Buffer", Buffer.from([1, 2, 3, 4, 5]));
+db.set("Uint8Array", new Uint8Array([1, 2, 3, 4, 5]));
+db.set("Null", null);
 ```
 
 ## Performance Considerations
