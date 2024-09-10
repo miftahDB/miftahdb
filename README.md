@@ -83,7 +83,8 @@ MiftahDB uses a synchronous API, which may seem counterintuitive but actually pr
 
 Creates a new MiftahDB instance.
 
-- `path`: The path to the SQLite database file, or `:memory:` for an in-memory database.
+- **Parameters**:
+  - `path`: The path to the database file, or `:memory:` for an in-memory database.
 
 ```javascript
 const diskDB = new MiftahDB("database.db");
@@ -94,11 +95,13 @@ const memoryDB = new MiftahDB(":memory:");
 
 Retrieves a value from the database by its key.
 
-- `key`: The key to look up.
-- Returns: The value associated with the key, or null if not found or expired.
+- **Parameters**:
+  - `key`: The key to look up.
+- **Returns**:
+  - The value associated with the key, or null if not found or expired.
 
-```javascript
-const value = db.get("user:1234");
+```typescript
+const value = db.get<User>("user:1234");
 if (value) {
   console.log(`User: ${value.name}`);
 } else {
@@ -110,26 +113,27 @@ if (value) {
 
 Sets a value in the database with an optional expiration.
 
-- `key`: The key under which to store the value.
-- `value`: The value to store.
-- `expiresAt`: Optional expiration date for the key-value pair.
+- **Parameters**:
+  - `key`: The key under which to store the value.
+  - `value`: The value to store.
+  - `expiresAt`: Optional expiration date for the key-value pair.
 
 ```javascript
 // Set a value without expiration
 db.set("user:1234", { name: "Ahmad Aburob" });
 
 // Set a value with expiration
-const expirationDate = new Date();
-expirationDate.setDate(expirationDate.getDate() + 30); // Expires in 30 days
-db.set("session:5678", { token: "abc123" }, expirationDate);
+db.set("session:5678", "data", new Date("2025-12-31"));
 ```
 
 ### `Exists`
 
 Checks if a key exists in the database.
 
-- `key`: The key to check.
-- Returns: True if the key exists and hasn't expired, false otherwise.
+- **Parameters**:
+  - `key`: The key to check.
+- **Returns**:
+  - True if the key exists and hasn't expired, false otherwise.
 
 ```javascript
 if (db.exists("user:1234")) {
@@ -143,7 +147,8 @@ if (db.exists("user:1234")) {
 
 Deletes a key-value pair from the database.
 
-- `key`: The key to delete.
+- **Parameters**:
+  - `key`: The key to delete.
 
 ```javascript
 db.delete("user:1234");
@@ -153,8 +158,9 @@ db.delete("user:1234");
 
 Renames a key in the database.
 
-- `oldKey`: The current key name.
-- `newKey`: The new key name.
+- **Parameters**:
+  - `oldKey`: The current key name.
+  - `newKey`: The new key name.
 
 ```javascript
 db.rename("user:old_id", "user:new_id");
@@ -164,8 +170,10 @@ db.rename("user:old_id", "user:new_id");
 
 Gets the expiration date of a key.
 
-- `key`: The key to check.
-- Returns: The expiration date of the key, or null if the key doesn't exist or has no expiration.
+- **Parameters**:
+  - `key`: The key to check.
+- **Returns**:
+  - The expiration date of the key, or null if the key doesn't exist or has no expiration.
 
 ```javascript
 const expirationDate = db.getExpire("session:5678");
@@ -180,8 +188,9 @@ if (expirationDate) {
 
 Sets the expiration date of a key.
 
-- `key`: The key to set the expiration date for.
-- `expiresAt`: The expiration date to set.
+- **Parameters**:
+  - `key`: The key to set the expiration date for.
+  - `expiresAt`: The expiration date to set.
 
 ```javascript
 db.setExpire("user:1234", new Date("2028-12-31"));
@@ -191,8 +200,10 @@ db.setExpire("user:1234", new Date("2028-12-31"));
 
 Retrieves keys matching a pattern.
 
-- `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
-- Returns: An array of matching keys.
+- **Parameters**:
+  - `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
+- **Returns**:
+  - An array of matching keys.
 
 ```javascript
 // Get all keys
@@ -212,10 +223,12 @@ const logKeys = db.keys("log__:%");
 
 Retrieves a paginated list of keys matching a pattern.
 
-- `limit`: The maximum number of keys to return per page.
-- `page`: The page number to retrieve (1-based index).
-- `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
-- Returns: An array of matching keys.
+- **Parameters**:
+  - `limit`: The maximum number of keys to return per page.
+  - `page`: The page number to retrieve (1-based index).
+  - `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
+- **Returns**:
+  - An array of matching keys.
 
 ```javascript
 // Get the first 5 keys from the database
@@ -232,8 +245,10 @@ const secondUsersPage = db.pagination(10, 2, "user:%");
 
 Counts the number of keys in the database.
 
-- `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
-- Returns: The number of keys in the database.
+- **Parameters**:
+  - `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
+- **Returns**:
+  - The number of keys in the database.
 
 ```javascript
 // Get the total number of keys
@@ -247,8 +262,10 @@ const userCount = db.count("user:%");
 
 Counts the number of expired keys in the database.
 
-- `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
-- Returns: The number of expired keys in the database.
+- **Parameters**:
+  - `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
+- **Returns**:
+  - The number of expired keys in the database.
 
 ```javascript
 // Get the total number of expired keys
@@ -286,9 +303,11 @@ db.flush();
 
 Executes a raw SQL statement and returns the result.
 
-- `sql`: The SQL statement to execute.
-- `params`: Optional parameters to bind to the SQL statement.
-- Returns: The result of the SQL statement.
+- **Parameters**:
+  - `sql`: The SQL statement to execute.
+  - `params`: Optional parameters to bind to the SQL statement.
+- **Returns**:
+  - The result of the SQL statement.
 
 ```javascript
 // Execute a SELECT statement and get results
@@ -329,6 +348,66 @@ db.set("date", new Date());
 db.set("Buffer", Buffer.from([1, 2, 3, 4, 5]));
 db.set("Uint8Array", new Uint8Array([1, 2, 3, 4, 5]));
 db.set("Null", null);
+```
+
+## TypeScript Typing & Generics
+
+MiftahDB is fully typed with TypeScript, allowing you to leverage TypeScript's static type checking and type inference. You can use generic types to specify the type of values stored and retrieved from the database.
+
+When retrieving values from MiftahDB, you can define the type of the stored value for better type safety:
+
+```typescript
+type User = {
+  name: string;
+  age: number;
+  email: string;
+};
+
+// Set a value with a known structure
+db.set<User>("user:1234", {
+  name: "Ahmad",
+  age: 25,
+  email: "ahmad@example.com",
+});
+
+// Retrieve the value with TypeScript typing
+const value = db.get<User>("user:1234");
+if (value) {
+  console.log(`User: ${value.name}, Age: ${value.age}`);
+} else {
+  console.log("User not found");
+}
+```
+
+## Pattern Matching
+
+MiftahDB provides powerful pattern matching capabilities for working with keys. You can use patterns in multiple methods, such as:
+
+- `db.keys(pattern)`
+- `db.pagination(limit, page, pattern)`
+- `db.count(pattern)`
+- `db.countExpired(pattern)`
+
+The pattern syntax follows SQL-like wildcard matching:
+
+- `%`: Matches any sequence of characters (including none).
+- `_`: Matches exactly one character.
+
+```javascript
+// Match keys starting with "user:"
+db.keys("user:%");
+
+// Match keys ending with "osama"
+db.keys("%osama");
+
+// Match keys starting with "osama" and ending with any number of characters
+db.keys("osama%");
+
+// Match keys that are exactly 3 characters long
+db.keys("___");
+
+// Combine patterns: Match keys starting with "log", followed by exactly two characters, and ending with any number of characters
+db.keys("log__:%");
 ```
 
 ## Performance Considerations
