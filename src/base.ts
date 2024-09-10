@@ -1,7 +1,9 @@
 import { encodeValue, decodeValue } from "./encoding";
 import { SQL_STATEMENTS } from "./statements";
 import type { IMiftahDB, Value, MiftahDBItem } from "./types";
-import type { Database, Statement } from "better-sqlite3";
+import type { Database, Statement, RunResult } from "better-sqlite3";
+
+const IS_BUN = typeof Bun !== "undefined";
 
 export abstract class BaseMiftahDB implements IMiftahDB {
   protected declare db: Database;
@@ -127,13 +129,9 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     this.statements.flush.run();
   }
 
-  public execute(sql: string, params: unknown[] = []): unknown | null {
+  public execute(sql: string, params: unknown[] = []): unknown[] | RunResult {
     const stmt = this.db.prepare(sql);
-    const isBun = typeof Bun !== "undefined";
-    if (isBun) {
-      return stmt.all(...params);
-    }
-    if (stmt.reader) {
+    if (IS_BUN || stmt.reader) {
       return stmt.all(...params);
     }
     return stmt.run(...params);
