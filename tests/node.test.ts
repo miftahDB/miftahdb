@@ -85,31 +85,32 @@ describe("MiftahDB Node Tests", () => {
     assert.strictEqual(db.exists("key1"), false);
   });
 
-  // it("execute raw SQL", () => {
-  //   const db = createDB();
-  //   db.execute(
-  //     "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
-  //   );
-  //   db.execute("INSERT INTO test (value) VALUES (?)", ["test_value"]);
-  //   const result = db.execute("SELECT value FROM test WHERE id = 1") as {
-  //     value: string;
-  //   }[];
-  //   assert.strictEqual(result[0].value, "test_value");
-  // });
+  it("execute raw SQL", () => {
+    const db = createDB();
+    db.execute(
+      "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
+    );
+    db.execute("INSERT INTO test (value) VALUES (?)", ["test_value"]);
+    const result = db.execute("SELECT value FROM test WHERE id = 1") as {
+      value: string;
+    }[];
+    console.log(result);
+    assert.strictEqual(result[0].value, "test_value");
+  });
 
-  // it("set and get expiration", () => {
-  //   const db = createDB();
-  //   const now = new Date();
-  //   const futureDate = new Date(now.getTime() + 10000);
-  //   db.set("key1", "value1", futureDate);
-  //
-  //   const margin = 1000;
-  //   const expiration = db.getExpire("key1");
-  //   assert.strictEqual(
-  //     Math.abs(expiration?.getTime()! - futureDate.getTime()!) < margin,
-  //     true
-  //   );
-  // });
+  it("set and get expiration", () => {
+    const db = createDB();
+    const now = new Date();
+    const futureDate = new Date(now.getTime() + 10000);
+    db.set("key1", "value1", futureDate);
+
+    const margin = 1000;
+    const expiration = db.getExpire("key1");
+    assert.strictEqual(
+      Math.abs(expiration?.getTime()! - futureDate.getTime()!) < margin,
+      true
+    );
+  });
 });
 
 
