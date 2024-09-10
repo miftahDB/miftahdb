@@ -1,4 +1,4 @@
-name: Bun test
+name: Node test
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   my-job:
-    name: Run Tests with Bun
+    name: Run Tests with Node
     runs-on: ubuntu-latest
 
     steps:

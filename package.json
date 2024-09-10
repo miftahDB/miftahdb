@@ -20,7 +20,7 @@
     "start": "node dist/index.js",
     "semantic-release": "semantic-release",
     "test-bun": "bun test ./tests/bun.ts",
-    "test-node": "node --import tsx --test node.test.ts",
+    "test-node": "node --import tsx --test ./tests/node.test.ts",
     "lint": "tsc --noEmit"
   },
   "keywords": [
