@@ -14,7 +14,8 @@ Fast and lightweight key-value database library.
 [![NPM License](https://img.shields.io/npm/l/miftahdb?label=License)](https://app.codacy.com/gh/vwh/sqlite-viewer/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 [![Release](https://github.com/miftahDB/miftahDB/actions/workflows/release.yml/badge.svg)](https://github.com/miftahDB/miftahDB/actions/workflows/release.yml)
-[![Test](https://github.com/miftahDB/miftahDB/actions/workflows/test.yml/badge.svg)](https://github.com/miftahDB/miftahDB/actions/workflows/test.yml)
+[![Test-Bun](https://github.com/miftahDB/miftahDB/actions/workflows/test-bun.yml/badge.svg)](https://github.com/miftahDB/miftahDB/actions/workflows/test-bun.yml)
+[![Test-Node](https://github.com/miftahDB/miftahDB/actions/workflows/test-node.yml/badge.svg)](https://github.com/miftahDB/miftahDB/actions/workflows/test-node.yml)
 [![Lint](https://github.com/miftahDB/miftahDB/actions/workflows/tsc.yml/badge.svg)](https://github.com/miftahDB/miftahDB/actions/workflows/tsc.yml)
 
 <a href="https://miftahdb.sqlite3.online/docs/intro/">

@@ -28,4 +28,4 @@ jobs:
 
       # Run the tests using Bun
       - name: Run Tests
-        run: bun run test
+        run: bun run test-bun
