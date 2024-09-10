@@ -1,0 +1,31 @@
+name: Bun test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  my-job:
+    name: Run Tests with Bun
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install node using official setup-bun action
+      - name: Install Node
+        uses: actions/setup-node@v4
+
+      # Install project dependencies (if any)
+      - name: Install dependencies
+        run: npm install
+
+      # Run the tests using Bun
+      - name: Run Tests
+        run: npm run test-node
