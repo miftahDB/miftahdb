@@ -129,6 +129,13 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   public execute(sql: string, params: unknown[] = []): unknown | null {
     const stmt = this.db.prepare(sql);
-    return stmt.all(...params);
+    const isBun = typeof Bun !== "undefined";
+    if (isBun) {
+      return stmt.all(...params);
+    }
+    if (stmt.reader) {
+      return stmt.all(...params);
+    }
+    return stmt.run(...params);
   }
 }

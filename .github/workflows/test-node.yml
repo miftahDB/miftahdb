@@ -1,4 +1,4 @@
-name: Bun test
+name: Node test
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   my-job:
-    name: Run Tests with Bun
+    name: Run Tests with Node
     runs-on: ubuntu-latest
 
     steps:
@@ -18,14 +18,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install Bun using official setup-bun action
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v2
+      # Install node using official setup-bun action
+      - name: Install Node
+        uses: actions/setup-node@v4
 
       # Install project dependencies (if any)
       - name: Install dependencies
-        run: bun install
+        run: npm install
 
       # Run the tests using Bun
       - name: Run Tests
-        run: bun run test
+        run: npm run test-node
