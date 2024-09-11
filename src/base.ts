@@ -1,11 +1,11 @@
 import { encodeValue, decodeValue } from "./encoding";
 import { SQL_STATEMENTS } from "./statements";
-import type { IMiftahDB, Value, MiftahDBItem } from "./types";
-import type { Database, Statement, RunResult } from "better-sqlite3";
+import type { IMiftahDB, MiftahValue, MiftahDBItem } from "./types";
+import type { Database, Statement } from "better-sqlite3";
 
-const IS_BUN = typeof Bun !== "undefined";
-
-export abstract class BaseMiftahDB implements IMiftahDB {
+export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
+  implements IMiftahDB
+{
   protected declare db: Database;
   private statements: Record<string, Statement>;
 
@@ -52,7 +52,11 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     return decodeValue(result.value);
   }
 
-  public set<T extends Value>(key: string, value: T, expiresAt?: Date): void {
+  public set<T extends MiftahValue>(
+    key: string,
+    value: T,
+    expiresAt?: Date
+  ): void {
     const encodedValue = encodeValue(value);
     const expiresAtMs = expiresAt?.getTime() ?? null;
     this.statements.set.run(key, encodedValue, expiresAtMs);
@@ -129,11 +133,5 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     this.statements.flush.run();
   }
 
-  public execute(sql: string, params: unknown[] = []): unknown[] | RunResult {
-    const stmt = this.db.prepare(sql);
-    if (IS_BUN || stmt.reader) {
-      return stmt.all(...params);
-    }
-    return stmt.run(...params);
-  }
+  public abstract execute(sql: string, params?: unknown[]): ExecuteReturnType;
 }

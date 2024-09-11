@@ -24,4 +24,11 @@ export class MiftahDB extends BaseMiftahDB {
   protected initializeDB(path = ":memory:"): void {
     this.db = new DB(path) as unknown as Database;
   }
+
+  public execute(sql: string, params: unknown[] = []): unknown[] {
+    const stmt = this.db.prepare(sql);
+    return stmt.all(...params);
+  }
 }
+
+export type { MiftahValue } from "./types";

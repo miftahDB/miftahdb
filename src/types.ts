@@ -1,7 +1,7 @@
 /**
  * Represents the possible types of values that can be stored in MiftahDB.
  */
-export type Value =
+export type MiftahValue =
   | string
   | number
   | boolean
@@ -15,7 +15,7 @@ export type Value =
 /**
  * Interface for the MiftahDB class, defining its public methods.
  */
-export interface IMiftahDB<T extends Value = Value> {
+export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
   /**
    * Retrieves a value from the database by its key.
    * - https://miftahdb.sqlite3.online/docs/api-reference/get
@@ -196,12 +196,12 @@ export interface IMiftahDB<T extends Value = Value> {
    * @returns The result of the SQL query. If the statement is a `SELECT` query, it returns the query result. Otherwise, it returns the database instance.
    * @example
    * // Execute a SELECT statement and get results
-   * const rows = db.execute('SELECT * FROM users');
+   * const rows = db.execute("SELECT * FROM miftahdb WHERE key LIKE ? LIMIT 5;", ["%"]);
    *
-   * // Execute an INSERT or UPDATE statement
-   * db.execute('INSERT INTO users (name) VALUES (?)', ['Ahmad']);
+   * // Execute an DELETE statement
+   * db.execute("DELETE FROM miftahdb WHERE key LIKE ?", ["user:1234"]);
    */
-  execute(sql: string, params?: unknown[]): void;
+  execute(sql: string, params?: unknown[]): unknown;
 }
 
 /**

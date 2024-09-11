@@ -311,7 +311,9 @@ Executes a raw SQL statement and returns the result.
 
 ```javascript
 // Execute a SELECT statement and get results
-const rows = db.execute("SELECT * FROM miftahdb");
+const rows = db.execute("SELECT * FROM miftahdb WHERE key LIKE ? LIMIT 5;", [
+  "%",
+]);
 ```
 
 ### `Close`

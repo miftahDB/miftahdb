@@ -1,4 +1,4 @@
-import DB, { type Database } from "better-sqlite3";
+import DB, { type Database, type RunResult } from "better-sqlite3";
 import { BaseMiftahDB } from "./base";
 
 /**
@@ -12,9 +12,20 @@ import { BaseMiftahDB } from "./base";
  * // Create a new MiftahDB instance with in-memory database
  * const memoryDB = new MiftahDB(":memory:");
  */
-export class MiftahDB extends BaseMiftahDB {
+export class MiftahDB extends BaseMiftahDB<RunResult | unknown[]> {
   protected declare db: Database;
   protected initializeDB(path = ":memory:"): void {
     this.db = new DB(path);
   }
+
+  public execute(sql: string, params: unknown[] = []): unknown[] | RunResult {
+    const stmt = this.db.prepare(sql);
+    if (stmt.reader) {
+      return stmt.all(...params);
+    }
+    return stmt.run(...params);
+  }
 }
+
+export type { RunResult };
+export type { MiftahValue } from "./types";
