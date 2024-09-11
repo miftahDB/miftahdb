@@ -338,6 +338,24 @@ MiftahDB supports various value types:
 8. Uint8Array (Binary Data)
 9. Null
 
+## Error Handling
+
+```javascript
+// Node
+import { DatabaseError } from "miftahdb";
+
+// Bun
+import { DatabaseError } from "miftahdb/bun";
+
+try {
+  db.execute("WRONG SQL STATEMENT");
+} catch (err) {
+  if (err instanceof DatabaseError) {
+    console.log(err.message);
+  }
+}
+```
+
 Example for each type:
 
 ```javascript
