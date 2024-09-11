@@ -116,6 +116,34 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
     return result.count;
   }
 
+  public multiGet<T>(keys: string[]): Record<string, T | null> {
+    const result: Record<string, T | null> = {};
+    this.db.transaction(() => {
+      for (const key of keys) {
+        result[key] = this.get<T>(key);
+      }
+    })();
+    return result;
+  }
+
+  public multiSet<T extends MiftahValue>(
+    entries: Array<{ key: string; value: T; expiresAt?: Date }>
+  ): void {
+    this.db.transaction(() => {
+      for (const entry of entries) {
+        this.set(entry.key, entry.value, entry.expiresAt);
+      }
+    })();
+  }
+
+  public multiDelete(keys: string[]): void {
+    this.db.transaction(() => {
+      for (const key of keys) {
+        this.delete(key);
+      }
+    })();
+  }
+
   public vacuum(): void {
     this.statements.vacuum.run();
   }

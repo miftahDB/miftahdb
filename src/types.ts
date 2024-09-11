@@ -157,6 +157,34 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
   countExpired(pattern?: string): number;
 
   /**
+   * Retrieves multiple values from the database by their keys.
+   * @param keys - An array of keys to look up.
+   * @returns An object with keys and their corresponding values, or null if not found or expired.
+   * @example
+   * const values = db.multiGet(['user:1234', 'user:5678']);
+   */
+  multiGet(keys: string[]): Record<string, T | null>;
+
+  /**
+   * Sets multiple key-value pairs in the database with optional expirations.
+   * @param entries - An array of objects containing key, value, and optional expiresAt.
+   * @example
+   * db.multiSet([
+   *   { key: 'user:1234', value: { name: 'Ahmad' }, expiresAt: new Date('2023-12-31') },
+   *   { key: 'user:5678', value: { name: 'Fatima' } }
+   * ]);
+   */
+  multiSet(entries: Array<{ key: string; value: T; expiresAt?: Date }>): void;
+
+  /**
+   * Deletes multiple key-value pairs from the database.
+   * @param keys - An array of keys to delete.
+   * @example
+   * db.multiDelete(['user:1234', 'user:5678']);
+   */
+  multiDelete(keys: string[]): void;
+
+  /**
    * Removes expired key-value pairs from the database.
    * - https://miftahdb.sqlite3.online/docs/api-reference/cleanup
    * @example

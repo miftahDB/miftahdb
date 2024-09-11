@@ -107,3 +107,24 @@ test("set and get expiration", () => {
     Math.abs(expiration?.getTime()! - futureDate.getTime()!) < margin
   ).toBe(true);
 });
+
+test("multiset and multiget", () => {
+  const db = createDB();
+  db.multiSet([
+    { key: "key1", value: "value1" },
+    { key: "key2", value: "value2" },
+  ]);
+  const result = db.multiGet(["key1", "key2"]);
+  expect(result).toEqual({ key1: "value1", key2: "value2" });
+});
+
+test("multidelete", () => {
+  const db = createDB();
+  db.multiSet([
+    { key: "key1", value: "value1" },
+    { key: "key2", value: "value2" },
+  ]);
+  db.multiDelete(["key1", "key2"]);
+  const result = db.multiGet(["key1", "key2"]);
+  expect(result).toEqual({ key1: null, key2: null });
+});

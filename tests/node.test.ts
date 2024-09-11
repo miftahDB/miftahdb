@@ -111,6 +111,23 @@ describe("MiftahDB Node Tests", () => {
       true
     );
   });
+  it("multiget and multiset", () => {
+    const db = createDB();
+    db.multiSet([
+      { key: "key1", value: "value1" },
+      { key: "key2", value: "value2" },
+    ]);
+    const result = db.multiGet(["key1", "key2"]);
+    assert.deepStrictEqual(result, { key1: "value1", key2: "value2" });
+  });
+  it("multiDelete", () => {
+    const db = createDB();
+    db.multiSet([
+      { key: "key1", value: "value1" },
+      { key: "key2", value: "value2" },
+    ]);
+    db.multiDelete(["key1", "key2"]);
+    const result = db.multiGet(["key1", "key2"]);
+    assert.deepStrictEqual(result, { key1: null, key2: null });
+  });
 });
-
-
