@@ -7,28 +7,28 @@ function createDB() {
 }
 
 describe("MiftahDB Node Tests", () => {
-  it("set and get value", () => {
+  it("Set & Get", () => {
     const db = createDB();
     db.set("key1", "value1");
     const result = db.get("key1");
     assert.strictEqual(result, "value1");
   });
 
-  it("check key existence", () => {
+  it("Exists", () => {
     const db = createDB();
     db.set("key1", "value1");
     assert.strictEqual(db.exists("key1"), true);
     assert.strictEqual(db.exists("nonexistent_key"), false);
   });
 
-  it("delete key", () => {
+  it("Delete", () => {
     const db = createDB();
     db.set("key1", "value1");
     db.delete("key1");
     assert.strictEqual(db.exists("key1"), false);
   });
 
-  it("rename key", () => {
+  it("Rename", () => {
     const db = createDB();
     db.set("key1", "value1");
     db.rename("key1", "key2");
@@ -36,7 +36,7 @@ describe("MiftahDB Node Tests", () => {
     assert.strictEqual(db.exists("key1"), false);
   });
 
-  it("get expired value", () => {
+  it("Get Expired", () => {
     const db = createDB();
     const now = new Date();
     const pastDate = new Date(now.getTime() - 10000); // 10 seconds ago
@@ -44,7 +44,7 @@ describe("MiftahDB Node Tests", () => {
     assert.strictEqual(db.get("key1"), null);
   });
 
-  it("pagination", () => {
+  it("Pagination", () => {
     const db = createDB();
     db.set("key1", "value1");
     db.set("key2", "value2");
@@ -54,7 +54,7 @@ describe("MiftahDB Node Tests", () => {
     assert.deepStrictEqual(result, ["key1", "key2"]);
   });
 
-  it("count keys", () => {
+  it("Count", () => {
     const db = createDB();
     db.flush();
     db.set("key1", "value1");
@@ -62,7 +62,7 @@ describe("MiftahDB Node Tests", () => {
     assert.strictEqual(db.count(), 2);
   });
 
-  it("count expired keys", () => {
+  it("Count Expired", () => {
     const db = createDB();
     const now = new Date();
     const pastDate = new Date(now.getTime() - 10000); // 10 seconds ago
@@ -70,7 +70,7 @@ describe("MiftahDB Node Tests", () => {
     assert.strictEqual(db.countExpired(), 1);
   });
 
-  it("vacuum database", () => {
+  it("Vacuum", () => {
     const db = createDB();
     db.set("key1", "value1");
     db.delete("key1");
@@ -78,14 +78,14 @@ describe("MiftahDB Node Tests", () => {
     // No assertions needed, just ensure no error occurs
   });
 
-  it("flush database", () => {
+  it("Flush", () => {
     const db = createDB();
     db.set("key1", "value1");
     db.flush(); // Test if flush runs without errors
     assert.strictEqual(db.exists("key1"), false);
   });
 
-  it("execute raw SQL", () => {
+  it("Execute", () => {
     const db = createDB();
     db.execute(
       "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
@@ -98,7 +98,7 @@ describe("MiftahDB Node Tests", () => {
     assert.strictEqual(result[0].value, "test_value");
   });
 
-  it("set and get expiration", () => {
+  it("Set & Get Expiration", () => {
     const db = createDB();
     const now = new Date();
     const futureDate = new Date(now.getTime() + 10000);
@@ -111,7 +111,8 @@ describe("MiftahDB Node Tests", () => {
       true
     );
   });
-  it("multiget and multiset", () => {
+
+  it("Multi Set & Get", () => {
     const db = createDB();
     db.multiSet([
       { key: "key1", value: "value1" },
@@ -120,7 +121,8 @@ describe("MiftahDB Node Tests", () => {
     const result = db.multiGet(["key1", "key2"]);
     assert.deepStrictEqual(result, { key1: "value1", key2: "value2" });
   });
-  it("multiDelete", () => {
+
+  it("Multi Delete", () => {
     const db = createDB();
     db.multiSet([
       { key: "key1", value: "value1" },

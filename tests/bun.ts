@@ -5,28 +5,28 @@ function createDB() {
   return new MiftahDB(":memory:");
 }
 
-test("set and get value", () => {
+test("Set & Get", () => {
   const db = createDB();
   db.set("key1", "value1");
   const result = db.get<string>("key1");
   expect(result).toBe("value1");
 });
 
-test("check key existence", () => {
+test("Exists", () => {
   const db = createDB();
   db.set("key1", "value1");
   expect(db.exists("key1")).toBe(true);
   expect(db.exists("nonexistent_key")).toBe(false);
 });
 
-test("delete key", () => {
+test("Delete", () => {
   const db = createDB();
   db.set("key1", "value1");
   db.delete("key1");
   expect(db.exists("key1")).toBe(false);
 });
 
-test("rename key", () => {
+test("Rename", () => {
   const db = createDB();
   db.set("key1", "value1");
   db.rename("key1", "key2");
@@ -34,7 +34,7 @@ test("rename key", () => {
   expect(db.exists("key1")).toBe(false);
 });
 
-test("get expired value", () => {
+test("Get Expired", () => {
   const db = createDB();
   const now = new Date();
   const pastDate = new Date(now.getTime() - 10000); // 10 seconds ago
@@ -42,7 +42,7 @@ test("get expired value", () => {
   expect(db.get<string>("key1")).toBe(null);
 });
 
-test("pagination", () => {
+test("Pagination", () => {
   const db = createDB();
   db.set("key1", "value1");
   db.set("key2", "value2");
@@ -52,7 +52,7 @@ test("pagination", () => {
   expect(result).toEqual(["key1", "key2"]);
 });
 
-test("count keys", () => {
+test("Count", () => {
   const db = createDB();
   db.flush();
   db.set("key1", "value1");
@@ -60,7 +60,7 @@ test("count keys", () => {
   expect(db.count()).toBe(2);
 });
 
-test("count expired keys", () => {
+test("Count Expired", () => {
   const db = createDB();
   const now = new Date();
   const pastDate = new Date(now.getTime() - 10000); // 10 seconds ago
@@ -68,7 +68,7 @@ test("count expired keys", () => {
   expect(db.countExpired()).toBe(1);
 });
 
-test("vacuum database", () => {
+test("Vacuum", () => {
   const db = createDB();
   db.set("key1", "value1");
   db.delete("key1");
@@ -76,14 +76,14 @@ test("vacuum database", () => {
   // No assertions needed, just ensure no error occurs
 });
 
-test("flush database", () => {
+test("Flush", () => {
   const db = createDB();
   db.set("key1", "value1");
   db.flush(); // Test if flush runs without errors
   expect(db.exists("key1")).toBe(false);
 });
 
-test("execute raw SQL", () => {
+test("Execute", () => {
   const db = createDB();
   db.execute(
     "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
@@ -95,7 +95,7 @@ test("execute raw SQL", () => {
   expect(result[0].value).toBe("test_value");
 });
 
-test("set and get expiration", () => {
+test("Set & Get Expiration", () => {
   const db = createDB();
   const now = new Date();
   const futureDate = new Date(now.getTime() + 10000);
@@ -108,7 +108,7 @@ test("set and get expiration", () => {
   ).toBe(true);
 });
 
-test("multiset and multiget", () => {
+test("Multi Set & Get", () => {
   const db = createDB();
   db.multiSet([
     { key: "key1", value: "value1" },
@@ -118,7 +118,7 @@ test("multiset and multiget", () => {
   expect(result).toEqual({ key1: "value1", key2: "value2" });
 });
 
-test("multidelete", () => {
+test("Multi Delete", () => {
   const db = createDB();
   db.multiSet([
     { key: "key1", value: "value1" },
