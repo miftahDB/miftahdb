@@ -275,6 +275,48 @@ const countExpired = db.countExpired();
 const userCountExpired = db.countExpired("user:%");
 ```
 
+### `multiGet`
+
+Retrieves multiple values from the database by their keys.
+
+- **Parameters**:
+  - `keys`: An array of keys to look up.
+- **Returns**:
+  - An object with keys and their corresponding values, or null if not found or expired.
+
+```javascript
+const values = db.multiGet(["user:1234", "user:5678"]);
+```
+
+### `multiSet`
+
+Sets multiple key-value pairs in the database with optional expirations.
+
+- **Parameters**:
+  - `entries`: An array of objects containing key, value, and optional expiresAt.
+
+```javascript
+db.multiSet([
+  {
+    key: "user:1234",
+    value: { name: "Ahmad" },
+    expiresAt: new Date("2023-12-31"),
+  },
+  { key: "user:5678", value: { name: "Fatima" } },
+]);
+```
+
+### `multiDelete`
+
+Deletes multiple key-value pairs from the database.
+
+- **Parameters**:
+  - `keys`: An array of keys to delete.
+
+```javascript
+db.multiDelete(["user:1234", "user:5678"]);
+```
+
 ### `Cleanup`
 
 Removes expired key-value pairs from the database.
