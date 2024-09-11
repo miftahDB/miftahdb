@@ -41,7 +41,7 @@ Fast and lightweight key-value database library.
 ## Installation
 
 ```bash
-# With NPM
+# With npm
 npm install miftahdb
 
 # With bun
@@ -275,7 +275,7 @@ const countExpired = db.countExpired();
 const userCountExpired = db.countExpired("user:%");
 ```
 
-### `multiGet`
+### `Multi Get`
 
 Retrieves multiple values from the database by their keys.
 
@@ -288,7 +288,7 @@ Retrieves multiple values from the database by their keys.
 const values = db.multiGet(["user:1234", "user:5678"]);
 ```
 
-### `multiSet`
+### `Multi Set`
 
 Sets multiple key-value pairs in the database with optional expirations.
 
@@ -306,7 +306,7 @@ db.multiSet([
 ]);
 ```
 
-### `multiDelete`
+### `Multi Delete`
 
 Deletes multiple key-value pairs from the database.
 
@@ -406,7 +406,7 @@ db.set("Number", 42);
 db.set("Boolean", true);
 db.set("Array", [1, 2, 3, 4, 5]);
 db.set("Record", { name: "Ahmad", age: 15 });
-db.set("date", new Date());
+db.set("Date", new Date());
 db.set("Buffer", Buffer.from([1, 2, 3, 4, 5]));
 db.set("Uint8Array", new Uint8Array([1, 2, 3, 4, 5]));
 db.set("Null", null);
