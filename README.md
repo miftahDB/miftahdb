@@ -51,7 +51,7 @@ bun add miftahdb
 ## Usage
 
 ```javascript
-// For Node.js
+// For Node
 import { MiftahDB } from "miftahdb";
 
 // For Bun
@@ -324,20 +324,6 @@ Closes the database connection.
 db.close();
 ```
 
-## Supported Value Types
-
-MiftahDB supports various value types:
-
-1. String
-2. Number
-3. Boolean
-4. Array
-5. Record (Object)
-6. Date
-7. Buffer (Binary Data)
-8. Uint8Array (Binary Data)
-9. Null
-
 ## Error Handling
 
 ```javascript
@@ -355,6 +341,20 @@ try {
   }
 }
 ```
+
+## Supported Value Types
+
+MiftahDB supports various value types:
+
+1. String
+2. Number
+3. Boolean
+4. Array
+5. Record (Object)
+6. Date
+7. Buffer (Binary Data)
+8. Uint8Array (Binary Data)
+9. Null
 
 Example for each type:
 
@@ -435,9 +435,8 @@ db.keys("log__:%");
 MiftahDB is designed for high performance:
 
 1. Synchronous API reduces overhead and improves concurrency
-2. Built on top of better-sqlite3, one of the fastest SQLite libraries for Node.js
-3. Optimized SQLite settings for improved performance
-4. In-memory database option for maximum speed
+2. Optimized SQLite settings for improved performance
+3. In-memory database option for maximum speed
 
 For best performance, consider the following tips:
 
