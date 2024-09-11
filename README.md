@@ -328,15 +328,15 @@ db.close();
 
 ```javascript
 // Node
-import { DatabaseError } from "miftahdb";
+import { SqliteError } from "miftahdb";
 
 // Bun
-import { DatabaseError } from "miftahdb/bun";
+// import { SQLiteError } from "miftahdb/bun";
 
 try {
   db.execute("WRONG SQL STATEMENT");
 } catch (err) {
-  if (err instanceof DatabaseError) {
+  if (err instanceof SqliteError) {
     console.log(err.message);
   }
 }

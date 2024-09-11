@@ -1,4 +1,4 @@
-import DB, { SQLiteError as DatabaseError } from "bun:sqlite";
+import DB from "bun:sqlite";
 import { BaseMiftahDB } from "./base";
 
 // Intentionally using a type assertion here to align `bun:sqlite`'s `Database` type with `better-sqlite3`.
@@ -32,4 +32,4 @@ export class MiftahDB extends BaseMiftahDB {
 }
 
 export type { MiftahValue } from "./types";
-export { DatabaseError };
+export { SQLiteError } from "bun:sqlite";

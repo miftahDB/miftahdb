@@ -1,8 +1,4 @@
-import DB, {
-  type Database,
-  type RunResult,
-  SqliteError as DatabaseError,
-} from "better-sqlite3";
+import DB, { type Database, type RunResult } from "better-sqlite3";
 import { BaseMiftahDB } from "./base";
 
 /**
@@ -33,4 +29,4 @@ export class MiftahDB extends BaseMiftahDB<RunResult | unknown[]> {
 
 export type { RunResult };
 export type { MiftahValue } from "./types";
-export { DatabaseError };
+export { SqliteError } from "better-sqlite3";
