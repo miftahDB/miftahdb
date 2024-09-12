@@ -1,6 +1,6 @@
 export const SQL_STATEMENTS = {
   // Gets a row from the table
-  GET: "SELECT value, expires_at FROM miftahDB WHERE key = ? LIMIT 1",
+  GET: "SELECT value, expires_at FROM miftahDB WHERE key = ?",
 
   // Sets a row in the table
   SET: "INSERT OR REPLACE INTO miftahDB (key, value, expires_at) VALUES (?, ?, ?)",
@@ -13,7 +13,7 @@ export const SQL_STATEMENTS = {
     "DELETE FROM miftahDB WHERE expires_at IS NOT NULL AND expires_at <= ?",
 
   // Renames a key
-  RENAME: "UPDATE OR IGNORE miftahDB SET key = ? WHERE key = ?",
+  RENAME: "UPDATE miftahDB SET key = ? WHERE key = ?",
 
   // Creates a table if it doesn't exist
   CREATE_TABLE: `
@@ -26,7 +26,7 @@ export const SQL_STATEMENTS = {
 
   // Creates an index on the expires_at column
   CREATE_INDEX:
-    "CREATE INDEX IF NOT EXISTS idx_expires_at ON miftahDB(expires_at);",
+    "CREATE INDEX IF NOT EXISTS idx_expires_at ON miftahDB(expires_at) WHERE expires_at IS NOT NULL",
 
   // Optimizes the database file, reducing its size.
   VACUUM: "VACUUM",
@@ -38,7 +38,7 @@ export const SQL_STATEMENTS = {
   EXISTS: "SELECT EXISTS (SELECT 1 FROM miftahDB WHERE key = ? LIMIT 1)",
 
   // Returns the expiration date for the given key
-  GET_EXPIRE: "SELECT expires_at FROM miftahDB WHERE key = ? LIMIT 1",
+  GET_EXPIRE: "SELECT expires_at FROM miftahDB WHERE key = ?",
 
   // Updates the expiration date for the given key
   SET_EXPIRE: "UPDATE miftahDB SET expires_at = ? WHERE key = ?",
@@ -57,6 +57,12 @@ export const SQL_STATEMENTS = {
     "SELECT COUNT(*) as count FROM miftahDB WHERE (expires_at IS NOT NULL AND expires_at <= strftime('%s', 'now') * 1000) AND key LIKE ?",
 
   // Creates the PRAGMA statements
-  CREATE_PRAGMA:
-    "PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL; PRAGMA temp_store = MEMORY; PRAGMA cache_size = -64000; PRAGMA mmap_size = 30000000000;",
+  CREATE_PRAGMA: `
+    PRAGMA journal_mode = WAL;
+    PRAGMA synchronous = NORMAL;
+    PRAGMA temp_store = MEMORY;
+    PRAGMA cache_size = -64000;
+    PRAGMA mmap_size = 30000000000;
+    PRAGMA optimize;
+  `,
 };
