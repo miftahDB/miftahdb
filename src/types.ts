@@ -158,6 +158,7 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Retrieves multiple values from the database by their keys.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/multiget
    * @param keys - An array of keys to look up.
    * @returns An object with keys and their corresponding values, or null if not found or expired.
    * @example
@@ -167,6 +168,7 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Sets multiple key-value pairs in the database with optional expirations.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/multiset
    * @param entries - An array of objects containing key, value, and optional expiresAt.
    * @example
    * db.multiSet([
@@ -178,6 +180,7 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Deletes multiple key-value pairs from the database.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/multidelete
    * @param keys - An array of keys to delete.
    * @example
    * db.multiDelete(['user:1234', 'user:5678']);
