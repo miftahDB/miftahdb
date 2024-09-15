@@ -1,5 +1,6 @@
 import DB, { type Database, type RunResult } from "better-sqlite3";
 import { BaseMiftahDB } from "./base";
+import { readFileSync } from "node:fs";
 
 /**
  * MiftahDB is a wrapper around `better-sqlite3`.
@@ -24,6 +25,14 @@ export class MiftahDB extends BaseMiftahDB<RunResult | unknown[]> {
       return stmt.all(...params);
     }
     return stmt.run(...params);
+  }
+
+  public restore(path: string) {
+    const file = readFileSync(path);
+    this.db = new DB(file);
+
+    this.initDatabase();
+    this.statements = this.prepareStatements();
   }
 }
 

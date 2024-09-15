@@ -230,6 +230,28 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * db.execute("DELETE FROM miftahdb WHERE key LIKE ?", ["user:1234"]);
    */
   execute(sql: string, params?: unknown[]): unknown;
+
+  /**
+   * Backups the database to a file.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/backup
+   * @param path - The path to where the backup should be saved.
+   * @example
+   * const db = new MiftahDB(":memory:");
+   * db.set("key", "value");
+   * db.backup("backup-1.db");
+   */
+  backup(path: string): void;
+
+  /**
+   * Restores the database from a backup file.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/restore
+   * @param path - The path to the backup file.
+   * @example
+   * const db = new MiftahDB(":memory:");
+   * db.restore("backup-1.db");
+   * console.log(db.get("key"));
+   */
+  restore(path: string): void;
 }
 
 /**

@@ -358,6 +358,32 @@ const rows = db.execute("SELECT * FROM miftahdb WHERE key LIKE ? LIMIT 5;", [
 ]);
 ```
 
+### `Backup`
+
+Backups the database to a file.
+
+- **Parameters**:
+  - `path`: The path to where the backup should be saved.
+
+```javascript
+const db = new MiftahDB(":memory:");
+db.set("key", "value");
+db.backup("backup-1.db");
+```
+
+### `Restore`
+
+Restores the database from a backup file.
+
+- **Parameters**:
+  - `path`: The path to the backup file.
+
+```javascript
+const db = new MiftahDB(":memory:");
+db.restore("backup-1.db");
+console.log(db.get("key"));
+```
+
 ### `Close`
 
 Closes the database connection.

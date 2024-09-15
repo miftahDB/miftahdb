@@ -128,3 +128,11 @@ test("Multi Delete", () => {
   const result = db.multiGet(["key1", "key2"]);
   expect(result).toEqual({ key1: null, key2: null });
 });
+
+test("Backup and Restore", () => {
+  const db = createDB();
+  db.set("key1", "value1");
+  db.backup("backup.db");
+  db.restore("backup.db");
+  expect(db.get<string>("key1")).toBe("value1");
+});

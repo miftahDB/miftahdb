@@ -2,12 +2,13 @@ import { encodeValue, decodeValue } from "./encoding";
 import { SQL_STATEMENTS } from "./statements";
 import type { IMiftahDB, MiftahValue, MiftahDBItem } from "./types";
 import type { Database, Statement } from "better-sqlite3";
+import { writeFileSync } from "node:fs";
 
 export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
   implements IMiftahDB
 {
   protected declare db: Database;
-  private statements: Record<string, Statement>;
+  protected statements: Record<string, Statement>;
 
   constructor(path = ":memory:") {
     this.initializeDB(path);
@@ -17,7 +18,7 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
 
   protected abstract initializeDB(path: string | ":memory:"): void;
 
-  private prepareStatements(): Record<string, Statement> {
+  protected prepareStatements(): Record<string, Statement> {
     return {
       get: this.db.prepare(SQL_STATEMENTS.GET),
       set: this.db.prepare(SQL_STATEMENTS.SET),
@@ -36,7 +37,7 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
     };
   }
 
-  private initDatabase(): void {
+  protected initDatabase(): void {
     this.db.exec(SQL_STATEMENTS.CREATE_PRAGMA);
     this.db.exec(SQL_STATEMENTS.CREATE_TABLE);
     this.db.exec(SQL_STATEMENTS.CREATE_INDEX);
@@ -160,6 +161,17 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
   public flush(): void {
     this.statements.flush.run();
   }
+
+  public backup(path: string): void {
+    const serialized = this.db.serialize();
+    const arrayBuffer = serialized.buffer.slice(
+      serialized.byteOffset,
+      serialized.byteOffset + serialized.byteLength
+    );
+    writeFileSync(path, Buffer.from(arrayBuffer));
+  }
+
+  public abstract restore(path: string): void;
 
   public abstract execute(sql: string, params?: unknown[]): ExecuteReturnType;
 }

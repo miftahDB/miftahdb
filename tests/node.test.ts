@@ -132,4 +132,12 @@ describe("MiftahDB Node Tests", () => {
     const result = db.multiGet(["key1", "key2"]);
     assert.deepStrictEqual(result, { key1: null, key2: null });
   });
+
+  it("Backup and Restore", () => {
+    const db = createDB();
+    db.set("key1", "value1");
+    db.backup("backup.db");
+    db.restore("backup.db");
+    assert.strictEqual(db.get("key1"), "value1");
+  });
 });

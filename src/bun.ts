@@ -1,5 +1,6 @@
 import DB from "bun:sqlite";
 import { BaseMiftahDB } from "./base";
+import { readFileSync } from "node:fs";
 
 // Intentionally using a type assertion here to align `bun:sqlite`'s `Database` type with `better-sqlite3`.
 // Although `bun:sqlite` and `better-sqlite3` have different implementations, their API is similar enough for our purposes.
@@ -28,6 +29,16 @@ export class MiftahDB extends BaseMiftahDB {
   public execute(sql: string, params: unknown[] = []): unknown[] {
     const stmt = this.db.prepare(sql);
     return stmt.all(...params);
+  }
+
+  public restore(path: string) {
+    const file = readFileSync(path);
+
+    // @ts-expect-error `deserialize` exists in `bun:sqlite` but not in `better-sqlite3`.
+    this.db = DB.deserialize(file);
+
+    this.initDatabase();
+    this.statements = this.prepareStatements();
   }
 }
 
