@@ -19,7 +19,7 @@
     "build": "tsup",
     "start": "node dist/index.js",
     "semantic-release": "semantic-release",
-    "test-bun": "bun test ./tests/bun.ts",
+    "test-bun": "bun test ./tests/bun.test.ts",
     "test-node": "node --import tsx --test ./tests/node.test.ts",
     "lint": "tsc --noEmit"
   },

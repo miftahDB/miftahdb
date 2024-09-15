@@ -94,7 +94,6 @@ describe("MiftahDB Node Tests", () => {
     const result = db.execute("SELECT value FROM test WHERE id = 1") as {
       value: string;
     }[];
-    console.log(result);
     assert.strictEqual(result[0].value, "test_value");
   });
 
