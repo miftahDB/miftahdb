@@ -160,7 +160,7 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * Retrieves multiple values from the database by their keys.
    * - https://miftahdb.sqlite3.online/docs/api-reference/multiget
    * @param keys - An array of keys to look up.
-   * @returns An object with keys and their corresponding values, or null if not found or expired.
+   * @returns An object with keys and their corresponding values, or empty object if keys are not found or expired.
    * @example
    * const values = db.multiGet(['user:1234', 'user:5678']);
    */

@@ -282,7 +282,7 @@ Retrieves multiple values from the database by their keys.
 - **Parameters**:
   - `keys`: An array of keys to look up.
 - **Returns**:
-  - An object with keys and their corresponding values, or null if not found or expired.
+  - An object with keys and their corresponding values, or empty object if keys are not found or expired.
 
 ```javascript
 const values = db.multiGet(["user:1234", "user:5678"]);
