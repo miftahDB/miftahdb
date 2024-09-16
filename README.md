@@ -27,7 +27,45 @@ Fast and lightweight key-value database library.
 </a>
 </div>
 
-## Features
+---
+
+## 📖 Contents
+- [Features](#-features)
+- [Installation](#-installation)
+- [Usage](#usage)
+- [Synchronous API](#synchronous-api)
+- [API Reference](#api-reference)
+  - [Constructor](#constructor)
+  - [Get](#get)
+  - [Set](#set)
+  - [Exists](#exists)
+  - [Delete](#delete)
+  - [Rename](#rename)
+  - [Get Expire](#get-expire)
+  - [Set Expire](#set-expire)
+  - [Keys](#keys)
+  - [Pagination](#pagination)
+  - [Count](#count)
+  - [Count Expired](#count-expired)
+  - [Multi Get](#multi-get)
+  - [Multi Set](#multi-set)
+  - [Multi Delete](#multi-delete)
+  - [Cleanup](#cleanup)
+  - [Vacuum](#vacuum)
+  - [Flush](#flush)
+  - [Execute](#execute)
+  - [Backup](#backup)
+  - [Restore](#restore)
+  - [Close](#close)
+- [Error Handling](#error-handling)
+- [Supported Value Types](#supported-value-types)
+- [TypeScript Typing & Generics](#typescript-typing--generics)
+- [Pattern Matching](#pattern-matching)
+- [Performance Considerations](#performance-considerations)
+
+---
+
+## 📜 Features
 
 - Fast and efficient key-value storage
 - Support for expiration of keys
@@ -38,7 +76,9 @@ Fast and lightweight key-value database library.
 - Pattern-based key retrieval
 - **Supports both Bun and Node.js environments**
 
-## Installation
+---
+
+## 🚀 Installation
 
 ```bash
 # With npm
@@ -47,6 +87,8 @@ npm install miftahdb
 # With bun
 bun add miftahdb
 ```
+
+---
 
 ## Usage
 
@@ -73,15 +115,17 @@ const user = db.get("user:1234");
 console.log(user);
 ```
 
+---
+
 ## Synchronous API
 
-MiftahDB uses a synchronous API, which may seem counterintuitive but actually provides better performance and concurrency than an asynchronous API for most use cases. This is because:
+**MiftahDB** uses a synchronous API, which may seem counterintuitive but actually provides better performance and concurrency than an asynchronous API for most use cases. This is because:
 
 ## API Reference
 
 ### `Constructor`
 
-Creates a new MiftahDB instance.
+Creates a new **MiftahDB** instance.
 
 - **Parameters**:
   - `path`: The path to the database file, or `:memory:` for an in-memory database.
@@ -90,6 +134,8 @@ Creates a new MiftahDB instance.
 const diskDB = new MiftahDB("database.db");
 const memoryDB = new MiftahDB(":memory:");
 ```
+
+---
 
 ### `Get`
 
@@ -109,6 +155,8 @@ if (value) {
 }
 ```
 
+---
+
 ### `Set`
 
 Sets a value in the database with an optional expiration.
@@ -125,6 +173,8 @@ db.set("user:1234", { name: "Ahmad Aburob" });
 // Set a value with expiration
 db.set("session:5678", "data", new Date("2025-12-31"));
 ```
+
+---
 
 ### `Exists`
 
@@ -143,6 +193,8 @@ if (db.exists("user:1234")) {
 }
 ```
 
+---
+
 ### `Delete`
 
 Deletes a key-value pair from the database.
@@ -153,6 +205,8 @@ Deletes a key-value pair from the database.
 ```javascript
 db.delete("user:1234");
 ```
+
+---
 
 ### `Rename`
 
@@ -165,6 +219,8 @@ Renames a key in the database.
 ```javascript
 db.rename("user:old_id", "user:new_id");
 ```
+
+---
 
 ### `Get Expire`
 
@@ -184,6 +240,8 @@ if (expirationDate) {
 }
 ```
 
+---
+
 ### `Set Expire`
 
 Sets the expiration date of a key.
@@ -195,6 +253,8 @@ Sets the expiration date of a key.
 ```javascript
 db.setExpire("user:1234", new Date("2028-12-31"));
 ```
+
+---
 
 ### `Keys`
 
@@ -219,6 +279,8 @@ const fiveCharKeys = db.keys("_____");
 const logKeys = db.keys("log__:%");
 ```
 
+---
+
 ### `Pagination`
 
 Retrieves a paginated list of keys matching a pattern.
@@ -241,6 +303,8 @@ const firstUsersPage = db.pagination(10, 1, "user:%");
 const secondUsersPage = db.pagination(10, 2, "user:%");
 ```
 
+---
+
 ### `Count`
 
 Counts the number of keys in the database.
@@ -257,6 +321,8 @@ const count = db.count();
 // Get the number of keys matching "user:%"
 const userCount = db.count("user:%");
 ```
+
+---
 
 ### `Count Expired`
 
@@ -275,6 +341,8 @@ const countExpired = db.countExpired();
 const userCountExpired = db.countExpired("user:%");
 ```
 
+---
+
 ### `Multi Get`
 
 Retrieves multiple values from the database by their keys.
@@ -287,6 +355,8 @@ Retrieves multiple values from the database by their keys.
 ```javascript
 const values = db.multiGet(["user:1234", "user:5678"]);
 ```
+
+---
 
 ### `Multi Set`
 
@@ -306,6 +376,8 @@ db.multiSet([
 ]);
 ```
 
+---
+
 ### `Multi Delete`
 
 Deletes multiple key-value pairs from the database.
@@ -317,6 +389,8 @@ Deletes multiple key-value pairs from the database.
 db.multiDelete(["user:1234", "user:5678"]);
 ```
 
+---
+
 ### `Cleanup`
 
 Removes expired key-value pairs from the database.
@@ -324,6 +398,8 @@ Removes expired key-value pairs from the database.
 ```javascript
 db.cleanup();
 ```
+
+---
 
 ### `Vacuum`
 
@@ -333,6 +409,8 @@ Optimizes the database file, reducing its size.
 db.vacuum();
 ```
 
+---
+
 ### `Flush`
 
 Ensures all the changes are written to disk.
@@ -340,6 +418,8 @@ Ensures all the changes are written to disk.
 ```javascript
 db.flush();
 ```
+
+---
 
 ### `Execute`
 
@@ -358,6 +438,8 @@ const rows = db.execute("SELECT * FROM miftahdb WHERE key LIKE ? LIMIT 5;", [
 ]);
 ```
 
+---
+
 ### `Backup`
 
 Backups the database to a file.
@@ -370,6 +452,8 @@ const db = new MiftahDB(":memory:");
 db.set("key", "value");
 db.backup("backup-1.db");
 ```
+
+---
 
 ### `Restore`
 
@@ -384,6 +468,8 @@ db.restore("backup-1.db");
 console.log(db.get("key"));
 ```
 
+---
+
 ### `Close`
 
 Closes the database connection.
@@ -391,6 +477,8 @@ Closes the database connection.
 ```javascript
 db.close();
 ```
+
+---
 
 ## Error Handling
 
@@ -410,21 +498,25 @@ try {
 }
 ```
 
+---
+
 ## Supported Value Types
 
-MiftahDB supports various value types:
+**MiftahDB** supports various value types:
 
-1. String
-2. Number
-3. Boolean
-4. Array
-5. Record (Object)
-6. Date
-7. Buffer (Binary Data)
-8. Uint8Array (Binary Data)
-9. Null
+|No | Type                      |
+| - | ----------                |
+| 1 | String                    |
+| 2 | Number                    |
+| 3 | Boolean                   |
+| 4 | Array                     |
+| 5 | Record (Object)           |
+| 6 | Date                      |
+| 7 | Buffer (Binary Data)      |
+| 8 | Uint8Array (Binary Data)  |
+| 9 | Null                      |
 
-Example for each type:
+**Example for each type**:
 
 ```javascript
 db.set("String", "Hello!");
@@ -438,11 +530,13 @@ db.set("Uint8Array", new Uint8Array([1, 2, 3, 4, 5]));
 db.set("Null", null);
 ```
 
+---
+
 ## TypeScript Typing & Generics
 
-MiftahDB is fully typed with TypeScript, allowing you to leverage TypeScript's static type checking and type inference. You can use generic types to specify the type of values stored and retrieved from the database.
+**MiftahDB** is fully typed with TypeScript, allowing you to leverage TypeScript's static type checking and type inference. You can use generic types to specify the type of values stored and retrieved from the database.
 
-When retrieving values from MiftahDB, you can define the type of the stored value for better type safety:
+When retrieving values from **MiftahDB**, you can define the type of the stored value for better type safety:
 
 ```typescript
 type User = {
@@ -467,9 +561,11 @@ if (value) {
 }
 ```
 
+---
+
 ## Pattern Matching
 
-MiftahDB provides powerful pattern matching capabilities for working with keys. You can use patterns in multiple methods, such as:
+**MiftahDB** provides powerful pattern matching capabilities for working with keys. You can use patterns in multiple methods, such as:
 
 - `db.keys(pattern)`
 - `db.pagination(limit, page, pattern)`
@@ -498,9 +594,11 @@ db.keys("___");
 db.keys("log__:%");
 ```
 
+---
+
 ## Performance Considerations
 
-MiftahDB is designed for high performance:
+**MiftahDB** is designed for high performance:
 
 1. Synchronous API reduces overhead and improves concurrency
 2. Optimized SQLite settings for improved performance
