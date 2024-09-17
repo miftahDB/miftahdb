@@ -25,6 +25,10 @@ Fast and lightweight key-value database library.
 <a href="https://www.npmjs.com/package/miftahdb">
     NPM
 </a>
+•
+<a href="https://github.com/miftahDB/benchmarks">
+    Benchmarks
+</a>
 </div>
 
 ---
@@ -526,7 +530,7 @@ type User = {
 // Set a value with a known structure
 db.set<User>("user:1234", {
   name: "Ahmad",
-  age: 25,
+  age: 15,
   email: "ahmad@example.com",
 });
 
