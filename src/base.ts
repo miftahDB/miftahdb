@@ -1,22 +1,26 @@
-import { encodeValue, decodeValue } from "./encoding";
+import DB, {
+  type Database,
+  type Statement,
+  type RunResult,
+} from "better-sqlite3";
 import { SQL_STATEMENTS } from "./statements";
 import type { IMiftahDB, MiftahValue, MiftahDBItem } from "./types";
-import type { Database, Statement } from "better-sqlite3";
-import { writeFileSync } from "node:fs";
+import { encodeValue, decodeValue } from "./encoding";
+import { writeFileSync, readFileSync } from "node:fs";
 
-export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
-  implements IMiftahDB
-{
+export abstract class BaseMiftahDB implements IMiftahDB {
   protected declare db: Database;
   protected statements: Record<string, Statement>;
 
   constructor(path = ":memory:") {
-    this.initializeDB(path);
-    this.initDatabase();
+    this.initDatabase(path);
+    this.db.exec(SQL_STATEMENTS.CREATE_PRAGMA);
+    this.db.exec(SQL_STATEMENTS.CREATE_TABLE);
+    this.db.exec(SQL_STATEMENTS.CREATE_INDEX);
     this.statements = this.prepareStatements();
   }
 
-  protected abstract initializeDB(path: string | ":memory:"): void;
+  protected abstract initDatabase(path: string | ":memory:"): void;
 
   protected prepareStatements(): Record<string, Statement> {
     return {
@@ -37,13 +41,7 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
     };
   }
 
-  protected initDatabase(): void {
-    this.db.exec(SQL_STATEMENTS.CREATE_PRAGMA);
-    this.db.exec(SQL_STATEMENTS.CREATE_TABLE);
-    this.db.exec(SQL_STATEMENTS.CREATE_INDEX);
-  }
-
-  public get<T>(key: string): T | null {
+  get<T>(key: string): T | null {
     const result = this.statements.get.get(key) as MiftahDBItem | undefined;
     if (!result) return null;
     if (result?.expires_at && result.expires_at <= Date.now()) {
@@ -53,35 +51,31 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
     return decodeValue(result.value);
   }
 
-  public set<T extends MiftahValue>(
-    key: string,
-    value: T,
-    expiresAt?: Date
-  ): void {
+  set<T extends MiftahValue>(key: string, value: T, expiresAt?: Date): void {
     const encodedValue = encodeValue(value);
     const expiresAtMs = expiresAt?.getTime() ?? null;
     this.statements.set.run(key, encodedValue, expiresAtMs);
   }
 
-  public exists(key: string): boolean {
+  exists(key: string): boolean {
     const result = this.statements.exists.get(key) as { [key: string]: number };
     return Boolean(Object.values(result)[0]);
   }
 
-  public delete(key: string): void {
+  delete(key: string): void {
     this.statements.delete.run(key);
   }
 
-  public rename(oldKey: string, newKey: string): void {
+  rename(oldKey: string, newKey: string): void {
     this.statements.rename.run(newKey, oldKey);
   }
 
-  public setExpire(key: string, expiresAt: Date): void {
+  setExpire(key: string, expiresAt: Date): void {
     const expiresAtMs = expiresAt.getTime();
     this.statements.setExpire.run(expiresAtMs, key);
   }
 
-  public getExpire(key: string): Date | null {
+  getExpire(key: string): Date | null {
     const result = this.statements.getExpire.get(key) as
       | {
           expires_at: number | null;
@@ -90,14 +84,14 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
     return result?.expires_at ? new Date(result.expires_at) : null;
   }
 
-  public keys(pattern = "%"): string[] {
+  keys(pattern = "%"): string[] {
     const result = this.statements.keys.all(pattern) as {
       key: string;
     }[];
     return result.map((r) => r.key);
   }
 
-  public pagination(limit: number, page: number, pattern = "%"): string[] {
+  pagination(limit: number, page: number, pattern = "%"): string[] {
     const offset = (page - 1) * limit;
     const result = this.statements.pagination.all(pattern, limit, offset) as {
       key: string;
@@ -105,19 +99,19 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
     return result.map((r) => r.key);
   }
 
-  public count(pattern = "%"): number {
+  count(pattern = "%"): number {
     const result = this.statements.countKeys.get(pattern) as { count: number };
     return result.count;
   }
 
-  public countExpired(pattern = "%"): number {
+  countExpired(pattern = "%"): number {
     const result = this.statements.countExpired.get(pattern) as {
       count: number;
     };
     return result.count;
   }
 
-  public multiGet<T>(keys: string[]): Record<string, T | null> {
+  multiGet<T>(keys: string[]): Record<string, T | null> {
     const result: Record<string, T | null> = {};
     this.db.transaction(() => {
       for (const key of keys) {
@@ -127,7 +121,7 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
     return result;
   }
 
-  public multiSet<T extends MiftahValue>(
+  multiSet<T extends MiftahValue>(
     entries: Array<{ key: string; value: T; expiresAt?: Date }>
   ): void {
     this.db.transaction(() => {
@@ -137,7 +131,7 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
     })();
   }
 
-  public multiDelete(keys: string[]): void {
+  multiDelete(keys: string[]): void {
     this.db.transaction(() => {
       for (const key of keys) {
         this.delete(key);
@@ -145,24 +139,24 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
     })();
   }
 
-  public vacuum(): void {
+  vacuum(): void {
     this.statements.vacuum.run();
   }
 
-  public close(): void {
+  close(): void {
     this.cleanup();
     this.db.close();
   }
 
-  public cleanup(): void {
+  cleanup(): void {
     this.statements.cleanup.run(Date.now());
   }
 
-  public flush(): void {
+  flush(): void {
     this.statements.flush.run();
   }
 
-  public backup(path: string): void {
+  backup(path: string): void {
     const serialized = this.db.serialize();
     const arrayBuffer = serialized.buffer.slice(
       serialized.byteOffset,
@@ -171,7 +165,17 @@ export abstract class BaseMiftahDB<ExecuteReturnType = unknown[]>
     writeFileSync(path, Buffer.from(arrayBuffer));
   }
 
-  public abstract restore(path: string): void;
+  execute(sql: string, params: unknown[] = []): unknown[] | RunResult {
+    const stmt = this.db.prepare(sql);
+    if (stmt.reader) {
+      return stmt.all(...params);
+    }
+    return stmt.run(...params);
+  }
 
-  public abstract execute(sql: string, params?: unknown[]): ExecuteReturnType;
+  restore(path: string) {
+    const file = readFileSync(path);
+    this.db = new DB(file);
+    this.statements = this.prepareStatements();
+  }
 }

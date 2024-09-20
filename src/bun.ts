@@ -22,22 +22,21 @@ import type { Database } from "better-sqlite3";
  */
 export class MiftahDB extends BaseMiftahDB {
   protected declare db: Database;
-  protected initializeDB(path = ":memory:"): void {
+  protected initDatabase(path = ":memory:"): void {
     this.db = new DB(path) as unknown as Database;
   }
 
-  public execute(sql: string, params: unknown[] = []): unknown[] {
+  override execute(sql: string, params: unknown[] = []): unknown[] {
     const stmt = this.db.prepare(sql);
     return stmt.all(...params);
   }
 
-  public restore(path: string) {
+  override restore(path: string) {
     const file = readFileSync(path);
 
     // @ts-expect-error `deserialize` exists in `bun:sqlite` but not in `better-sqlite3`.
     this.db = DB.deserialize(file);
 
-    this.initDatabase();
     this.statements = this.prepareStatements();
   }
 }

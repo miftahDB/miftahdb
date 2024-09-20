@@ -132,11 +132,15 @@ describe("MiftahDB Node Tests", () => {
     assert.deepStrictEqual(result, { key1: null, key2: null });
   });
 
-  it("Backup and Restore", () => {
+  it("Backup", () => {
     const db = createDB();
     db.set("key1", "value1");
-    db.backup("backup.db");
-    db.restore("backup.db");
+    db.backup("backup_node_test.db");
+  });
+
+  it("Restore", () => {
+    const db = createDB();
+    db.restore("backup_node_test.db");
     assert.strictEqual(db.get("key1"), "value1");
   });
 });

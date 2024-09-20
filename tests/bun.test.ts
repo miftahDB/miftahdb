@@ -129,10 +129,14 @@ test("Multi Delete", () => {
   expect(result).toEqual({ key1: null, key2: null });
 });
 
-test("Backup and Restore", () => {
+test("Backup", () => {
   const db = createDB();
   db.set("key1", "value1");
-  db.backup("backup.db");
-  db.restore("backup.db");
+  db.backup("backup_bun_test.db");
+});
+
+test("Restore", () => {
+  const db = createDB();
+  db.restore("backup_bun_test.db");
   expect(db.get<string>("key1")).toBe("value1");
 });
