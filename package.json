@@ -1,18 +1,21 @@
 {
   "name": "miftahdb",
+  "version": "0.0.0-development",
   "description": "Fast and lightweight key-value database library for Node.js",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
+    "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.cjs"
     },
     "./bun": {
       "types": "./dist/bun.d.ts",
-      "import": "./dist/bun.mjs"
+      "import": "./dist/bun.js",
+      "default": "./dist/bun.cjs"
     }
   },
   "scripts": {
@@ -21,6 +24,7 @@
     "semantic-release": "semantic-release",
     "test-bun": "bun test ./tests/bun.test.ts",
     "test-node": "node --import tsx --test ./tests/node.test.ts",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "lint": "tsc --noEmit"
   },
   "keywords": [
@@ -46,6 +50,7 @@
   "author": "vwh",
   "license": "MIT",
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.16.4",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/github": "^10.1.7",
