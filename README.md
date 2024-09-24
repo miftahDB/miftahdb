@@ -412,9 +412,12 @@ Creates a namespaced database instance.
   - A new database instance with the namespace applied.
 
 ```javascript
-// Create a new database instance with a namespace
 const db = new MiftahDB(":memory:");
+
+// Create a new database instance with a namespace
 const users = db.namespace("users");
+const posts = db.namespace("posts");
+const comments = db.namespace("comments");
 
 // Set a value with a namespace
 users.set("852335", { name: "Ahmad" });
