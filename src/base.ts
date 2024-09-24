@@ -11,6 +11,7 @@ import { writeFileSync, readFileSync } from "node:fs";
 export abstract class BaseMiftahDB implements IMiftahDB {
   protected declare db: Database;
   protected statements: Record<string, Statement>;
+  private nameSpacePrefix: string | null = null;
 
   constructor(path = ":memory:") {
     this.initDatabase(path);
@@ -18,6 +19,16 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     this.db.exec(SQL_STATEMENTS.CREATE_TABLE);
     this.db.exec(SQL_STATEMENTS.CREATE_INDEX);
     this.statements = this.prepareStatements();
+  }
+
+  private addNamespacePrefix(k: string): string {
+    return this.nameSpacePrefix ? `${this.nameSpacePrefix}:${k}` : k;
+  }
+
+  private removeNamespacePrefix(key: string): string {
+    return this.nameSpacePrefix && key.startsWith(`${this.nameSpacePrefix}:`)
+      ? key.slice(this.nameSpacePrefix.length + 1)
+      : key;
   }
 
   protected abstract initDatabase(path: string | ":memory:"): void;
@@ -42,10 +53,12 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   }
 
   get<T>(key: string): T | null {
-    const result = this.statements.get.get(key) as MiftahDBItem | undefined;
+    const result = this.statements.get.get(this.addNamespacePrefix(key)) as
+      | MiftahDBItem
+      | undefined;
     if (!result) return null;
     if (result?.expires_at && result.expires_at <= Date.now()) {
-      this.delete(key);
+      this.delete(this.addNamespacePrefix(key));
       return null;
     }
     return decodeValue(result.value);
@@ -54,29 +67,40 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   set<T extends MiftahValue>(key: string, value: T, expiresAt?: Date): void {
     const encodedValue = encodeValue(value);
     const expiresAtMs = expiresAt?.getTime() ?? null;
-    this.statements.set.run(key, encodedValue, expiresAtMs);
+    this.statements.set.run(
+      this.addNamespacePrefix(key),
+      encodedValue,
+      expiresAtMs
+    );
   }
 
   exists(key: string): boolean {
-    const result = this.statements.exists.get(key) as { [key: string]: number };
+    const result = this.statements.exists.get(this.addNamespacePrefix(key)) as {
+      [key: string]: number;
+    };
     return Boolean(Object.values(result)[0]);
   }
 
   delete(key: string): void {
-    this.statements.delete.run(key);
+    this.statements.delete.run(this.addNamespacePrefix(key));
   }
 
   rename(oldKey: string, newKey: string): void {
-    this.statements.rename.run(newKey, oldKey);
+    this.statements.rename.run(
+      this.addNamespacePrefix(newKey),
+      this.addNamespacePrefix(oldKey)
+    );
   }
 
   setExpire(key: string, expiresAt: Date): void {
     const expiresAtMs = expiresAt.getTime();
-    this.statements.setExpire.run(expiresAtMs, key);
+    this.statements.setExpire.run(expiresAtMs, this.addNamespacePrefix(key));
   }
 
   getExpire(key: string): Date | null {
-    const result = this.statements.getExpire.get(key) as
+    const result = this.statements.getExpire.get(
+      this.addNamespacePrefix(key)
+    ) as
       | {
           expires_at: number | null;
         }
@@ -85,27 +109,36 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   }
 
   keys(pattern = "%"): string[] {
-    const result = this.statements.keys.all(pattern) as {
+    const result = this.statements.keys.all(
+      this.addNamespacePrefix(pattern)
+    ) as {
       key: string;
     }[];
-    return result.map((r) => r.key);
+    return result.map((r) => this.removeNamespacePrefix(r.key));
   }
 
   pagination(limit: number, page: number, pattern = "%"): string[] {
     const offset = (page - 1) * limit;
-    const result = this.statements.pagination.all(pattern, limit, offset) as {
-      key: string;
-    }[];
-    return result.map((r) => r.key);
+    const result = this.statements.pagination.all(
+      this.addNamespacePrefix(pattern),
+      limit,
+      offset
+    ) as { key: string }[];
+    return result.map((r) => this.removeNamespacePrefix(r.key));
   }
 
   count(pattern = "%"): number {
-    const result = this.statements.countKeys.get(pattern) as { count: number };
+    const result = this.statements.countKeys.get(
+      this.nameSpacePrefix ? `${this.nameSpacePrefix}:${pattern}` : pattern
+    ) as { count: number };
     return result.count;
   }
 
   countExpired(pattern = "%"): number {
-    const result = this.statements.countExpired.get(pattern) as {
+    const result = this.statements.countExpired.get(
+      Date.now(),
+      this.nameSpacePrefix ? `${this.nameSpacePrefix}:${pattern}` : pattern
+    ) as {
       count: number;
     };
     return result.count;
@@ -114,8 +147,9 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   multiGet<T>(keys: string[]): Record<string, T | null> {
     const result: Record<string, T | null> = {};
     this.db.transaction(() => {
-      for (const key of keys) {
-        result[key] = this.get<T>(key);
+      for (const k of keys) {
+        const value = this.get<T>(this.addNamespacePrefix(k));
+        result[this.removeNamespacePrefix(k)] = value;
       }
     })();
     return result;
@@ -126,14 +160,16 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   ): void {
     this.db.transaction(() => {
       for (const entry of entries) {
-        this.set(entry.key, entry.value, entry.expiresAt);
+        const key = this.addNamespacePrefix(entry.key);
+        this.set(key, entry.value, entry.expiresAt);
       }
     })();
   }
 
   multiDelete(keys: string[]): void {
     this.db.transaction(() => {
-      for (const key of keys) {
+      for (const k of keys) {
+        const key = this.addNamespacePrefix(k);
         this.delete(key);
       }
     })();
@@ -149,11 +185,11 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   }
 
   cleanup(): void {
-    this.statements.cleanup.run(Date.now());
+    this.statements.cleanup.run(Date.now(), this.addNamespacePrefix("%"));
   }
 
   flush(): void {
-    this.statements.flush.run();
+    this.statements.flush.run(this.addNamespacePrefix("%"));
   }
 
   backup(path: string): void {
@@ -177,5 +213,13 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     const file = readFileSync(path);
     this.db = new DB(file);
     this.statements = this.prepareStatements();
+  }
+
+  namespace(name: string): IMiftahDB {
+    const namespacedDB = Object.create(this);
+    namespacedDB.nameSpacePrefix = this.nameSpacePrefix
+      ? `${this.nameSpacePrefix}:${name}`
+      : name;
+    return namespacedDB;
   }
 }

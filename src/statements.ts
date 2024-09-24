@@ -10,7 +10,7 @@ export const SQL_STATEMENTS = {
 
   // Deletes rows that have expired
   CLEANUP:
-    "DELETE FROM miftahDB WHERE expires_at IS NOT NULL AND expires_at <= ?",
+    "DELETE FROM miftahDB WHERE expires_at IS NOT NULL AND expires_at <= ? AND key LIKE ?",
 
   // Renames a key
   RENAME: "UPDATE miftahDB SET key = ? WHERE key = ?",
@@ -32,7 +32,7 @@ export const SQL_STATEMENTS = {
   VACUUM: "VACUUM",
 
   // Deletes all rows from the table
-  FLUSH: "DELETE FROM miftahDB",
+  FLUSH: "DELETE FROM miftahDB WHERE key LIKE ?",
 
   // Returns true if the key exists, false otherwise
   EXISTS: "SELECT EXISTS (SELECT 1 FROM miftahDB WHERE key = ? LIMIT 1)",
@@ -54,7 +54,7 @@ export const SQL_STATEMENTS = {
 
   // Counts the number of expired rows in the table
   COUNT_EXPIRED:
-    "SELECT COUNT(*) as count FROM miftahDB WHERE (expires_at IS NOT NULL AND expires_at <= strftime('%s', 'now') * 1000) AND key LIKE ?",
+    "SELECT COUNT(*) as count FROM miftahDB WHERE (expires_at IS NOT NULL AND expires_at <= ?) AND key LIKE ?",
 
   // Creates the PRAGMA statements
   CREATE_PRAGMA: `

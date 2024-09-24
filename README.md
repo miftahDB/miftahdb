@@ -34,6 +34,7 @@ Fast and lightweight key-value database library.
 ---
 
 ## 📖 Contents
+
 - [Features](#-features)
 - [Installation](#-installation)
 - [Usage](#usage)
@@ -401,6 +402,35 @@ Ensures all the changes are written to disk.
 db.flush();
 ```
 
+### `Namespace`
+
+Creates a namespaced database instance.
+
+- **Parameters**:
+  - `name`: The name of the namespace.
+- **Returns**:
+  - A new database instance with the namespace applied.
+
+```javascript
+// Create a new database instance with a namespace
+const db = new MiftahDB(":memory:");
+const users = db.namespace("users");
+
+// Set a value with a namespace
+users.set("852335", { name: "Ahmad" });
+console.log(users.get("852335"));
+
+// Other examples:
+// Will count the keys only on the "users" namespace
+users.count();
+
+// Will remove expired keys only on the "users" namespace
+users.cleanup();
+
+// Will remove all keys only on the "users" namespace
+users.flush();
+```
+
 ---
 
 ### `Execute`
@@ -486,17 +516,17 @@ try {
 
 **MiftahDB** supports various value types:
 
-|No | Type                      |
-| - | ----------                |
-| 1 | String                    |
-| 2 | Number                    |
-| 3 | Boolean                   |
-| 4 | Array                     |
-| 5 | Record (Object)           |
-| 6 | Date                      |
-| 7 | Buffer (Binary Data)      |
-| 8 | Uint8Array (Binary Data)  |
-| 9 | Null                      |
+| No  | Type                     |
+| --- | ------------------------ |
+| 1   | String                   |
+| 2   | Number                   |
+| 3   | Boolean                  |
+| 4   | Array                    |
+| 5   | Record (Object)          |
+| 6   | Date                     |
+| 7   | Buffer (Binary Data)     |
+| 8   | Uint8Array (Binary Data) |
+| 9   | Null                     |
 
 **Example for each type**:
 

@@ -24,7 +24,7 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @example
    * const value = db.get('user:1234');
    */
-  get(key: string): T | null;
+  get<K extends T>(key: string): K | null;
 
   /**
    * Sets a value in the database with an optional expiration.
@@ -35,7 +35,7 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @example
    * db.set('user:1234', { name: 'Ahmad' }, new Date('2023-12-31'));
    */
-  set(key: string, value: T, expiresAt?: Date): void;
+  set<K extends T>(key: string, value: K, expiresAt?: Date): void;
 
   /**
    * Gets the expiration date of a key.
@@ -107,7 +107,7 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * // Get keys starting with "log", followed by exactly two characters, and ending with any number of characters
    * const logKeys = db.keys('log__:%');
    */
-  keys(pattern: string): string[];
+  keys(pattern?: string): string[];
 
   /**
    * Retrieves a paginated list of keys matching a pattern.
@@ -126,7 +126,7 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * // Get the next 10 keys matching "user:%" (keys starting with "user:")
    * const secondUsersPage = db.pagination(10, 2, "user:%");
    */
-  pagination(limit: number, page: number, pattern: string): string[];
+  pagination(limit: number, page: number, pattern?: string): string[];
 
   /**
    * Counts the number of keys in the database.
@@ -164,7 +164,7 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @example
    * const values = db.multiGet(['user:1234', 'user:5678']);
    */
-  multiGet(keys: string[]): Record<string, T | null>;
+  multiGet<K extends T>(keys: string[]): Record<string, K | null>;
 
   /**
    * Sets multiple key-value pairs in the database with optional expirations.
@@ -176,7 +176,9 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    *   { key: 'user:5678', value: { name: 'Fatima' } }
    * ]);
    */
-  multiSet(entries: Array<{ key: string; value: T; expiresAt?: Date }>): void;
+  multiSet<K extends T>(
+    entries: Array<{ key: string; value: K; expiresAt?: Date }>
+  ): void;
 
   /**
    * Deletes multiple key-value pairs from the database.
@@ -255,6 +257,18 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * console.log(db.get("key"));
    */
   restore(path: string): void;
+
+  /**
+   * Creates a namespaced database instance.
+   * - https://miftahdb.sqlite3.online/docs/api-reference/namespace
+   * @param name - The name of the namespace.
+   * @returns A new database instance with the namespace applied.
+   * @example
+   * const users = db.namespace("users");
+   * users.set("123", "value1");
+   * console.log(users.get("123"));
+   */
+  namespace(name: string): IMiftahDB<T>;
 }
 
 /**
