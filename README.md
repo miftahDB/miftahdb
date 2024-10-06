@@ -31,9 +31,7 @@ Fast and lightweight key-value database library.
 </a>
 </div>
 
----
-
-## 📖 Contents
+## Contents
 
 - [Features](#-features)
 - [Installation](#-installation)
@@ -46,9 +44,7 @@ Fast and lightweight key-value database library.
 - [Pattern Matching](#pattern-matching)
 - [Performance Considerations](#performance-considerations)
 
----
-
-## 📜 Features
+## Features
 
 - Fast and efficient key-value storage
 - Support for expiration of keys
@@ -59,9 +55,7 @@ Fast and lightweight key-value database library.
 - Pattern-based key retrieval
 - **Supports both Bun and Node.js environments**
 
----
-
-## 🚀 Installation
+## Installation
 
 ```bash
 # With npm
@@ -70,8 +64,6 @@ npm install miftahdb
 # With bun
 bun add miftahdb
 ```
-
----
 
 ## Usage
 
@@ -98,11 +90,9 @@ const user = db.get("user:1234");
 console.log(user);
 ```
 
----
-
 ## Synchronous API
 
-**MiftahDB** uses a synchronous API, which may seem counterintuitive but actually provides better performance and concurrency than an asynchronous API for most use cases. This is because:
+**MiftahDB** uses a synchronous API, which may seem counterintuitive but actually provides better performance and concurrency than an asynchronous API for most use cases.
 
 ## API Reference
 
@@ -513,8 +503,6 @@ try {
 }
 ```
 
----
-
 ## Supported Value Types
 
 **MiftahDB** supports various value types:
@@ -545,8 +533,6 @@ db.set("Uint8Array", new Uint8Array([1, 2, 3, 4, 5]));
 db.set("Null", null);
 ```
 
----
-
 ## TypeScript Typing & Generics
 
 **MiftahDB** is fully typed with TypeScript, allowing you to leverage TypeScript's static type checking and type inference. You can use generic types to specify the type of values stored and retrieved from the database.
@@ -575,8 +561,6 @@ if (value) {
   console.log("User not found");
 }
 ```
-
----
 
 ## Pattern Matching
 
@@ -608,8 +592,6 @@ db.keys("___");
 // Combine patterns: Match keys starting with "log", followed by exactly two characters, and ending with any number of characters
 db.keys("log__:%");
 ```
-
----
 
 ## Performance Considerations
 
