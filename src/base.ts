@@ -4,9 +4,31 @@ import DB, {
   type RunResult,
 } from "better-sqlite3";
 import { SQL_STATEMENTS } from "./statements";
-import type { IMiftahDB, MiftahValue, MiftahDBItem } from "./types";
+import type { IMiftahDB, MiftahValue, MiftahDBItem, Result } from "./types";
 import { encodeValue, decodeValue } from "./encoding";
 import { writeFileSync, readFileSync } from "node:fs";
+
+export function SafeExecution<T extends (...args: unknown[]) => R, R>(
+  target: unknown,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+): PropertyDescriptor {
+  const originalMethod = descriptor.value;
+
+  descriptor.value = function (...args: Parameters<T>): Result<ReturnType<T>> {
+    try {
+      const result = originalMethod.apply(this, args);
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error : new Error(String(error)),
+      };
+    }
+  };
+
+  return descriptor;
+}
 
 export abstract class BaseMiftahDB implements IMiftahDB {
   protected declare db: Database;
@@ -52,19 +74,30 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     };
   }
 
-  get<T>(key: string): T | null {
+  @SafeExecution
+  get<T>(key: string): Result<T> {
     const result = this.statements.get.get(this.addNamespacePrefix(key)) as
       | MiftahDBItem
       | undefined;
-    if (!result) return null;
-    if (result?.expires_at && result.expires_at <= Date.now()) {
+
+    if (!result) throw Error("Key not found");
+    if (result.expires_at && result.expires_at <= Date.now()) {
       this.delete(this.addNamespacePrefix(key));
-      return null;
+      throw new Error("Key expired");
     }
-    return decodeValue(result.value);
+
+    return {
+      success: true,
+      data: decodeValue(result.value) as T,
+    };
   }
 
-  set<T extends MiftahValue>(key: string, value: T, expiresAt?: Date): void {
+  @SafeExecution
+  set<T extends MiftahValue>(
+    key: string,
+    value: T,
+    expiresAt?: Date
+  ): Result<boolean> {
     const encodedValue = encodeValue(value);
     const expiresAtMs = expiresAt?.getTime() ?? null;
     this.statements.set.run(
@@ -72,32 +105,49 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       encodedValue,
       expiresAtMs
     );
+
+    return { success: true, data: true };
   }
 
-  exists(key: string): boolean {
+  @SafeExecution
+  exists(key: string): Result<boolean> {
     const result = this.statements.exists.get(this.addNamespacePrefix(key)) as {
       [key: string]: number;
     };
-    return Boolean(Object.values(result)[0]);
+
+    const doExists = Boolean(Object.values(result)[0]);
+    if (!doExists) throw Error("Key not found");
+
+    return { success: true, data: doExists };
   }
 
-  delete(key: string): void {
-    this.statements.delete.run(this.addNamespacePrefix(key));
+  @SafeExecution
+  delete(key: string): Result<number> {
+    const result = this.statements.delete.run(this.addNamespacePrefix(key));
+
+    return { success: true, data: result.changes };
   }
 
-  rename(oldKey: string, newKey: string): void {
+  @SafeExecution
+  rename(oldKey: string, newKey: string): Result<boolean> {
     this.statements.rename.run(
       this.addNamespacePrefix(newKey),
       this.addNamespacePrefix(oldKey)
     );
+
+    return { success: true, data: true };
   }
 
-  setExpire(key: string, expiresAt: Date): void {
+  @SafeExecution
+  setExpire(key: string, expiresAt: Date): Result<boolean> {
     const expiresAtMs = expiresAt.getTime();
     this.statements.setExpire.run(expiresAtMs, this.addNamespacePrefix(key));
+
+    return { success: true, data: true };
   }
 
-  getExpire(key: string): Date | null {
+  @SafeExecution
+  getExpire(key: string): Result<Date> {
     const result = this.statements.getExpire.get(
       this.addNamespacePrefix(key)
     ) as
@@ -105,110 +155,176 @@ export abstract class BaseMiftahDB implements IMiftahDB {
           expires_at: number | null;
         }
       | undefined;
-    return result?.expires_at ? new Date(result.expires_at) : null;
+
+    if (!result) throw Error("Key not found");
+    if (!result.expires_at) throw Error("Key has no expiration");
+
+    return { success: true, data: new Date(result.expires_at) };
   }
 
-  keys(pattern = "%"): string[] {
+  @SafeExecution
+  keys(pattern = "%"): Result<string[]> {
     const result = this.statements.keys.all(
       this.addNamespacePrefix(pattern)
     ) as {
       key: string;
     }[];
-    return result.map((r) => this.removeNamespacePrefix(r.key));
+
+    const resultArray = result.map((r) => this.removeNamespacePrefix(r.key));
+    if (resultArray.length === 0) throw Error("No keys found");
+
+    return {
+      success: true,
+      data: resultArray,
+    };
   }
 
-  pagination(limit: number, page: number, pattern = "%"): string[] {
+  @SafeExecution
+  pagination(limit: number, page: number, pattern = "%"): Result<string[]> {
     const offset = (page - 1) * limit;
     const result = this.statements.pagination.all(
       this.addNamespacePrefix(pattern),
       limit,
       offset
     ) as { key: string }[];
-    return result.map((r) => this.removeNamespacePrefix(r.key));
+
+    const resultArray = result.map((r) => this.removeNamespacePrefix(r.key));
+    if (resultArray.length === 0) throw Error("No keys found");
+
+    return {
+      success: true,
+      data: resultArray,
+    };
   }
 
-  count(pattern = "%"): number {
+  @SafeExecution
+  count(pattern = "%"): Result<number> {
     const result = this.statements.countKeys.get(
       this.nameSpacePrefix ? `${this.nameSpacePrefix}:${pattern}` : pattern
     ) as { count: number };
-    return result.count;
+
+    return { success: true, data: result.count };
   }
 
-  countExpired(pattern = "%"): number {
+  @SafeExecution
+  countExpired(pattern = "%"): Result<number> {
     const result = this.statements.countExpired.get(
       Date.now(),
       this.nameSpacePrefix ? `${this.nameSpacePrefix}:${pattern}` : pattern
     ) as {
       count: number;
     };
-    return result.count;
+
+    return { success: true, data: result.count };
   }
 
-  multiGet<T>(keys: string[]): Record<string, T | null> {
+  @SafeExecution
+  multiGet<T>(keys: string[]): Result<Record<string, T | null>> {
     const result: Record<string, T | null> = {};
     this.db.transaction(() => {
       for (const k of keys) {
         const value = this.get<T>(this.addNamespacePrefix(k));
-        result[this.removeNamespacePrefix(k)] = value;
+        if (value.success) result[this.removeNamespacePrefix(k)] = value.data;
       }
     })();
-    return result;
+
+    return {
+      success: true,
+      data: result,
+    };
   }
 
+  @SafeExecution
   multiSet<T extends MiftahValue>(
     entries: Array<{ key: string; value: T; expiresAt?: Date }>
-  ): void {
+  ): Result<boolean> {
     this.db.transaction(() => {
       for (const entry of entries) {
         const key = this.addNamespacePrefix(entry.key);
         this.set(key, entry.value, entry.expiresAt);
       }
     })();
+
+    return {
+      success: true,
+      data: true,
+    };
   }
 
-  multiDelete(keys: string[]): void {
+  @SafeExecution
+  multiDelete(keys: string[]): Result<boolean> {
     this.db.transaction(() => {
       for (const k of keys) {
         const key = this.addNamespacePrefix(k);
         this.delete(key);
       }
     })();
+
+    return {
+      success: true,
+      data: true,
+    };
   }
 
-  vacuum(): void {
+  @SafeExecution
+  vacuum(): Result<boolean> {
     this.statements.vacuum.run();
+
+    return { success: true, data: true };
   }
 
-  close(): void {
+  @SafeExecution
+  close(): Result<boolean> {
     this.cleanup();
     this.db.close();
+
+    return { success: true, data: true };
   }
 
-  cleanup(): void {
-    this.statements.cleanup.run(Date.now(), this.addNamespacePrefix("%"));
+  @SafeExecution
+  cleanup(): Result<number> {
+    const result = this.statements.cleanup.run(
+      Date.now(),
+      this.addNamespacePrefix("%")
+    );
+
+    return { success: true, data: result.changes };
   }
 
-  flush(): void {
-    this.statements.flush.run(this.addNamespacePrefix("%"));
+  @SafeExecution
+  flush(): Result<number> {
+    const result = this.statements.flush.run(this.addNamespacePrefix("%"));
+
+    return { success: true, data: result.changes };
   }
 
+  @SafeExecution
   backup(path: string): void {
     const serialized = this.db.serialize();
     const arrayBuffer = serialized.buffer.slice(
       serialized.byteOffset,
       serialized.byteOffset + serialized.byteLength
     );
+
     writeFileSync(path, Buffer.from(arrayBuffer));
   }
 
-  execute(sql: string, params: unknown[] = []): unknown[] | RunResult {
+  @SafeExecution
+  execute(sql: string, params: unknown[] = []): Result<unknown> {
     const stmt = this.db.prepare(sql);
     if (stmt.reader) {
-      return stmt.all(...params);
+      return {
+        success: true,
+        data: stmt.all(...params),
+      };
     }
-    return stmt.run(...params);
+    return {
+      success: true,
+      data: stmt.run(...params),
+    };
   }
 
+  @SafeExecution
   restore(path: string) {
     const file = readFileSync(path);
     this.db = new DB(file);

@@ -117,14 +117,14 @@ Retrieves a value from the database by its key.
 - **Parameters**:
   - `key`: The key to look up.
 - **Returns**:
-  - The value associated with the key, or null if not found or expired.
+  - The result of the operation, which includes a boolean indicating whether the operation was successful and the value associated with the key, or an error if the operation failed.
 
 ```typescript
-const value = db.get<User>("user:1234");
-if (value) {
-  console.log(`User: ${value.name}`);
+const result = db.get<User>("user:1234");
+if (result.success) {
+  console.log(`User: ${result.data.name}`);
 } else {
-  console.log("User not found");
+  console.log(result.error.message);
 }
 ```
 
@@ -138,13 +138,27 @@ Sets a value in the database with an optional expiration.
   - `key`: The key under which to store the value.
   - `value`: The value to store.
   - `expiresAt`: Optional expiration date for the key-value pair.
+- **Returns**:
+  - The result of the operation, which includes a boolean indicating whether the operation was successful or an error if the operation failed.
 
-```javascript
+```typescript
 // Set a value without expiration
-db.set("user:1234", { name: "Ahmad Aburob" });
+db.set<User>("user:1234", { name: "Ahmad" });
 
 // Set a value with expiration
-db.set("session:5678", "data", new Date("2025-12-31"));
+db.set<User>("user:1234", { name: "Ahmad" }, new Date("2030-12-31"));
+
+// Set a value result type handling
+const result = db.set<User>(
+  "user:1234",
+  { name: "Ahmad" },
+  new Date("2030-12-31")
+);
+if (result.success) {
+  console.log("Key set successfully");
+} else {
+  console.log(result.error.message);
+}
 ```
 
 ---
@@ -156,13 +170,13 @@ Checks if a key exists in the database.
 - **Parameters**:
   - `key`: The key to check.
 - **Returns**:
-  - True if the key exists and hasn't expired, false otherwise.
+  - The result of the operation, which includes a boolean indicating whether the operation was successful or an error if the operation failed.
 
 ```javascript
-if (db.exists("user:1234")) {
+if (db.exists("user:12345").success) {
   console.log("User exists");
 } else {
-  console.log("User not found");
+  console.log("User does not exist");
 }
 ```
 
@@ -174,9 +188,14 @@ Deletes a key-value pair from the database.
 
 - **Parameters**:
   - `key`: The key to delete.
+- **Returns**:
+  - The result of the operation, which includes a number indicating the number of rows affected by the operation or an error if the operation failed.
 
 ```javascript
-db.delete("user:1234");
+const result = db.delete("user:1234");
+if (result.success) {
+  console.log(`Deleted ${result.data} rows`);
+}
 ```
 
 ---
@@ -188,9 +207,13 @@ Renames a key in the database.
 - **Parameters**:
   - `oldKey`: The current key name.
   - `newKey`: The new key name.
+- **Returns**:
+  - The result of the operation, which includes a boolean indicating whether the operation was successful or an error if the operation failed.
 
 ```javascript
-db.rename("user:old_id", "user:new_id");
+if (db.rename("user:old_id", "user:new_id").success) {
+  console.log("Key renamed successfully");
+}
 ```
 
 ---
@@ -202,14 +225,14 @@ Gets the expiration date of a key.
 - **Parameters**:
   - `key`: The key to check.
 - **Returns**:
-  - The expiration date of the key, or null if the key doesn't exist or has no expiration.
+  - The result of the operation, which includes the expiration date of the key or an error if the operation failed.
 
 ```javascript
-const expirationDate = db.getExpire("session:5678");
-if (expirationDate) {
-  console.log(`Session expires at: ${expirationDate}`);
+const result = db.getExpire("session:5678");
+if (result.success) {
+  console.log(`Expiration date: ${result.data}`);
 } else {
-  console.log("Session has no expiration or does not exist");
+  console.log(result.error.message);
 }
 ```
 
@@ -222,9 +245,13 @@ Sets the expiration date of a key.
 - **Parameters**:
   - `key`: The key to set the expiration date for.
   - `expiresAt`: The expiration date to set.
+- **Returns**:
+  - The result of the operation, which includes a boolean indicating whether the operation was successful or an error if the operation failed.
 
 ```javascript
-db.setExpire("user:1234", new Date("2028-12-31"));
+if (db.setExpire("user:1234", new Date("2028-12-31")).success) {
+  console.log("Expiration date set successfully");
+}
 ```
 
 ---
@@ -236,7 +263,7 @@ Retrieves keys matching a pattern.
 - **Parameters**:
   - `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
 - **Returns**:
-  - An array of matching keys.
+  - The result of the operation, which includes an array of matching keys or an error if the operation failed.
 
 ```javascript
 // Get all keys
@@ -263,7 +290,7 @@ Retrieves a paginated list of keys matching a pattern.
   - `page`: The page number to retrieve (1-based index).
   - `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
 - **Returns**:
-  - An array of matching keys.
+  - The result of the operation, which includes an array of keys that match the pattern or an error if the operation failed.
 
 ```javascript
 // Get the first 5 keys from the database
@@ -285,11 +312,14 @@ Counts the number of keys in the database.
 - **Parameters**:
   - `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
 - **Returns**:
-  - The number of keys in the database.
+  - The result of the operation, which includes the number of keys in the database or an error if the operation failed.
 
 ```javascript
 // Get the total number of keys
 const count = db.count();
+if (result.success) {
+  console.log(`Total keys: ${result.data}`);
+}
 
 // Get the number of keys matching "user:%"
 const userCount = db.count("user:%");
@@ -304,11 +334,14 @@ Counts the number of expired keys in the database.
 - **Parameters**:
   - `pattern`: Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
 - **Returns**:
-  - The number of expired keys in the database.
+  - The result of the operation, which includes the number of expired keys in the database or an error if the operation failed.
 
 ```javascript
 // Get the total number of expired keys
 const countExpired = db.countExpired();
+if (result.success) {
+  console.log(`Total expired keys: ${result.data}`);
+}
 
 // Get the number of expired keys matching "user:%"
 const userCountExpired = db.countExpired("user:%");
@@ -323,10 +356,10 @@ Retrieves multiple values from the database by their keys.
 - **Parameters**:
   - `keys`: An array of keys to look up.
 - **Returns**:
-  - An object with keys and their corresponding values, or empty object if keys are not found or expired.
+  - The result of the operation, which includes an object with keys and their corresponding values or an error if the operation failed.
 
 ```javascript
-const values = db.multiGet(["user:1234", "user:5678"]);
+const result = db.multiGet(["user:1234", "user:5678"]);
 ```
 
 ---
@@ -337,6 +370,8 @@ Sets multiple key-value pairs in the database with optional expirations.
 
 - **Parameters**:
   - `entries`: An array of objects containing key, value, and optional expiresAt.
+- **Returns**:
+  - The result of the operation, which includes a boolean indicating whether the operation was successful or an error if the operation failed.
 
 ```javascript
 db.multiSet([
@@ -357,6 +392,8 @@ Deletes multiple key-value pairs from the database.
 
 - **Parameters**:
   - `keys`: An array of keys to delete.
+- **Returns**:
+  - The result of the operation, which includes a boolean indicating whether the operation was successful or an error if the operation failed.
 
 ```javascript
 db.multiDelete(["user:1234", "user:5678"]);
@@ -368,8 +405,14 @@ db.multiDelete(["user:1234", "user:5678"]);
 
 Removes expired key-value pairs from the database.
 
+- **Returns**:
+  - The result of the operation, which includes the number of rows affected by the operation or an error if the operation failed.
+
 ```javascript
-db.cleanup();
+const result = db.cleanup();
+if (result.success) {
+  console.log(`Cleaned up ${result.data} rows`);
+}
 ```
 
 ---
@@ -377,6 +420,9 @@ db.cleanup();
 ### `Vacuum`
 
 Optimizes the database file, reducing its size.
+
+- **Returns**:
+  - The result of the operation, which includes a boolean indicating whether the operation was successful or an error if the operation failed.
 
 ```javascript
 db.vacuum();
@@ -388,8 +434,14 @@ db.vacuum();
 
 Ensures all the changes are written to disk.
 
+- **Returns**:
+  - The result of the operation, which includes the number of rows affected by the operation or an error if the operation failed.
+
 ```javascript
 db.flush();
+if (result.success) {
+  console.log(`Flushed ${result.data} rows`);
+}
 ```
 
 ### `Namespace`
@@ -434,11 +486,11 @@ Executes a raw SQL statement and returns the result.
   - `sql`: The SQL statement to execute.
   - `params`: Optional parameters to bind to the SQL statement.
 - **Returns**:
-  - The result of the SQL statement.
+  - The result of the operation, which includes the result of the SQL query or an error if the operation failed.
 
 ```javascript
 // Execute a SELECT statement and get results
-const rows = db.execute("SELECT * FROM miftahdb WHERE key LIKE ? LIMIT 5;", [
+const result = db.execute("SELECT * FROM miftahdb WHERE key LIKE ? LIMIT 5;", [
   "%",
 ]);
 ```
@@ -487,19 +539,14 @@ db.close();
 
 ## Error Handling
 
+**MiftahDB** uses result types to handle errors. The result type includes a boolean indicating whether the operation was successful and the data returned by the operation.
+
 ```javascript
-// Node
-import { SqliteError } from "miftahdb";
-
-// Bun
-// import { SQLiteError } from "miftahdb/bun";
-
-try {
-  db.execute("WRONG SQL STATEMENT");
-} catch (err) {
-  if (err instanceof SqliteError) {
-    console.log(err.message);
-  }
+const result = db.get("user:1234");
+if (result.success) {
+  console.log(`User: ${result.data}`);
+} else {
+  console.log(result.error.message);
 }
 ```
 
@@ -554,11 +601,11 @@ db.set<User>("user:1234", {
 });
 
 // Retrieve the value with TypeScript typing
-const value = db.get<User>("user:1234");
-if (value) {
-  console.log(`User: ${value.name}, Age: ${value.age}`);
+const result = db.get<User>("user:1234");
+if (result.success) {
+  console.log(`User: ${result.data.name}, Age: ${result.data.age}`);
 } else {
-  console.log("User not found");
+  console.log(result.error.message);
 }
 ```
 

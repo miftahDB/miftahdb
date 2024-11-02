@@ -1,5 +1,6 @@
 import DB from "bun:sqlite";
-import { BaseMiftahDB } from "./base";
+import { BaseMiftahDB, SafeExecution } from "./base";
+import type { Result } from "./types.ts";
 import { readFileSync } from "node:fs";
 
 // Intentionally using a type assertion here to align `bun:sqlite`'s `Database` type with `better-sqlite3`.
@@ -26,11 +27,16 @@ export class MiftahDB extends BaseMiftahDB {
     this.db = new DB(path) as unknown as Database;
   }
 
-  override execute(sql: string, params: unknown[] = []): unknown[] {
+  @SafeExecution
+  override execute(sql: string, params: unknown[] = []): Result<unknown[]> {
     const stmt = this.db.prepare(sql);
-    return stmt.all(...params);
+    return {
+      success: true,
+      data: stmt.all(...params),
+    };
   }
 
+  @SafeExecution
   override restore(path: string) {
     const file = readFileSync(path);
 
@@ -42,4 +48,3 @@ export class MiftahDB extends BaseMiftahDB {
 }
 
 export type { MiftahValue } from "./types";
-export { SQLiteError } from "bun:sqlite";
