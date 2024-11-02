@@ -442,7 +442,7 @@ Ensures all the changes are written to disk.
   - The result of the operation, which includes the number of rows affected by the operation or an error if the operation failed.
 
 ```javascript
-db.flush();
+const result = db.flush();
 if (result.success) {
   console.log(`Flushed ${result.data} rows`);
 }
