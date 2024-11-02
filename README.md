@@ -53,6 +53,7 @@ Fast and lightweight key-value database library.
 - Built on top of `better-sqlite3` for optimal Node.js performance
 - Utilizes `bun:sqlite` for seamless Bun integration
 - Pattern-based key retrieval
+- Result type handling ( no try-catch blocks )
 - **Supports both Bun and Node.js environments**
 
 ## Installation
