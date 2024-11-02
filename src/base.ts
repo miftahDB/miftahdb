@@ -6,7 +6,7 @@ import DB, {
 import { SQL_STATEMENTS } from "./statements";
 import type { IMiftahDB, MiftahValue, MiftahDBItem, Result } from "./types";
 import { encodeValue, decodeValue } from "./encoding";
-import { writeFileSync, readFileSync } from "node:fs";
+import { writeFile, readFile } from "node:fs/promises";
 
 export function SafeExecution<T extends (...args: unknown[]) => R, R>(
   target: unknown,
@@ -299,14 +299,10 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   }
 
   @SafeExecution
-  backup(path: string): void {
+  async backup(path: string): Promise<void> {
     const serialized = this.db.serialize();
-    const arrayBuffer = serialized.buffer.slice(
-      serialized.byteOffset,
-      serialized.byteOffset + serialized.byteLength
-    );
-
-    writeFileSync(path, Buffer.from(arrayBuffer));
+    const uint8Array = new Uint8Array(serialized);
+    await writeFile(path, uint8Array);
   }
 
   @SafeExecution
@@ -325,8 +321,8 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   }
 
   @SafeExecution
-  restore(path: string) {
-    const file = readFileSync(path);
+  async restore(path: string) {
+    const file = await readFile(path);
     this.db = new DB(file);
     this.statements = this.prepareStatements();
   }

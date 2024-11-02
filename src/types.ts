@@ -289,9 +289,9 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @example
    * const db = new MiftahDB(":memory:");
    * db.set("key", "value");
-   * db.backup("backup-1.db");
+   * await db.backup("backup-1.db");
    */
-  backup(path: string): void;
+  backup(path: string): Promise<void>;
 
   /**
    * Restores the database from a backup file.
@@ -299,10 +299,10 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @param path - The path to the backup file.
    * @example
    * const db = new MiftahDB(":memory:");
-   * db.restore("backup-1.db");
+   * await db.restore("backup-1.db");
    * console.log(db.get("key"));
    */
-  restore(path: string): void;
+  restore(path: string): Promise<void>;
 
   /**
    * Creates a namespaced database instance.

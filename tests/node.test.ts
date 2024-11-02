@@ -179,15 +179,15 @@ describe("MiftahDB Node Tests", () => {
     }
   });
 
-  it("Backup", () => {
+  it("Backup", async () => {
     const db = createDB();
     db.set("key1", "value1");
-    db.backup("backup_node_test.db");
+    await db.backup("backup_node_test.db");
   });
 
-  it("Restore", () => {
+  it("Restore", async () => {
     const db = createDB();
-    db.restore("backup_node_test.db");
+    await db.restore("backup_node_test.db");
     const result = db.get("key1");
     if (result.success) {
       assert.strictEqual(result.data, "value1");

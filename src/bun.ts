@@ -1,7 +1,7 @@
 import DB from "bun:sqlite";
 import { BaseMiftahDB, SafeExecution } from "./base";
 import type { Result } from "./types.ts";
-import { readFileSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 
 // Intentionally using a type assertion here to align `bun:sqlite`'s `Database` type with `better-sqlite3`.
 // Although `bun:sqlite` and `better-sqlite3` have different implementations, their API is similar enough for our purposes.
@@ -37,8 +37,8 @@ export class MiftahDB extends BaseMiftahDB {
   }
 
   @SafeExecution
-  override restore(path: string) {
-    const file = readFileSync(path);
+  override async restore(path: string) {
+    const file = await readFile(path);
 
     // @ts-expect-error `deserialize` exists in `bun:sqlite` but not in `better-sqlite3`.
     this.db = DB.deserialize(file);

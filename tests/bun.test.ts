@@ -175,15 +175,15 @@ test("Multi Delete", () => {
   }
 });
 
-test("Backup", () => {
+test("Backup", async () => {
   const db = createDB();
   db.set("key1", "value1");
-  db.backup("backup_bun_test.db");
+  await db.backup("backup_bun_test.db");
 });
 
-test("Restore", () => {
+test("Restore", async () => {
   const db = createDB();
-  db.restore("backup_bun_test.db");
+  await db.restore("backup_bun_test.db");
   const result = db.get<string>("key1");
   if (result.success) {
     expect(result.data).toBe("value1");
