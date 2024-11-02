@@ -219,11 +219,14 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * Deletes multiple key-value pairs from the database.
    * - https://miftahdb.sqlite3.online/docs/api-reference/multidelete
    * @param keys - An array of keys to delete.
-   * @returns The result of the operation, which includes a boolean indicating whether the operation was successful or an error if the operation failed.
+   * @returns The result of the operation, which includes the number of rows affected by the operation or an error if the operation failed.
    * @example
-   * db.multiDelete(['user:1234', 'user:5678']);
+   * const result = db.multiDelete(['user:1234', 'user:5678']);
+   * if (result.success) {
+   *   console.log(`Deleted ${result.data} rows`);
+   * }
    */
-  multiDelete(keys: string[]): Result<boolean>;
+  multiDelete(keys: string[]): Result<number>;
 
   /**
    * Optimizes the database file, reducing its size.

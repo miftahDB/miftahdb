@@ -394,10 +394,13 @@ Deletes multiple key-value pairs from the database.
 - **Parameters**:
   - `keys`: An array of keys to delete.
 - **Returns**:
-  - The result of the operation, which includes a boolean indicating whether the operation was successful or an error if the operation failed.
+  - The result of the operation, which includes the number of rows affected by the operation or an error if the operation failed.
 
 ```javascript
-db.multiDelete(["user:1234", "user:5678"]);
+const result = db.multiDelete(["user:1234", "user:5678"]);
+if (result.success) {
+  console.log(`Deleted ${result.data} rows`);
+}
 ```
 
 ---

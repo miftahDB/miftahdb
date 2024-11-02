@@ -252,17 +252,21 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   }
 
   @SafeExecution
-  multiDelete(keys: string[]): Result<boolean> {
+  multiDelete(keys: string[]): Result<number> {
+    let totalDeletedRows = 0;
     this.db.transaction(() => {
       for (const k of keys) {
         const key = this.addNamespacePrefix(k);
-        this.delete(key);
+        const deleteResult = this.delete(key);
+        if (deleteResult.success) {
+          totalDeletedRows += deleteResult.data;
+        }
       }
     })();
 
     return {
       success: true,
-      data: true,
+      data: totalDeletedRows,
     };
   }
 
