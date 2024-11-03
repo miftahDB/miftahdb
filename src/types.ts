@@ -230,7 +230,7 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * ]);
    */
   multiSet<K extends T>(
-    entries: Array<{ key: string; value: K; expiresAt?: Date }>
+    entries: Array<{ key: string; value: K; expiresAt?: Date | number }>
   ): Result<boolean>;
 
   /**

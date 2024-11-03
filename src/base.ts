@@ -215,7 +215,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     const result: Record<string, T | null> = {};
     this.db.transaction(() => {
       for (const k of keys) {
-        const value = this.get<T>(this.addNamespacePrefix(k));
+        const value = this.get<T>(k);
         if (value.success) result[this.removeNamespacePrefix(k)] = value.data;
       }
     })();
@@ -232,8 +232,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   ): Result<boolean> {
     this.db.transaction(() => {
       for (const entry of entries) {
-        const key = this.addNamespacePrefix(entry.key);
-        this.set(key, entry.value, entry.expiresAt);
+        this.set(entry.key, entry.value, entry.expiresAt);
       }
     })();
 
@@ -248,8 +247,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     let totalDeletedRows = 0;
     this.db.transaction(() => {
       for (const k of keys) {
-        const key = this.addNamespacePrefix(k);
-        const deleteResult = this.delete(key);
+        const deleteResult = this.delete(k);
         if (deleteResult.success) {
           totalDeletedRows += deleteResult.data;
         }
