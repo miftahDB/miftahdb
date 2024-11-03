@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert";
-import { MiftahDB } from "../src/index";
+import { MiftahDB, type Result } from "../src/index";
 
 function createDB() {
   return new MiftahDB(":memory:");
@@ -120,17 +120,21 @@ describe("MiftahDB Node Tests", () => {
     assert.strictEqual(result.error.message, "Key not found");
   });
 
-  // it("Execute", () => {
-  //   const db = createDB();
-  //   db.execute(
-  //     "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
-  //   );
-  //   db.execute("INSERT INTO test (value) VALUES (?)", ["test_value"]);
-  //   const result = db.execute("SELECT value FROM test WHERE id = 1") as {
-  //     value: string;
-  //   }[];
-  //   assert.strictEqual(result[0].value, "test_value");
-  // });
+  it("Execute", () => {
+    const db = createDB();
+    db.execute(
+      "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
+    );
+    db.execute("INSERT INTO test (value) VALUES (?)", ["test_value"]);
+    const result = db.execute("SELECT value FROM test WHERE id = 1") as Result<
+      {
+        value: string;
+      }[]
+    >;
+
+    if (!result.success) throw new Error(result.error.message);
+    assert.strictEqual(result.data[0].value, "test_value");
+  });
 
   it("Set & Get Expiration", () => {
     const db = createDB();

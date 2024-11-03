@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { MiftahDB } from "../src/bun";
+import { MiftahDB, type Result } from "../src/bun";
 
 function createDB() {
   return new MiftahDB(":memory:");
@@ -117,17 +117,20 @@ test("Flush", () => {
   }
 });
 
-// test("Execute", () => {
-//   const db = createDB();
-//   db.execute(
-//     "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
-//   );
-//   db.execute("INSERT INTO test (value) VALUES (?)", ["test_value"]);
-//   const result = db.execute("SELECT value FROM test WHERE id = 1") as {
-//     value: string;
-//   }[];
-//   expect(result[0].value).toBe("test_value");
-// });
+test("Execute", () => {
+  const db = createDB();
+  db.execute(
+    "CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, value TEXT)"
+  );
+  db.execute("INSERT INTO test (value) VALUES (?)", ["test_value"]);
+  const result = db.execute("SELECT value FROM test WHERE id = 1") as Result<
+    {
+      value: string;
+    }[]
+  >;
+  if (!result.success) throw new Error(result.error.message);
+  expect(result.data[0].value).toBe("test_value");
+});
 
 test("Set & Get Expiration", () => {
   const db = createDB();

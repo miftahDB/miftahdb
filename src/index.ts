@@ -22,3 +22,4 @@ export class MiftahDB extends BaseMiftahDB {
 
 export type { RunResult } from "better-sqlite3";
 export type { MiftahValue } from "./types";
+export type { Result } from "./types";

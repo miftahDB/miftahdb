@@ -310,7 +310,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   }
 
   @SafeExecution
-  execute(sql: string, params: unknown[] = []): Result<unknown> {
+  execute(sql: string, params: unknown[] = []): Result<unknown[] | RunResult> {
     const stmt = this.db.prepare(sql);
 
     if (stmt.reader)

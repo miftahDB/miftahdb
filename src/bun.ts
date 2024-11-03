@@ -51,3 +51,4 @@ export class MiftahDB extends BaseMiftahDB {
 }
 
 export type { MiftahValue } from "./types";
+export type { Result } from "./types";
