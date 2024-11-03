@@ -3,32 +3,13 @@ import DB, {
   type Statement,
   type RunResult,
 } from "better-sqlite3";
-import { SQL_STATEMENTS } from "./statements";
-import type { IMiftahDB, MiftahValue, MiftahDBItem, Result } from "./types";
-import { encodeValue, decodeValue } from "./encoding";
 import { writeFile, readFile } from "node:fs/promises";
 
-export function SafeExecution<T extends (...args: unknown[]) => R, R>(
-  target: unknown,
-  propertyKey: string,
-  descriptor: PropertyDescriptor
-): PropertyDescriptor {
-  const originalMethod = descriptor.value;
+import { SQL_STATEMENTS } from "./statements";
+import { encodeValue, decodeValue } from "./encoding";
+import { SafeExecution, getExpireDate } from "./utils";
 
-  descriptor.value = function (...args: Parameters<T>): Result<ReturnType<T>> {
-    try {
-      const result = originalMethod.apply(this, args);
-      return result;
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error : new Error(String(error)),
-      };
-    }
-  };
-
-  return descriptor;
-}
+import type { IMiftahDB, MiftahValue, MiftahDBItem, Result } from "./types";
 
 export abstract class BaseMiftahDB implements IMiftahDB {
   protected declare db: Database;
@@ -37,36 +18,13 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   constructor(path = ":memory:") {
     this.initDatabase(path);
+
     this.db.exec(SQL_STATEMENTS.CREATE_PRAGMA);
     this.db.exec(SQL_STATEMENTS.CREATE_TABLE);
     this.db.exec(SQL_STATEMENTS.CREATE_INDEX);
+
     this.statements = this.prepareStatements();
   }
-
-  private addNamespacePrefix(k: string): string {
-    return this.nameSpacePrefix ? `${this.nameSpacePrefix}:${k}` : k;
-  }
-
-  private removeNamespacePrefix(key: string): string {
-    return this.nameSpacePrefix && key.startsWith(`${this.nameSpacePrefix}:`)
-      ? key.slice(this.nameSpacePrefix.length + 1)
-      : key;
-  }
-
-  private getExpireDate(expiresAt: number | Date | undefined) {
-    let expiresAtMs: number | undefined = undefined;
-    if (expiresAt) {
-      if (typeof expiresAt === "number") {
-        expiresAtMs = new Date().getTime() + expiresAt;
-      } else {
-        expiresAtMs = expiresAt.getTime();
-      }
-    }
-
-    return expiresAtMs;
-  }
-
-  protected abstract initDatabase(path: string | ":memory:"): void;
 
   protected prepareStatements(): Record<string, Statement> {
     return {
@@ -85,6 +43,27 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       vacuum: this.db.prepare(SQL_STATEMENTS.VACUUM),
       flush: this.db.prepare(SQL_STATEMENTS.FLUSH),
     };
+  }
+
+  protected abstract initDatabase(path: string | ":memory:"): void;
+
+  private addNamespacePrefix(k: string): string {
+    return this.nameSpacePrefix ? `${this.nameSpacePrefix}:${k}` : k;
+  }
+
+  private removeNamespacePrefix(key: string): string {
+    return this.nameSpacePrefix && key.startsWith(`${this.nameSpacePrefix}:`)
+      ? key.slice(this.nameSpacePrefix.length + 1)
+      : key;
+  }
+
+  namespace(name: string): IMiftahDB {
+    const namespacedDB = Object.create(this);
+    namespacedDB.nameSpacePrefix = this.nameSpacePrefix
+      ? `${this.nameSpacePrefix}:${name}`
+      : name;
+
+    return namespacedDB;
   }
 
   @SafeExecution
@@ -114,7 +93,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     this.statements.set.run(
       this.addNamespacePrefix(key),
       encodeValue(value),
-      this.getExpireDate(expiresAt)
+      getExpireDate(expiresAt)
     );
 
     return { success: true, data: true };
@@ -152,7 +131,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   @SafeExecution
   setExpire(key: string, expiresAt: Date | number): Result<boolean> {
     this.statements.setExpire.run(
-      this.getExpireDate(expiresAt),
+      getExpireDate(expiresAt),
       this.addNamespacePrefix(key)
     );
 
@@ -319,36 +298,32 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   async backup(path: string): Promise<void> {
     const serialized = this.db.serialize();
     const uint8Array = new Uint8Array(serialized);
-    await writeFile(path, uint8Array);
-  }
 
-  @SafeExecution
-  execute(sql: string, params: unknown[] = []): Result<unknown> {
-    const stmt = this.db.prepare(sql);
-    if (stmt.reader) {
-      return {
-        success: true,
-        data: stmt.all(...params),
-      };
-    }
-    return {
-      success: true,
-      data: stmt.run(...params),
-    };
+    await writeFile(path, uint8Array);
   }
 
   @SafeExecution
   async restore(path: string) {
     const file = await readFile(path);
+
     this.db = new DB(file);
+
     this.statements = this.prepareStatements();
   }
 
-  namespace(name: string): IMiftahDB {
-    const namespacedDB = Object.create(this);
-    namespacedDB.nameSpacePrefix = this.nameSpacePrefix
-      ? `${this.nameSpacePrefix}:${name}`
-      : name;
-    return namespacedDB;
+  @SafeExecution
+  execute(sql: string, params: unknown[] = []): Result<unknown> {
+    const stmt = this.db.prepare(sql);
+
+    if (stmt.reader)
+      return {
+        success: true,
+        data: stmt.all(...params),
+      };
+
+    return {
+      success: true,
+      data: stmt.run(...params),
+    };
   }
 }

@@ -1,7 +1,9 @@
 import DB from "bun:sqlite";
-import { BaseMiftahDB, SafeExecution } from "./base";
-import type { Result } from "./types.ts";
 import { readFile } from "node:fs/promises";
+
+import { BaseMiftahDB } from "./base";
+import type { Result } from "./types.ts";
+import { SafeExecution } from "./utils";
 
 // Intentionally using a type assertion here to align `bun:sqlite`'s `Database` type with `better-sqlite3`.
 // Although `bun:sqlite` and `better-sqlite3` have different implementations, their API is similar enough for our purposes.
@@ -15,11 +17,11 @@ import type { Database } from "better-sqlite3";
  * - https://miftahdb.sqlite3.online/docs/api-reference/constructor
  * @param {string} path - Path to the database file. Defaults to ":memory:" if not provided.
  * @example
- * // Create a new MiftahDB instance with disk-based database
+ * // New MiftahDB instance with disk-based database
  * const db = new MiftahDB("test.db");
  *
- * // Create a new MiftahDB instance with in-memory database
- * const memoryDB = new MiftahDB(":memory:");
+ * //New MiftahDB instance with in-memory database
+ * const db = new MiftahDB(":memory:");
  */
 export class MiftahDB extends BaseMiftahDB {
   protected declare db: Database;

@@ -31,7 +31,7 @@ export const SQL_STATEMENTS = {
   // Optimizes the database file, reducing its size.
   VACUUM: "VACUUM",
 
-  // Deletes all rows from the table
+  // Deletes all rows
   FLUSH: "DELETE FROM miftahDB WHERE key LIKE ?",
 
   // Returns true if the key exists, false otherwise
@@ -49,14 +49,14 @@ export const SQL_STATEMENTS = {
   // Returns all keys that match the given pattern with pagination
   PAGINATION: "SELECT key FROM miftahDB WHERE key LIKE ? LIMIT ? OFFSET ?",
 
-  // Counts the total number of rows in the table
+  // Counts the total number of rows
   COUNT_KEYS: "SELECT COUNT(*) AS count FROM miftahDB where key LIKE ?",
 
-  // Counts the number of expired rows in the table
+  // Counts the number of expired rows
   COUNT_EXPIRED:
     "SELECT COUNT(*) as count FROM miftahDB WHERE (expires_at IS NOT NULL AND expires_at <= ?) AND key LIKE ?",
 
-  // Creates the PRAGMA statements
+  // PRAGMA statements
   CREATE_PRAGMA: `
     PRAGMA journal_mode = WAL;
     PRAGMA synchronous = NORMAL;
