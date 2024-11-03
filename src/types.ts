@@ -36,17 +36,28 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * - https://miftahdb.sqlite3.online/docs/api-reference/set
    * @param key - The key under which to store the value.
    * @param value - The value to store.
-   * @param expiresAt - Optional expiration date for the key-value pair.
+   * @param expiresAt - Optional expiration date or number of milliseconds for the key-value pair.
    * @returns The result of the operation, which includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
+   * // Full example with expiration date
    * const result = db.set('user:1234', { name: 'Ahmad' }, new Date('2030-12-31'));
    * if (result.success) {
    *   console.log('Key set successfully');
    * } else {
    *   console.log(result.error.message);
    * }
+   *
+   * // Set a value with expiration in milliseconds
+   * db.set('key', 'value', 90000);
+   *
+   * // Set a value with no expiration
+   * db.set('key', 'value');
    */
-  set<K extends T>(key: string, value: K, expiresAt?: Date): Result<boolean>;
+  set<K extends T>(
+    key: string,
+    value: K,
+    expiresAt?: Date | number
+  ): Result<boolean>;
 
   /**
    * Checks if a key exists in the database.
@@ -203,12 +214,13 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
   /**
    * Sets multiple key-value pairs in the database with optional expirations.
    * - https://miftahdb.sqlite3.online/docs/api-reference/multiset
-   * @param entries - An array of objects containing key, value, and optional expiresAt.
+   * @param entries - An array of objects containing key, value, and optional expiresAt date or number of milliseconds.
    * @returns The result of the operation, which includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
    * db.multiSet([
-   *   { key: 'user:1234', value: { name: 'Ahmad' }, expiresAt: new Date('2023-12-31') },
-   *   { key: 'user:5678', value: { name: 'Fatima' } }
+   *   { key: 'user:1234', value: { name: 'Ahmad' }, expiresAt: new Date('2025-12-31') },
+   *   { key: 'user:5678', value: { name: 'Fatima' }, expiresAt: 86400000 },
+   *   { key: 'user:7890', value: { name: 'Mohamed' } }
    * ]);
    */
   multiSet<K extends T>(

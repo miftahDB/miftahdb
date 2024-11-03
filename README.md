@@ -379,9 +379,10 @@ db.multiSet([
   {
     key: "user:1234",
     value: { name: "Ahmad" },
-    expiresAt: new Date("2023-12-31"),
+    expiresAt: new Date("2025-12-31"),
   },
-  { key: "user:5678", value: { name: "Fatima" } },
+  { key: "user:5678", value: { name: "Fatima" }, expiresAt: 86400000 },
+  { key: "user:7890", value: { name: "Mohamed" } },
 ]);
 ```
 

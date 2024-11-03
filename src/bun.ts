@@ -30,6 +30,7 @@ export class MiftahDB extends BaseMiftahDB {
   @SafeExecution
   override execute(sql: string, params: unknown[] = []): Result<unknown[]> {
     const stmt = this.db.prepare(sql);
+
     return {
       success: true,
       data: stmt.all(...params),

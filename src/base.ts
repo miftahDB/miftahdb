@@ -53,6 +53,19 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       : key;
   }
 
+  private getExpireDate(expiresAt: number | Date | undefined) {
+    let expiresAtMs: number | undefined = undefined;
+    if (expiresAt) {
+      if (typeof expiresAt === "number") {
+        expiresAtMs = new Date().getTime() + expiresAt;
+      } else {
+        expiresAtMs = expiresAt.getTime();
+      }
+    }
+
+    return expiresAtMs;
+  }
+
   protected abstract initDatabase(path: string | ":memory:"): void;
 
   protected prepareStatements(): Record<string, Statement> {
@@ -96,14 +109,12 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   set<T extends MiftahValue>(
     key: string,
     value: T,
-    expiresAt?: Date
+    expiresAt?: Date | number
   ): Result<boolean> {
-    const encodedValue = encodeValue(value);
-    const expiresAtMs = expiresAt?.getTime() ?? null;
     this.statements.set.run(
       this.addNamespacePrefix(key),
-      encodedValue,
-      expiresAtMs
+      encodeValue(value),
+      this.getExpireDate(expiresAt)
     );
 
     return { success: true, data: true };
@@ -139,9 +150,11 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   }
 
   @SafeExecution
-  setExpire(key: string, expiresAt: Date): Result<boolean> {
-    const expiresAtMs = expiresAt.getTime();
-    this.statements.setExpire.run(expiresAtMs, this.addNamespacePrefix(key));
+  setExpire(key: string, expiresAt: Date | number): Result<boolean> {
+    this.statements.setExpire.run(
+      this.getExpireDate(expiresAt),
+      this.addNamespacePrefix(key)
+    );
 
     return { success: true, data: true };
   }
@@ -236,7 +249,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   multiSet<T extends MiftahValue>(
-    entries: Array<{ key: string; value: T; expiresAt?: Date }>
+    entries: Array<{ key: string; value: T; expiresAt?: Date | number }>
   ): Result<boolean> {
     this.db.transaction(() => {
       for (const entry of entries) {
