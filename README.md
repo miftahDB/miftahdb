@@ -580,8 +580,15 @@ Backups the database to a file asynchronously.
 
 ```javascript
 const db = new MiftahDB(":memory:");
+
 db.set("key", "value");
-await db.backup("backup-1.db");
+
+const result = await db.backup("backup-1.db");
+if (result.success) {
+  console.log("Backup completed successfully");
+} else {
+  console.log(result.error.message);
+}
 ```
 
 ---
@@ -595,7 +602,14 @@ Restores the database from a backup file asynchronously.
 
 ```javascript
 const db = new MiftahDB(":memory:");
-await db.restore("backup-1.db");
+
+const result = await db.restore("backup-1.db");
+if (result.success) {
+  console.log("Restore completed successfully");
+} else {
+  console.log(result.error.message);
+}
+
 console.log(db.get("key"));
 ```
 

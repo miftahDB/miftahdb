@@ -357,23 +357,39 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * Backups the database to a file.
    * - https://miftahdb.sqlite3.online/docs/api-reference/backup
    * @param path - The path to where the backup should be saved.
+   * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
    * const db = new MiftahDB(":memory:");
+   *
    * db.set("key", "value");
-   * await db.backup("backup-1.db");
+   *
+   * const result = await db.backup("backup-1.db");
+   * if (result.success) {
+   *   console.log("Backup completed successfully");
+   * } else {
+   *   console.log(result.error.message);
+   * }
    */
-  backup(path: string): Promise<void>;
+  backup(path: string): PromiseResult<boolean>;
 
   /**
    * Restores the database from a backup file.
    * - https://miftahdb.sqlite3.online/docs/api-reference/restore
    * @param path - The path to the backup file.
+   * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
    * const db = new MiftahDB(":memory:");
-   * await db.restore("backup-1.db");
+   *
+   * const result = await db.restore("backup-1.db");
+   * if (result.success) {
+   *   console.log("Restore completed successfully");
+   * } else {
+   *   console.log(result.error.message);
+   * }
+   *
    * console.log(db.get("key"));
    */
-  restore(path: string): Promise<void>;
+  restore(path: string): PromiseResult<boolean>;
 
   /**
    * Creates a namespaced database instance.
@@ -421,3 +437,17 @@ export type Result<TData, TError extends Error = Error> =
       success: false;
       error: TError;
     };
+
+/**
+ * Represents the result of a function that returns a value or an error asynchronously.
+ */
+export type PromiseResult<TData, TError extends Error = Error> = Promise<
+  | {
+      success: true;
+      data: TData;
+    }
+  | {
+      success: false;
+      error: TError;
+    }
+>;

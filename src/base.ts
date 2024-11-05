@@ -9,7 +9,13 @@ import { SQL_STATEMENTS } from "./statements";
 import { encodeValue, decodeValue } from "./encoding";
 import { SafeExecution, getExpireDate } from "./utils";
 
-import type { IMiftahDB, MiftahValue, MiftahDBItem, Result } from "./types";
+import type {
+  IMiftahDB,
+  MiftahValue,
+  MiftahDBItem,
+  Result,
+  PromiseResult,
+} from "./types";
 
 export abstract class BaseMiftahDB implements IMiftahDB {
   protected declare db: Database;
@@ -291,20 +297,23 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   }
 
   @SafeExecution
-  async backup(path: string): Promise<void> {
+  async backup(path: string): PromiseResult<boolean> {
     const serialized = this.db.serialize();
     const uint8Array = new Uint8Array(serialized);
 
     await writeFile(path, uint8Array);
+
+    return { success: true, data: true };
   }
 
   @SafeExecution
-  async restore(path: string) {
+  async restore(path: string): PromiseResult<boolean> {
     const file = await readFile(path);
 
     this.db = new DB(file);
-
     this.statements = this.prepareStatements();
+
+    return { success: true, data: true };
   }
 
   @SafeExecution
