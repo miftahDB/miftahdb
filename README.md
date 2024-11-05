@@ -190,6 +190,8 @@ if (db.exists("user:12345").success) {
 }
 ```
 
+> **Note:** The `exists` method is faster than `get` because it uses a simpler SQL query. Use `exists` when you only need to check if a key is present, as it can boost performance in speed-sensitive situations.
+
 ---
 
 ### `Delete`
@@ -367,6 +369,8 @@ if (result.success) {
 const userCount = db.count("user:%");
 ```
 
+> **Note:** The `count` method is faster than using `keys().length` because it directly executes a SQL query optimized for counting rows. Use `count` when you need to determine the number of keys, as it provides better performance compared to fetching all keys and measuring their length.
+
 ---
 
 ### `Count Expired`
@@ -482,6 +486,8 @@ if (result.success) {
 }
 ```
 
+> **Note:** Regularly run the cleanup() method to optimize the database and reduce its size.
+
 ---
 
 ### `Vacuum`
@@ -498,6 +504,8 @@ if (db.vacuum().success) {
   console.log(result.error.message);
 }
 ```
+
+> **Note:** Regularly run the cleanup() method to optimize the database and reduce its size.
 
 ---
 
@@ -566,6 +574,7 @@ Executes a raw SQL statement and returns the result.
 const result = db.execute("SELECT * FROM miftahdb WHERE key LIKE ? LIMIT 5;", [
   "%",
 ]);
+
 if (result.success) {
   console.log(result.data);
 } else {
@@ -700,22 +709,38 @@ When retrieving values from **MiftahDB**, you can define the type of the stored 
 type User = {
   name: string;
   age: number;
-  email: string;
 };
 
-// Set a value with a known structure
+// Set a value with TypeScript typing
 db.set<User>("user:1234", {
   name: "Ahmad",
   age: 15,
-  email: "ahmad@example.com",
 });
 
 // Retrieve the value with TypeScript typing
-const result = db.get<User>("user:1234");
-if (result.success) {
-  console.log(`User: ${result.data.name}, Age: ${result.data.age}`);
+const getResult = db.get<User>("user:1234");
+if (getResult.success) {
+  console.log(`User: ${getResult.data.name}`);
 } else {
-  console.log(result.error.message);
+  console.log(getResult.error.message);
+}
+
+// Multi-Set a value with TypeScript typing
+db.multiSet<User>([
+  {
+    key: "user:2345",
+    value: { name: "Ahmad", age: 15 },
+    expiresAt: new Date("2025-12-31"),
+  },
+  { key: "user:7890", value: { name: "Mohamed", age: 25 } },
+]);
+
+// Multi-Get a value with TypeScript typing
+const multiGetResult = db.multiGet<User>(["user:2345", "user:7890"]);
+if (multiGetResult.success) {
+  console.log(multiGetResult.data[0].age);
+} else {
+  console.log(multiGetResult.error.message);
 }
 ```
 
