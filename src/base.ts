@@ -215,8 +215,8 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   }
 
   @SafeExecution
-  multiGet<T>(keys: string[]): Result<Record<string, T | null>> {
-    const result: Record<string, T | null> = {};
+  multiGet<T>(keys: string[]): Result<T[]> {
+    const result: Record<string, T> = {};
     this.db.transaction(() => {
       for (const k of keys) {
         const value = this.get<T>(k);
@@ -224,9 +224,12 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       }
     })();
 
+    const resultArray = Object.values(result);
+    if (resultArray.length === 0) throw Error("No keys found");
+
     return {
       success: true,
-      data: result,
+      data: resultArray as T[],
     };
   }
 

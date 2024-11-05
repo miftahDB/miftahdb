@@ -162,7 +162,7 @@ describe("MiftahDB Node Tests", () => {
     ]);
     const result = db.multiGet(["key1", "key2"]);
     if (result.success) {
-      assert.deepStrictEqual(result.data, { key1: "value1", key2: "value2" });
+      assert.deepStrictEqual(result.data, ["value1", "value2"]);
     } else {
       throw new Error(result.error.message);
     }
@@ -177,10 +177,9 @@ describe("MiftahDB Node Tests", () => {
     db.multiDelete(["key1", "key2"]);
     const result = db.multiGet(["key1", "key2"]);
     if (result.success) {
-      assert.deepStrictEqual(result.data, {});
-    } else {
-      throw new Error(result.error.message);
+      throw new Error("No keys found should be an error");
     }
+    assert.strictEqual(result.error.message, "No keys found");
   });
 
   it("Backup", async () => {
@@ -239,18 +238,12 @@ describe("MiftahDB Node Tests", () => {
     ]);
     const result2 = db.multiGet(["123", "456"]);
     if (result.success) {
-      assert.deepStrictEqual(result.data, {
-        "123": "value1",
-        "456": "value2",
-      });
+      assert.deepStrictEqual(result.data, ["value1", "value2"]);
     } else {
       throw new Error(result.error.message);
     }
     if (result2.success) {
-      assert.deepStrictEqual(result2.data, {
-        "123": "value3",
-        "456": "value4",
-      });
+      assert.deepStrictEqual(result2.data, ["value3", "value4"]);
     } else {
       throw new Error(result2.error.message);
     }

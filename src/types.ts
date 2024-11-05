@@ -239,16 +239,16 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * Retrieves multiple values from the database by their keys.
    * - https://miftahdb.sqlite3.online/docs/api-reference/multiget
    * @param keys - An array of keys to look up.
-   * @returns The result of the operation, includes an object with keys and their corresponding values or an error if the operation failed.
+   * @returns The result of the operation, includes an array of values or an error if the operation failed.
    * @example
-   * const result = db.multiGet(['user:1234', 'user:5678']);
+   * const result = db.multiGet<User>(['user:1234', 'user:5678']);
    * if (result.success) {
-   *   console.log(result.data);
+   *   console.log(result[0].age);
    * } else {
    *   console.log(result.error.message);
    * }
    */
-  multiGet<K extends T>(keys: string[]): Result<Record<string, T | null>>;
+  multiGet<K extends T>(keys: string[]): Result<T[]>;
 
   /**
    * Sets multiple key-value pairs in the database with optional expirations.
@@ -256,7 +256,7 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @param entries - An array of objects containing key, value, and optional expiresAt date as a Date object or number of milliseconds.
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
-   * const result = db.multiSet([
+   * const result = db.multiSet<User>([
    *   { key: 'user:1234', value: { name: 'Ahmad' }, expiresAt: new Date('2025-12-31') },
    *   { key: 'user:5678', value: { name: 'Fatima' }, expiresAt: 86400000 },
    *   { key: 'user:7890', value: { name: 'Mohamed' } }

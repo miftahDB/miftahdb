@@ -400,12 +400,12 @@ Retrieves multiple values from the database by their keys.
 - **Parameters**:
   - `keys`: An array of keys to look up.
 - **Returns**:
-  - The result of the operation, includes an object with keys and their corresponding values or an error if the operation failed.
+  - The result of the operation, includes an array of values or an error if the operation failed.
 
-```javascript
-const result = db.multiGet(["user:1234", "user:5678"]);
+```typescript
+const result = db.multiGet<User>(["user:1234", "user:5678"]);
 if (result.success) {
-  console.log(result.data);
+  console.log(result.data[0].age);
 } else {
   console.log(result.error.message);
 }
@@ -422,15 +422,19 @@ Sets multiple key-value pairs in the database with optional expirations.
 - **Returns**:
   - The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
 
-```javascript
-const result = db.multiSet([
+```typescript
+const result = db.multiSet<User>([
   {
     key: "user:1234",
-    value: { name: "Ahmad" },
-    expiresAt: new Date("2025-12-31"),
+    value: { name: "Ahmad", age: 15 },
+    expiresAt: new Date("2025-12-31"), // 1 year in Date object
   },
-  { key: "user:5678", value: { name: "Fatima" }, expiresAt: 86400000 },
-  { key: "user:7890", value: { name: "Mohamed" } },
+  {
+    key: "user:5678",
+    value: { name: "Fatima", age: 30 },
+    expiresAt: 86400000, // 1 day in milliseconds
+  },
+  { key: "user:7890", value: { name: "Mohamed", age: 25 } }, // No expiration
 ]);
 
 if (result.success) {
