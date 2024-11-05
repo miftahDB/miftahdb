@@ -82,6 +82,8 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * const result = db.delete('user:1234');
    * if (result.success) {
    *   console.log(`Deleted ${result.data} rows`);
+   * } else {
+   *   console.log(result.error.message);
    * }
    */
   delete(key: string): Result<number>;
@@ -95,6 +97,8 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @example
    * if (db.rename('user:old_id', 'user:new_id').success) {
    *   console.log('Key renamed successfully');
+   * } else {
+   *   console.log(result.error.message);
    * }
    */
   rename(oldKey: string, newKey: string): Result<boolean>;
@@ -109,11 +113,15 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * // Date object expiration
    * if (db.setExpire('user:1234', new Date('2028-12-31')).success) {
    *   console.log('Expiration date set successfully');
+   * } else {
+   *   console.log(result.error.message);
    * }
    *
    * // Number of milliseconds expiration
    * if (db.setExpire('user:1234', 90000).success) {
    *   console.log('Expiration date set successfully');
+   * } else {
+   *   console.log(result.error.message);
    * }
    */
   setExpire(key: string, expiresAt: Date | number): Result<boolean>;
@@ -140,6 +148,14 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    *                                 Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The result of the operation, includes an array of matching keys or an error if the operation failed.
    * @example
+   * // Get all keys with result type handling
+   * const result = db.keys();
+   * if (result.success) {
+   *   console.log(result.data);
+   * } else {
+   *   console.log(result.error.message);
+   * }
+   *
    * // Get all keys
    * const allKeys = db.keys();
    *
@@ -162,6 +178,14 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The result of the operation, includes an array of keys that match the pattern or an error if the operation failed.
    * @example
+   * // Get the first 5 keys from the database with result type handling
+   * const result = db.pagination(5, 1);
+   * if (result.success) {
+   *   console.log(result.data);
+   * } else {
+   *   console.log(result.error.message);
+   * }
+   *
    * // Get the first 5 keys from the database
    * const firstPage = db.pagination(5, 1);
    *
@@ -179,10 +203,12 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The result of the operation, includes the number of keys in the database or an error if the operation failed.
    * @example
-   * // Get the total number of keys
-   * const count = db.count();
+   * // Get the total number of keys with result type handling
+   * const result = db.count();
    * if (result.success) {
    *   console.log(`Total keys: ${result.data}`);
+   * } else {
+   *   console.log(result.error.message);
    * }
    *
    * // Get the number of keys matching "user:%"
@@ -196,10 +222,12 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The result of the operation, includes the number of expired keys in the database or an error if the operation failed.
    * @example
-   * // Get the total number of expired keys
-   * const countExpired = db.countExpired();
+   * // Get the total number of expired keys with result type handling
+   * const result = db.countExpired();
    * if (result.success) {
    *   console.log(`Total expired keys: ${result.data}`);
+   * } else {
+   *   console.log(result.error.message);
    * }
    *
    * // Get the number of expired keys matching "user:%"
@@ -214,6 +242,11 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @returns The result of the operation, includes an object with keys and their corresponding values or an error if the operation failed.
    * @example
    * const result = db.multiGet(['user:1234', 'user:5678']);
+   * if (result.success) {
+   *   console.log(result.data);
+   * } else {
+   *   console.log(result.error.message);
+   * }
    */
   multiGet<K extends T>(keys: string[]): Result<Record<string, T | null>>;
 
@@ -223,11 +256,16 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @param entries - An array of objects containing key, value, and optional expiresAt date as a Date object or number of milliseconds.
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
-   * db.multiSet([
+   * const result = db.multiSet([
    *   { key: 'user:1234', value: { name: 'Ahmad' }, expiresAt: new Date('2025-12-31') },
    *   { key: 'user:5678', value: { name: 'Fatima' }, expiresAt: 86400000 },
    *   { key: 'user:7890', value: { name: 'Mohamed' } }
    * ]);
+   * if (result.success) {
+   *   console.log(result.data);
+   * } else {
+   *   console.log(result.error.message);
+   * }
    */
   multiSet<K extends T>(
     entries: Array<{ key: string; value: K; expiresAt?: Date | number }>
@@ -242,6 +280,8 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * const result = db.multiDelete(['user:1234', 'user:5678']);
    * if (result.success) {
    *   console.log(`Deleted ${result.data} rows`);
+   * } else {
+   *   console.log(result.error.message);
    * }
    */
   multiDelete(keys: string[]): Result<number>;
@@ -251,7 +291,11 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * - https://miftahdb.sqlite3.online/docs/api-reference/vacuum
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
-   * db.vacuum();
+   * if (db.vacuum().success) {
+   *   console.log("Database vacuumed successfully");
+   * } else {
+   *   console.log(result.error.message);
+   * }
    */
   vacuum(): Result<boolean>;
 
@@ -272,6 +316,8 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * const result = db.cleanup();
    * if (result.success) {
    *   console.log(`Cleaned up ${result.data} rows`);
+   * } else {
+   *   console.log(result.error.message);
    * }
    */
   cleanup(): Result<number>;
@@ -284,6 +330,8 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * const result = db.flush();
    * if (result.success) {
    *   console.log(`Flushed ${result.data} rows`);
+   * } else {
+   *   console.log(result.error.message);
    * }
    */
   flush(): Result<number>;
@@ -297,9 +345,11 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @example
    * // Execute a SELECT statement and get results
    * const result = db.execute("SELECT * FROM miftahdb WHERE key LIKE ? LIMIT 5;", ["%"]);
-   *
-   * // Execute an DELETE statement
-   * db.execute("DELETE FROM miftahdb WHERE key LIKE ?", ["user:1234"]);
+   * if (result.success) {
+   *   console.log(result.data);
+   * } else {
+   *   console.log(result.error.message);
+   * }
    */
   execute(sql: string, params?: unknown[]): Result<unknown>;
 
@@ -329,11 +379,22 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * Creates a namespaced database instance.
    * - https://miftahdb.sqlite3.online/docs/api-reference/namespace
    * @param name - The name of the namespace.
-   * @returns A new database instance with the namespace applied.
+   * @returns A new namespaced database instance.
    * @example
    * const users = db.namespace("users");
-   * users.set("123", "value1");
-   * console.log(users.get("123"));
+   *
+   * // Set/Get a value with a namespace
+   * users.set("852335", { name: "Ahmad" });
+   * console.log(users.get("852335"));
+   *
+   * // Will count the keys only on the "users" namespace only
+   * users.count();
+   *
+   * // Will remove expired keys only on the "users" namespace only
+   * users.cleanup();
+   *
+   * // Will remove all keys only on the "users" namespace only
+   * users.flush();
    */
   namespace(name: string): IMiftahDB<T>;
 }

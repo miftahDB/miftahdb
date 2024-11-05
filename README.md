@@ -37,8 +37,8 @@ Fast and lightweight key-value database library.
 - [Installation](#-installation)
 - [Usage](#usage)
 - [Synchronous API](#synchronous-api)
-- [API Reference](#api-reference)
 - [Error Handling](#error-handling)
+- [API Reference](#api-reference)
 - [Supported Value Types](#supported-value-types)
 - [TypeScript Typing & Generics](#typescript-typing--generics)
 - [Pattern Matching](#pattern-matching)
@@ -81,9 +81,6 @@ import { MiftahDB } from "miftahdb/bun";
 ```javascript
 // Create a new disk-based database instance
 const db = new MiftahDB("database.db");
-
-// Or create an in-memory database
-// const db = new MiftahDB(":memory:");
 
 // Use the database
 db.set("user:1234", { name: "Ahmad Aburob" });
@@ -208,6 +205,8 @@ Deletes a key-value pair from the database.
 const result = db.delete("user:1234");
 if (result.success) {
   console.log(`Deleted ${result.data} rows`);
+} else {
+  console.log(result.error.message);
 }
 ```
 
@@ -226,6 +225,8 @@ Renames a key in the database.
 ```javascript
 if (db.rename("user:old_id", "user:new_id").success) {
   console.log("Key renamed successfully");
+} else {
+  console.log(result.error.message);
 }
 ```
 
@@ -265,11 +266,15 @@ Sets or update the expiration date of a key.
 // Date object expiration
 if (db.setExpire("user:1234", new Date("2028-12-31")).success) {
   console.log("Expiration date set successfully");
+} else {
+  console.log(result.error.message);
 }
 
 // Number of milliseconds expiration
 if (db.setExpire("user:1234", 90000).success) {
   console.log("Expiration date set successfully");
+} else {
+  console.log(result.error.message);
 }
 ```
 
@@ -285,6 +290,14 @@ Retrieves keys matching a pattern.
   - The result of the operation, includes an array of matching keys or an error if the operation failed.
 
 ```javascript
+// Get all keys with result type handling
+const result = db.keys();
+if (result.success) {
+  console.log(result.data);
+} else {
+  console.log(result.error.message);
+}
+
 // Get all keys
 const allKeys = db.keys();
 
@@ -312,6 +325,14 @@ Retrieves a paginated list of keys matching a pattern.
   - The result of the operation, includes an array of keys that match the pattern or an error if the operation failed.
 
 ```javascript
+// Get the first 5 keys from the database with result type handling
+const result = db.pagination(5, 1);
+if (result.success) {
+  console.log(result.data);
+} else {
+  console.log(result.error.message);
+}
+
 // Get the first 5 keys from the database
 const firstPage = db.pagination(5, 1);
 
@@ -334,10 +355,12 @@ Counts the number of keys in the database.
   - The result of the operation, includes the number of keys in the database or an error if the operation failed.
 
 ```javascript
-// Get the total number of keys
-const count = db.count();
+// Get the total number of keys with result type handling
+const result = db.count();
 if (result.success) {
   console.log(`Total keys: ${result.data}`);
+} else {
+  console.log(result.error.message);
 }
 
 // Get the number of keys matching "user:%"
@@ -356,10 +379,12 @@ Counts the number of expired keys in the database.
   - The result of the operation, includes the number of expired keys in the database or an error if the operation failed.
 
 ```javascript
-// Get the total number of expired keys
-const countExpired = db.countExpired();
+// Get the total number of expired keys with result type handling
+const result = db.countExpired();
 if (result.success) {
   console.log(`Total expired keys: ${result.data}`);
+} else {
+  console.log(result.error.message);
 }
 
 // Get the number of expired keys matching "user:%"
@@ -379,6 +404,11 @@ Retrieves multiple values from the database by their keys.
 
 ```javascript
 const result = db.multiGet(["user:1234", "user:5678"]);
+if (result.success) {
+  console.log(result.data);
+} else {
+  console.log(result.error.message);
+}
 ```
 
 ---
@@ -393,7 +423,7 @@ Sets multiple key-value pairs in the database with optional expirations.
   - The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
 
 ```javascript
-db.multiSet([
+const result = db.multiSet([
   {
     key: "user:1234",
     value: { name: "Ahmad" },
@@ -402,6 +432,12 @@ db.multiSet([
   { key: "user:5678", value: { name: "Fatima" }, expiresAt: 86400000 },
   { key: "user:7890", value: { name: "Mohamed" } },
 ]);
+
+if (result.success) {
+  console.log(result.data);
+} else {
+  console.log(result.error.message);
+}
 ```
 
 ---
@@ -419,6 +455,8 @@ Deletes multiple key-value pairs from the database.
 const result = db.multiDelete(["user:1234", "user:5678"]);
 if (result.success) {
   console.log(`Deleted ${result.data} rows`);
+} else {
+  console.log(result.error.message);
 }
 ```
 
@@ -435,6 +473,8 @@ Removes expired key-value pairs from the database.
 const result = db.cleanup();
 if (result.success) {
   console.log(`Cleaned up ${result.data} rows`);
+} else {
+  console.log(result.error.message);
 }
 ```
 
@@ -448,7 +488,11 @@ Optimizes the database file, reducing its size.
   - The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
 
 ```javascript
-db.vacuum();
+if (db.vacuum().success) {
+  console.log("Database vacuumed successfully");
+} else {
+  console.log(result.error.message);
+}
 ```
 
 ---
@@ -464,6 +508,8 @@ Ensures all the changes are written to disk.
 const result = db.flush();
 if (result.success) {
   console.log(`Flushed ${result.data} rows`);
+} else {
+  console.log(result.error.message);
 }
 ```
 
@@ -477,25 +523,25 @@ Creates a namespaced database instance.
   - A new database instance with the namespace applied.
 
 ```javascript
+// Create a new database instance
 const db = new MiftahDB(":memory:");
 
-// Create a new database instance with a namespace
+// Make a namespaced database instance
 const users = db.namespace("users");
 const posts = db.namespace("posts");
 const comments = db.namespace("comments");
 
-// Set a value with a namespace
+// Set/Get a value with a namespace
 users.set("852335", { name: "Ahmad" });
 console.log(users.get("852335"));
 
-// Other examples:
-// Will count the keys only on the "users" namespace
+// Will count the keys only on the "users" namespace only
 users.count();
 
-// Will remove expired keys only on the "users" namespace
+// Will remove expired keys only on the "users" namespace only
 users.cleanup();
 
-// Will remove all keys only on the "users" namespace
+// Will remove all keys only on the "users" namespace only
 users.flush();
 ```
 
@@ -516,6 +562,11 @@ Executes a raw SQL statement and returns the result.
 const result = db.execute("SELECT * FROM miftahdb WHERE key LIKE ? LIMIT 5;", [
   "%",
 ]);
+if (result.success) {
+  console.log(result.data);
+} else {
+  console.log(result.error.message);
+}
 ```
 
 ---
