@@ -68,9 +68,9 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   get<T>(key: string): Result<T> {
-    const result = this.statements.get.get(this.addNamespacePrefix(key)) as
-      | MiftahDBItem
-      | undefined;
+    const result = this.statements.get.get(
+      this.addNamespacePrefix(key)
+    ) as MiftahDBItem | null;
 
     if (!result) throw Error("Key not found");
     if (result.expires_at && result.expires_at <= Date.now()) {
@@ -142,11 +142,9 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   getExpire(key: string): Result<Date> {
     const result = this.statements.getExpire.get(
       this.addNamespacePrefix(key)
-    ) as
-      | {
-          expires_at: number | null;
-        }
-      | undefined;
+    ) as {
+      expires_at: number | null;
+    } | null;
 
     if (!result) throw Error("Key not found");
     if (!result.expires_at) throw Error("Key has no expiration");
@@ -162,8 +160,8 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       key: string;
     }[];
 
+    if (result.length === 0) throw Error("No keys found");
     const resultArray = result.map((r) => this.removeNamespacePrefix(r.key));
-    if (resultArray.length === 0) throw Error("No keys found");
 
     return {
       success: true,
@@ -180,8 +178,8 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       offset
     ) as { key: string }[];
 
+    if (result.length === 0) throw Error("No keys found");
     const resultArray = result.map((r) => this.removeNamespacePrefix(r.key));
-    if (resultArray.length === 0) throw Error("No keys found");
 
     return {
       success: true,
