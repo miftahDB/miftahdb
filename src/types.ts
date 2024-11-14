@@ -18,7 +18,6 @@ export type MiftahValue =
 export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
   /**
    * Retrieves a value from the database by its key.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/get
    * @param key - The key to look up.
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful and the value, or an error if the operation failed.
    * @example
@@ -33,7 +32,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Sets a value in the database with an optional expiration.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/set
    * @param key - The key under which to store the value.
    * @param value - The value to store.
    * @param expiresAt - Optional expiration date as a Date object or number of milliseconds.
@@ -61,7 +59,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Checks if a key exists in the database.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/exists
    * @param key - The key to check.
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
@@ -75,7 +72,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Deletes a key-value pair from the database.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/delete
    * @param key - The key to delete.
    * @returns The result of the operation, includes a number indicating the number of rows affected by the operation or an error if the operation failed.
    * @example
@@ -90,7 +86,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Renames a key in the database.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/rename
    * @param oldKey - The current key name.
    * @param newKey - The new key name.
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
@@ -105,7 +100,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Sets or update the expiration date of a key.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/setexpire
    * @param key - The key to set the expiration date for.
    * @param expiresAt - The expiration date to set as a Date object or number of milliseconds.
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
@@ -128,7 +122,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Gets the expiration date of a key.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/getexpire
    * @param key - The key to check.
    * @returns The result of the operation, includes the expiration date of the key or an error if the operation failed.
    * @example
@@ -143,7 +136,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Retrieves keys matching a pattern.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/keys
    * @param {string} [pattern="%"] - Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
    *                                 Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The result of the operation, includes an array of matching keys or an error if the operation failed.
@@ -172,7 +164,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Retrieves a paginated list of keys matching a pattern.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/pagination
    * @param limit - The maximum number of keys to return per page.
    * @param page - The page number to retrieve (1-based index).
    * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
@@ -199,7 +190,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Counts the number of keys in the database.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/count
    * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The result of the operation, includes the number of keys in the database or an error if the operation failed.
    * @example
@@ -218,7 +208,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Counts the number of expired keys in the database.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/countexpired
    * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The result of the operation, includes the number of expired keys in the database or an error if the operation failed.
    * @example
@@ -237,7 +226,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Retrieves multiple values from the database by their keys.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/multiget
    * @param keys - An array of keys to look up.
    * @returns The result of the operation, includes an array of values or an error if the operation failed.
    * @example
@@ -252,7 +240,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Sets multiple key-value pairs in the database with optional expirations.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/multiset
    * @param entries - An array of objects containing key, value, and optional expiresAt date as a Date object or number of milliseconds.
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
@@ -273,7 +260,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Deletes multiple key-value pairs from the database.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/multidelete
    * @param keys - An array of keys to delete.
    * @returns The result of the operation, includes the number of rows affected by the operation or an error if the operation failed.
    * @example
@@ -288,7 +274,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Optimizes the database file, reducing its size.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/vacuum
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
    * if (db.vacuum().success) {
@@ -301,7 +286,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Closes the database connection.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/close
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
    * db.close();
@@ -310,7 +294,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Removes expired key-value pairs from the database.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/cleanup
    * @returns The result of the operation, includes the number of rows affected by the operation or an error if the operation failed.
    * @example
    * const result = db.cleanup();
@@ -324,7 +307,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Ensures all the changes written to disk.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/flush
    * @returns The result of the operation, includes the number of rows affected by the operation or an error if the operation failed.
    * @example
    * const result = db.flush();
@@ -338,7 +320,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Executes a raw SQL statement and returns the result.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/execute
    * @param sql - The SQL statement to execute. Be cautious with raw SQL to avoid SQL injection vulnerabilities.
    * @param params - Optional parameters to bind to the SQL statement.
    * @returns The result of the operation, includes the result of the SQL query or an error if the operation failed.
@@ -355,7 +336,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Backups the database to a file.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/backup
    * @param path - The path to where the backup should be saved.
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
@@ -374,7 +354,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Restores the database from a backup file.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/restore
    * @param path - The path to the backup file.
    * @returns The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
    * @example
@@ -393,7 +372,6 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 
   /**
    * Creates a namespaced database instance.
-   * - https://miftahdb.sqlite3.online/docs/api-reference/namespace
    * @param name - The name of the namespace.
    * @returns A new namespaced database instance.
    * @example
