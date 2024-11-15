@@ -157,7 +157,7 @@ Sets a value in the database with an optional expiration.
 
 ```typescript
 // Full example with result type handling
-const result = db.set("user:1234", { name: "Ahmad" });
+const result = db.set<User>("user:1234", { name: "Ahmad" });
 if (result.success) {
   console.log("Key set successfully");
 } else {
