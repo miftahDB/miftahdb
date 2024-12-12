@@ -6,6 +6,7 @@ import { BaseMiftahDB } from "./base";
  * MiftahDB is a wrapper around `better-sqlite3`.
  * - https://miftahdb.sqlite3.online/docs/api-reference/constructor
  * @param {string} path - Path to the database file. Defaults to ":memory:" if not provided.
+ * @param {DBOptions} options - Optional configuration options for the database.
  * @example
  * // New MiftahDB instance with disk-based database
  * const db = new MiftahDB("test.db");

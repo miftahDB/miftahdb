@@ -113,6 +113,7 @@ Creates a new **MiftahDB** instance.
 
 - **Parameters**:
   - `path`: The path to the database file. Defaults to ":memory:" if not provided.
+  - `options`: Optional configuration options for the database.
 
 ```javascript
 // New MiftahDB instance with disk-based database

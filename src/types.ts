@@ -13,6 +13,43 @@ export type MiftahValue =
   | null;
 
 /**
+ * Represents an item stored in the MiftahDB.
+ */
+export interface MiftahDBItem {
+  /** The stored value as a Buffer. */
+  value: Uint8Array;
+  /** The expiration timestamp in milliseconds, or null if no expiration. */
+  expires_at: number | null;
+}
+
+/**
+ * Represents the result of a function that returns a value or an error.
+ */
+export type Result<TData, TError extends Error = Error> =
+  | {
+      success: true;
+      data: TData;
+    }
+  | {
+      success: false;
+      error: TError;
+    };
+
+/**
+ * Represents the result of a function that returns a value or an error asynchronously.
+ */
+export type PromiseResult<TData, TError extends Error = Error> = Promise<
+  | {
+      success: true;
+      data: TData;
+    }
+  | {
+      success: false;
+      error: TError;
+    }
+>;
+
+/**
  * Interface for the MiftahDB class, defining its public methods.
  */
 export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
@@ -393,39 +430,20 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
   namespace(name: string): IMiftahDB<T>;
 }
 
-/**
- * Represents an item stored in the MiftahDB.
+/*
+ Represents the PRAGMA statements that can be used to configure the database.
  */
-export interface MiftahDBItem {
-  /** The stored value as a Buffer. */
-  value: Uint8Array;
-  /** The expiration timestamp in milliseconds, or null if no expiration. */
-  expires_at: number | null;
+export type JournalModes = "DELETE" | "TRUNCATE" | "PERSIST" | "WAL" | "MEMORY";
+export type SynchronousModes = "OFF" | "NORMAL" | "FULL" | "EXTRA";
+export type TempStoreModes = "DEFAULT" | "MEMORY" | "FILE";
+export type LockingModes = "NORMAL" | "EXCLUSIVE";
+export type AutoVacuumModes = "OFF" | "FULL" | "INCREMENTAL";
+export interface DBOptions {
+  journalMode?: JournalModes;
+  synchronousMode?: SynchronousModes;
+  tempStoreMode?: TempStoreModes;
+  cacheSize?: number;
+  mmapSize?: number;
+  lockingMode?: LockingModes;
+  autoVacuumMode?: AutoVacuumModes;
 }
-
-/**
- * Represents the result of a function that returns a value or an error.
- */
-export type Result<TData, TError extends Error = Error> =
-  | {
-      success: true;
-      data: TData;
-    }
-  | {
-      success: false;
-      error: TError;
-    };
-
-/**
- * Represents the result of a function that returns a value or an error asynchronously.
- */
-export type PromiseResult<TData, TError extends Error = Error> = Promise<
-  | {
-      success: true;
-      data: TData;
-    }
-  | {
-      success: false;
-      error: TError;
-    }
->;

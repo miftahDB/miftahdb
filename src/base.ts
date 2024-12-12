@@ -15,6 +15,7 @@ import type {
   MiftahDBItem,
   Result,
   PromiseResult,
+  DBOptions,
 } from "./types";
 
 export abstract class BaseMiftahDB implements IMiftahDB {
@@ -22,10 +23,32 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   protected statements: Record<string, Statement>;
   private nameSpacePrefix: string | null = null;
 
-  constructor(path = ":memory:") {
+  constructor(
+    path = ":memory:",
+    options: DBOptions = {
+      journalMode: "WAL",
+      synchronousMode: "NORMAL",
+      tempStoreMode: "MEMORY",
+      cacheSize: -64000,
+      mmapSize: 30000000000,
+      lockingMode: "NORMAL",
+      autoVacuumMode: "OFF",
+    }
+  ) {
     this.initDatabase(path);
 
-    this.db.exec(SQL_STATEMENTS.CREATE_PRAGMA);
+    const formattedPRAGMA = SQL_STATEMENTS.CREATE_PRAGMA.replace(
+      "%journal_mode",
+      options.journalMode ?? "WAL"
+    )
+      .replace("%synchronous_mode", options.synchronousMode ?? "NORMAL")
+      .replace("%temp_store_mode", options.tempStoreMode ?? "MEMORY")
+      .replace("%cache_size", options.cacheSize?.toString() ?? "-64000")
+      .replace("%mmap_size", options.mmapSize?.toString() ?? "30000000000")
+      .replace("%locking_mode", options.lockingMode ?? "NORMAL")
+      .replace("%auto_vacuum_mode", options.autoVacuumMode ?? "OFF");
+
+    this.db.exec(formattedPRAGMA);
     this.db.exec(SQL_STATEMENTS.CREATE_TABLE);
     this.db.exec(SQL_STATEMENTS.CREATE_INDEX);
 

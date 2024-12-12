@@ -59,11 +59,13 @@ export const SQL_STATEMENTS = {
   // PRAGMA statements
   CREATE_PRAGMA: `
     PRAGMA wal_checkpoint;
-    PRAGMA journal_mode = WAL;
-    PRAGMA synchronous = NORMAL;
-    PRAGMA temp_store = MEMORY;
-    PRAGMA cache_size = -64000;
-    PRAGMA mmap_size = 30000000000;
+    PRAGMA journal_mode = %journal_mode;
+    PRAGMA synchronous = %synchronous_mode;
+    PRAGMA temp_store = %temp_store_mode;
+    PRAGMA cache_size = %cache_size;
+    PRAGMA mmap_size = %mmap_size;
+    PRAGMA locking_mode = %locking_mode;
+    PRAGMA auto_vacuum = %auto_vacuum_mode;
     PRAGMA optimize;
   `,
 };
