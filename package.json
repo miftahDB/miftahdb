@@ -53,20 +53,21 @@
     "@arethetypeswrong/cli": "^0.16.4",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
-    "@semantic-release/github": "^10.1.7",
+    "@semantic-release/github": "^10.3.5",
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.1",
-    "@types/better-sqlite3": "^7.6.11",
+    "@types/better-sqlite3": "^7.6.12",
     "@types/bun": "latest",
     "@types/msgpack-lite": "^0.1.11",
-    "@types/node": "^22.5.1",
-    "semantic-release": "^24.1.0",
-    "tsup": "^8.2.4",
-    "tsx": "^4.19.0",
-    "typescript": "^5.5.4"
+    "@types/node": "^22.10.2",
+    "semantic-release": "^24.2.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
-    "better-sqlite3": "^11.2.1",
+    "better-sqlite3": "^11.7.0",
+    "cross-spawn": "^7.0.6",
     "msgpack-lite": "^0.1.26"
   },
   "files": [
