@@ -49,6 +49,21 @@ export class MiftahDB extends BaseMiftahDB {
 
     return { success: true, data: true };
   }
+
+  @SafeExecution
+  override close(): Result<boolean> {
+    console.log("closing");
+    this.vacuum();
+
+    this.db.exec("pragma wal_checkpoint(TRUNCATE)");
+
+    // @ts-expect-error `deserialize` exists in `bun:sqlite` but not in `better-sqlite3`.
+    for (const stmt of Object.values(this.statements)) stmt.finalize();
+
+    this.db.close();
+
+    return { success: true, data: true };
+  }
 }
 
 export type { MiftahValue } from "./types";

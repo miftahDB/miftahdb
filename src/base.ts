@@ -276,7 +276,8 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   close(): Result<boolean> {
-    this.cleanup();
+    this.vacuum();
+    this.db.exec("pragma wal_checkpoint(TRUNCATE)");
     this.db.close();
 
     return { success: true, data: true };

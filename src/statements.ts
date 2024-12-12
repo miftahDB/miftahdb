@@ -58,6 +58,7 @@ export const SQL_STATEMENTS = {
 
   // PRAGMA statements
   CREATE_PRAGMA: `
+    PRAGMA wal_checkpoint;
     PRAGMA journal_mode = WAL;
     PRAGMA synchronous = NORMAL;
     PRAGMA temp_store = MEMORY;
