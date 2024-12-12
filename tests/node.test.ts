@@ -71,6 +71,25 @@ describe("MiftahDB Node Tests", () => {
     }
   });
 
+  it("getExpiredRange", () => {
+    const db = createDB();
+    db.set("key1", "value1", new Date("2023-01-01"));
+    db.set("key2", "value2", new Date("2023-01-02"));
+    db.set("key3", "value3", new Date("2023-01-03"));
+    db.set("key4", "value4", new Date("2023-01-04"));
+    db.set("key5", "value5", new Date("2023-01-05"));
+
+    const result = db.getExpiredRange(
+      new Date("2023-01-02"),
+      new Date("2023-01-04")
+    );
+    if (result.success) {
+      assert.deepStrictEqual(result.data, ["key2", "key3", "key4"]);
+    } else {
+      throw new Error(result.error.message);
+    }
+  });
+
   it("Count", () => {
     const db = createDB();
     db.flush();
@@ -331,6 +350,26 @@ describe("MiftahDB Node Tests", () => {
       assert.deepStrictEqual(result2.data, ["123", "456"]);
     } else {
       throw new Error(result2.error.message);
+    }
+  });
+
+  it("Namespace getExpiredRange", () => {
+    const db = createDB();
+    const users = db.namespace("users");
+    users.set("123", "value1", new Date("2023-01-01"));
+    users.set("456", "value2", new Date("2023-01-02"));
+    users.set("789", "value3", new Date("2023-01-03"));
+    users.set("101", "value4", new Date("2023-01-04"));
+    users.set("135", "value5", new Date("2023-01-05"));
+
+    const result = users.getExpiredRange(
+      new Date("2023-01-02"),
+      new Date("2023-01-04")
+    );
+    if (result.success) {
+      assert.deepStrictEqual(result.data, ["456", "789", "101"]);
+    } else {
+      throw new Error(result.error.message);
     }
   });
 

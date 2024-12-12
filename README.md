@@ -366,6 +366,31 @@ const firstUsersPage = db.pagination(10, 1, "user:%");
 const secondUsersPage = db.pagination(10, 2, "user:%");
 ```
 
+### `getExpiredRange`
+
+Returns an array of keys that have expired between the given start and end dates.
+
+- **Parameters**:
+  - `start`: The start date or timestamp.
+  - `end`: The end date or timestamp.
+  - `pattern`: Optional pattern to match against the keys.
+- **Returns**:
+  - An array of expired keys.
+- **Example**:
+
+```ts
+// Get the expired keys between two dates
+const result = db.getExpiredRange(
+  new Date("2023-01-01"),
+  new Date("2023-01-31")
+);
+if (result.success) {
+  console.log(result.data);
+} else {
+  console.error(result.error);
+}
+```
+
 ---
 
 ### `Count`

@@ -49,6 +49,9 @@ export const SQL_STATEMENTS = {
   // Returns all keys that match the given pattern with pagination
   PAGINATION: "SELECT key FROM miftahDB WHERE key LIKE ? LIMIT ? OFFSET ?",
 
+  GET_EXPIRED_RANGE:
+    "SELECT key FROM miftahDB WHERE key LIKE ? AND expires_at >= ? AND expires_at <= ?",
+
   // Counts the total number of rows
   COUNT_KEYS: "SELECT COUNT(*) AS count FROM miftahDB where key LIKE ?",
 

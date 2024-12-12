@@ -226,6 +226,27 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
   pagination(limit: number, page: number, pattern?: string): Result<string[]>;
 
   /**
+   * Returns an array of keys that have expired between the given start and end dates.
+   * @param {Date | number} start - The start date or timestamp.
+   * @param {Date | number} end - The end date or timestamp.
+   * @param {string} pattern - Optional pattern to match against the keys.
+   * @returns {Result<string[]>} An array of expired keys.
+   * @example
+   * // Get the expired keys between two dates
+   * const result = db.getExpiredRange(new Date("2023-01-01"), new Date("2023-01-31"));
+   * if (result.success) {
+   *   console.log(result.data);
+   * } else {
+   *   console.error(result.error);
+   * }
+   */
+  getExpiredRange(
+    start: Date | number,
+    end: Date | number,
+    pattern?: string
+  ): Result<string[]>;
+
+  /**
    * Counts the number of keys in the database.
    * @param pattern - Optional SQL LIKE pattern to match keys. Use "%" to match any sequence of characters and "_" to match any single character.
    * @returns The result of the operation, includes the number of keys in the database or an error if the operation failed.

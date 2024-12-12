@@ -56,6 +56,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       setExpire: this.db.prepare(SQL_STATEMENTS.SET_EXPIRE),
       keys: this.db.prepare(SQL_STATEMENTS.KEYS),
       pagination: this.db.prepare(SQL_STATEMENTS.PAGINATION),
+      getExpiredRange: this.db.prepare(SQL_STATEMENTS.GET_EXPIRED_RANGE),
       cleanup: this.db.prepare(SQL_STATEMENTS.CLEANUP),
       countKeys: this.db.prepare(SQL_STATEMENTS.COUNT_KEYS),
       countExpired: this.db.prepare(SQL_STATEMENTS.COUNT_EXPIRED),
@@ -195,6 +196,30 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       this.addNamespacePrefix(pattern),
       limit,
       offset
+    ) as { key: string }[];
+
+    if (result.length === 0) throw Error("No keys found");
+    const resultArray = result.map((r) => this.removeNamespacePrefix(r.key));
+
+    return {
+      success: true,
+      data: resultArray,
+    };
+  }
+
+  @SafeExecution
+  getExpiredRange(
+    start: Date | number,
+    end: Date | number,
+    pattern = "%"
+  ): Result<string[]> {
+    const startDate = getExpireDate(start);
+    const endDate = getExpireDate(end);
+
+    const result = this.statements.getExpiredRange.all(
+      this.addNamespacePrefix(pattern),
+      startDate,
+      endDate
     ) as { key: string }[];
 
     if (result.length === 0) throw Error("No keys found");
