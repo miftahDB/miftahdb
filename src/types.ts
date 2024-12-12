@@ -438,14 +438,27 @@ export type SynchronousModes = "OFF" | "NORMAL" | "FULL" | "EXTRA";
 export type TempStoreModes = "DEFAULT" | "MEMORY" | "FILE";
 export type LockingModes = "NORMAL" | "EXCLUSIVE";
 export type AutoVacuumModes = "OFF" | "FULL" | "INCREMENTAL";
-
 export const defaultDBOptions = {
-  journalMode: "WAL",
-  synchronousMode: "NORMAL",
-  tempStoreMode: "MEMORY",
+  journalMode: "WAL" as JournalModes,
+  synchronousMode: "NORMAL" as SynchronousModes,
+  tempStoreMode: "MEMORY" as TempStoreModes,
   cacheSize: -64000,
   mmapSize: 30000000000,
-  lockingMode: "NORMAL",
-  autoVacuumMode: "OFF",
+  lockingMode: "NORMAL" as LockingModes,
+  autoVacuumMode: "OFF" as AutoVacuumModes,
 } as const;
-export type DBOptions = typeof defaultDBOptions;
+export type DBOptions = {
+  [K in keyof typeof defaultDBOptions]?: K extends "cacheSize" | "mmapSize"
+    ? number
+    : K extends "journalMode"
+    ? JournalModes
+    : K extends "synchronousMode"
+    ? SynchronousModes
+    : K extends "tempStoreMode"
+    ? TempStoreModes
+    : K extends "lockingMode"
+    ? LockingModes
+    : K extends "autoVacuumMode"
+    ? AutoVacuumModes
+    : never;
+};
