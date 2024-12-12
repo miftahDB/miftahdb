@@ -438,12 +438,14 @@ export type SynchronousModes = "OFF" | "NORMAL" | "FULL" | "EXTRA";
 export type TempStoreModes = "DEFAULT" | "MEMORY" | "FILE";
 export type LockingModes = "NORMAL" | "EXCLUSIVE";
 export type AutoVacuumModes = "OFF" | "FULL" | "INCREMENTAL";
-export interface DBOptions {
-  journalMode?: JournalModes;
-  synchronousMode?: SynchronousModes;
-  tempStoreMode?: TempStoreModes;
-  cacheSize?: number;
-  mmapSize?: number;
-  lockingMode?: LockingModes;
-  autoVacuumMode?: AutoVacuumModes;
-}
+
+export const defaultDBOptions = {
+  journalMode: "WAL",
+  synchronousMode: "NORMAL",
+  tempStoreMode: "MEMORY",
+  cacheSize: -64000,
+  mmapSize: 30000000000,
+  lockingMode: "NORMAL",
+  autoVacuumMode: "OFF",
+} as const;
+export type DBOptions = typeof defaultDBOptions;

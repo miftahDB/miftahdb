@@ -9,6 +9,7 @@ import { SQL_STATEMENTS } from "./statements";
 import { encodeValue, decodeValue } from "./encoding";
 import { SafeExecution, getExpireDate } from "./utils";
 
+import { defaultDBOptions } from "./types";
 import type {
   IMiftahDB,
   MiftahValue,
@@ -23,18 +24,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   protected statements: Record<string, Statement>;
   private nameSpacePrefix: string | null = null;
 
-  constructor(
-    path = ":memory:",
-    options: DBOptions = {
-      journalMode: "WAL",
-      synchronousMode: "NORMAL",
-      tempStoreMode: "MEMORY",
-      cacheSize: -64000,
-      mmapSize: 30000000000,
-      lockingMode: "NORMAL",
-      autoVacuumMode: "OFF",
-    }
-  ) {
+  constructor(path = ":memory:", options: DBOptions = defaultDBOptions) {
     this.initDatabase(path);
 
     const formattedPRAGMA = SQL_STATEMENTS.CREATE_PRAGMA.replace(

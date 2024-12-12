@@ -107,20 +107,40 @@ if (result.success) {
 
 ## API Reference
 
-### `Constructor`
+### Constructor
 
 Creates a new **MiftahDB** instance.
 
 - **Parameters**:
   - `path`: The path to the database file. Defaults to ":memory:" if not provided.
-  - `options`: Optional configuration options for the database.
+  - `options`: Optional configuration options for the database. These options can be customized as follows:
+    - `journalMode`: Determines the journal mode (default: `"WAL"`).
+    - `synchronousMode`: Controls the database's synchronization mode (default: `"NORMAL"`).
+    - `tempStoreMode`: Specifies where temporary tables are stored (default: `"MEMORY"`).
+    - `cacheSize`: The cache size for the database (default: `-64000`).
+    - `mmapSize`: The memory-mapped file size (default: `30000000000`).
+    - `lockingMode`: Determines the database locking mode (default: `"NORMAL"`).
+    - `autoVacuumMode`: Configures the auto-vacuum behavior (default: `"OFF"`).
+
+#### Example Usage
 
 ```javascript
 // New MiftahDB instance with disk-based database
-const db = new MiftahDB("test.db");
+const db1 = new MiftahDB("test.db");
 
 // New MiftahDB instance with in-memory database
-const db = new MiftahDB(":memory:");
+const db2 = new MiftahDB(":memory:");
+
+// New MiftahDB instance with custom configuration
+const db3 = new MiftahDB("test.db", {
+  journalMode: "DELETE",
+  synchronousMode: "FULL",
+  tempStoreMode: "FILE",
+  cacheSize: -128000,
+  mmapSize: 50000000000,
+  lockingMode: "EXCLUSIVE",
+  autoVacuumMode: "INCREMENTAL",
+});
 ```
 
 ---
