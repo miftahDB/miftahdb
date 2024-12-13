@@ -375,8 +375,8 @@ Returns an array of keys that have expired between the given start and end dates
   - `end`: The end date or timestamp.
   - `pattern`: Optional pattern to match against the keys.
 - **Returns**:
-  - An array of expired keys.
-- **Example**:
+  - The result of the operation, includes an array of keys or an error if the operation failed.
+
 
 ```ts
 // Get the expired keys between two dates
@@ -384,6 +384,7 @@ const result = db.getExpiredRange(
   new Date("2023-01-01"),
   new Date("2023-01-31")
 );
+
 if (result.success) {
   console.log(result.data);
 } else {
@@ -532,7 +533,7 @@ if (result.success) {
 }
 ```
 
-> **Note:** Regularly run the cleanup() method to optimize the database and reduce its size.
+> **Note:** Regularly run the `cleanup()` method to optimize the database and reduce its size.
 
 ---
 
@@ -551,7 +552,7 @@ if (db.vacuum().success) {
 }
 ```
 
-> **Note:** Regularly run the cleanup() method to optimize the database and reduce its size.
+> **Note:** Regularly run the `vacuum()` method to optimize the database and reduce its size.
 
 ---
 
