@@ -59,7 +59,7 @@
     "@types/better-sqlite3": "^7.6.12",
     "@types/bun": "latest",
     "@types/msgpack-lite": "^0.1.11",
-    "@types/node": "^22.10.2",
+    "@types/node": "^22.10.5",
     "semantic-release": "^24.2.0",
     "tsup": "^8.3.5",
     "tsx": "^4.19.2",
