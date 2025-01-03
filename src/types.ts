@@ -233,14 +233,14 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
    * @returns {Result<string[]>} An array of expired keys.
    * @example
    * // Get the expired keys between two dates
-   * const result = db.getExpiredRange(new Date("2023-01-01"), new Date("2023-01-31"));
+   * const result = db.expiredRange(new Date("2023-01-01"), new Date("2023-01-31"));
    * if (result.success) {
    *   console.log(result.data);
    * } else {
    *   console.error(result.error);
    * }
    */
-  getExpiredRange(
+  expiredRange(
     start: Date | number,
     end: Date | number,
     pattern?: string

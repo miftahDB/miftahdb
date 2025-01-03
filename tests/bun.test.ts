@@ -69,7 +69,7 @@ test("Pagination", () => {
   }
 });
 
-test("getExpiredRange", () => {
+test("expiredRange", () => {
   const db = createDB();
   db.set("key1", "value1", new Date("2023-01-01"));
   db.set("key2", "value2", new Date("2023-01-02"));
@@ -77,7 +77,7 @@ test("getExpiredRange", () => {
   db.set("key4", "value4", new Date("2023-01-04"));
   db.set("key5", "value5", new Date("2023-01-05"));
 
-  const result = db.getExpiredRange(
+  const result = db.expiredRange(
     new Date("2023-01-02"),
     new Date("2023-01-04")
   );
@@ -348,7 +348,7 @@ test("Namespace Keys/Pagination", () => {
   }
 });
 
-test("Namespace getExpiredRange", () => {
+test("Namespace expiredRange", () => {
   const db = createDB();
   const users = db.namespace("users");
   users.set("123", "value1", new Date("2023-01-01"));
@@ -357,7 +357,7 @@ test("Namespace getExpiredRange", () => {
   users.set("101", "value4", new Date("2023-01-04"));
   users.set("135", "value5", new Date("2023-01-05"));
 
-  const result = users.getExpiredRange(
+  const result = users.expiredRange(
     new Date("2023-01-02"),
     new Date("2023-01-04")
   );

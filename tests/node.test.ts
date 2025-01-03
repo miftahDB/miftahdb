@@ -71,7 +71,7 @@ describe("MiftahDB Node Tests", () => {
     }
   });
 
-  it("getExpiredRange", () => {
+  it("expiredRange", () => {
     const db = createDB();
     db.set("key1", "value1", new Date("2023-01-01"));
     db.set("key2", "value2", new Date("2023-01-02"));
@@ -79,7 +79,7 @@ describe("MiftahDB Node Tests", () => {
     db.set("key4", "value4", new Date("2023-01-04"));
     db.set("key5", "value5", new Date("2023-01-05"));
 
-    const result = db.getExpiredRange(
+    const result = db.expiredRange(
       new Date("2023-01-02"),
       new Date("2023-01-04")
     );
@@ -353,7 +353,7 @@ describe("MiftahDB Node Tests", () => {
     }
   });
 
-  it("Namespace getExpiredRange", () => {
+  it("Namespace expiredRange", () => {
     const db = createDB();
     const users = db.namespace("users");
     users.set("123", "value1", new Date("2023-01-01"));
@@ -362,7 +362,7 @@ describe("MiftahDB Node Tests", () => {
     users.set("101", "value4", new Date("2023-01-04"));
     users.set("135", "value5", new Date("2023-01-05"));
 
-    const result = users.getExpiredRange(
+    const result = users.expiredRange(
       new Date("2023-01-02"),
       new Date("2023-01-04")
     );
