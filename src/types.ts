@@ -467,5 +467,6 @@ export const defaultDBOptions = {
   mmapSize: 30000000000,
   lockingMode: "NORMAL" as "NORMAL" | "EXCLUSIVE",
   autoVacuumMode: "OFF" as "OFF" | "FULL" | "INCREMENTAL",
-  cleanUpOnClose: false as boolean,
+  autoCleanupOnClose: false as boolean,
+  autoCloseOnExit: true as boolean,
 } as const;

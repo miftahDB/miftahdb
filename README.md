@@ -121,6 +121,8 @@ Creates a new **MiftahDB** instance.
     - `mmapSize`: The memory-mapped file size (default: `30000000000`).
     - `lockingMode`: Determines the database locking mode (default: `"NORMAL"`).
     - `autoVacuumMode`: Configures the auto-vacuum behavior (default: `"OFF"`).
+    - `autoCleanupOnClose`: Automatically cleans up expired keys when the database is closed (default: `false`).
+    - `autoCloseOnExit`: Automatically closes the database when the process exits (default: `true`).
 
 #### Example Usage
 

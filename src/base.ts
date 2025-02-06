@@ -23,6 +23,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   protected declare db: Database;
   protected statements: Record<string, Statement>;
   private nameSpacePrefix: string | null = null;
+  private autoCleanupOnClose: boolean;
 
   constructor(path = ":memory:", options: DBOptions = defaultDBOptions) {
     this.initDatabase(path);
@@ -43,8 +44,10 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     this.db.exec(SQL_STATEMENTS.CREATE_INDEX);
 
     this.statements = this.prepareStatements();
+    this.autoCleanupOnClose = options.autoCleanupOnClose ?? false;
 
-    executeOnExit(() => this.close());
+    const autoCloseOnExit = options.autoCloseOnExit ?? true;
+    if (autoCloseOnExit) executeOnExit(() => this.close());
   }
 
   protected prepareStatements(): Record<string, Statement> {
@@ -68,6 +71,11 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   }
 
   protected abstract initDatabase(path: string | ":memory:"): void;
+
+  protected beforeClose(): void {
+    this.vacuum();
+    if (this.autoCleanupOnClose) this.cleanup();
+  }
 
   private addNamespacePrefix(k: string): string {
     return this.nameSpacePrefix ? `${this.nameSpacePrefix}:${k}` : k;
@@ -316,7 +324,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   close(): Result<boolean> {
-    this.vacuum();
+    this.beforeClose();
 
     this.db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
 

@@ -56,7 +56,8 @@ export class MiftahDB extends BaseMiftahDB {
   // Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
   @SafeExecution
   override close(): Result<boolean> {
-    this.vacuum();
+    this.beforeClose();
+
     this.db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
 
     // @ts-expect-error `deserialize` exists in `bun:sqlite` but not in `better-sqlite3`.
