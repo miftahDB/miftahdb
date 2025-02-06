@@ -30,6 +30,7 @@ export class MiftahDB extends BaseMiftahDB {
     this.db = new DB(path) as unknown as Database;
   }
 
+  // Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
   @SafeExecution
   override execute(sql: string, params: unknown[] = []): Result<unknown[]> {
     const stmt = this.db.prepare(sql);
@@ -40,6 +41,7 @@ export class MiftahDB extends BaseMiftahDB {
     };
   }
 
+  // Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
   @SafeExecution
   override async restore(path: string): PromiseResult<boolean> {
     const file = await readFile(path);
@@ -51,10 +53,10 @@ export class MiftahDB extends BaseMiftahDB {
     return { success: true, data: true };
   }
 
+  // Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
   @SafeExecution
   override close(): Result<boolean> {
     this.vacuum();
-
     this.db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
 
     // @ts-expect-error `deserialize` exists in `bun:sqlite` but not in `better-sqlite3`.

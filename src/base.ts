@@ -7,7 +7,7 @@ import { writeFile, readFile } from "node:fs/promises";
 
 import { SQL_STATEMENTS } from "./statements";
 import { encodeValue, decodeValue } from "./encoding";
-import { SafeExecution, executeOnExit, getExpireDate } from "./utils";
+import { SafeExecution, executeOnExit, expiresAtMs } from "./utils";
 
 import { defaultDBOptions } from "./types";
 import type {
@@ -115,7 +115,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     this.statements.set.run(
       this.addNamespacePrefix(key),
       encodeValue(value),
-      getExpireDate(expiresAt)
+      expiresAtMs(expiresAt)
     );
 
     return { success: true, data: true };
@@ -153,7 +153,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   @SafeExecution
   setExpire(key: string, expiresAt: Date | number): Result<boolean> {
     this.statements.setExpire.run(
-      getExpireDate(expiresAt),
+      expiresAtMs(expiresAt),
       this.addNamespacePrefix(key)
     );
 
@@ -215,8 +215,8 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     end: Date | number,
     pattern = "%"
   ): Result<string[]> {
-    const startDate = getExpireDate(start);
-    const endDate = getExpireDate(end);
+    const startDate = expiresAtMs(start);
+    const endDate = expiresAtMs(end);
 
     const result = this.statements.expiredRange.all(
       this.addNamespacePrefix(pattern),

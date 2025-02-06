@@ -2,6 +2,7 @@ import msgpack from "msgpack-lite";
 
 import type { MiftahValue } from "./types";
 
+// Concatenates multiple Uint8Arrays into a single Uint8Array
 function concatUint8Arrays(arrays: Uint8Array[]): Uint8Array {
   const totalLength = arrays.reduce((sum, arr) => sum + arr.length, 0);
   const result = new Uint8Array(totalLength);
@@ -15,6 +16,7 @@ function concatUint8Arrays(arrays: Uint8Array[]): Uint8Array {
   return result;
 }
 
+// Encodes a value into a Uint8Array
 export function encodeValue(value: MiftahValue): Uint8Array {
   if (value instanceof Uint8Array) {
     const marker = new Uint8Array([0x01]);
@@ -27,6 +29,7 @@ export function encodeValue(value: MiftahValue): Uint8Array {
   return concatUint8Arrays([marker, msgPackedValue]);
 }
 
+// Decodes a value from a Uint8Array
 export function decodeValue<T>(buffer: Uint8Array): T | null {
   try {
     const marker = buffer[0];

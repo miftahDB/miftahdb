@@ -1,5 +1,6 @@
 import type { Result } from "./types";
 
+// Decorator to safely execute a method and return a result type
 export function SafeExecution<T extends (...args: unknown[]) => R, R>(
   target: unknown,
   propertyKey: string,
@@ -9,8 +10,7 @@ export function SafeExecution<T extends (...args: unknown[]) => R, R>(
 
   descriptor.value = function (...args: Parameters<T>): Result<ReturnType<T>> {
     try {
-      const result = originalMethod.apply(this, args);
-      return result;
+      return originalMethod.apply(this, args);
     } catch (error) {
       return {
         success: false,
@@ -22,19 +22,22 @@ export function SafeExecution<T extends (...args: unknown[]) => R, R>(
   return descriptor;
 }
 
-export function getExpireDate(expiresAt: number | Date | undefined) {
-  let expiresAtMs: number | undefined = undefined;
+// Converts an expiresAt value to a number of milliseconds
+export function expiresAtMs(expiresAt: number | Date | undefined) {
+  let result: number | undefined = undefined;
+
   if (expiresAt) {
     if (typeof expiresAt === "number") {
-      expiresAtMs = new Date().getTime() + expiresAt;
+      result = new Date().getTime() + expiresAt;
     } else {
-      expiresAtMs = expiresAt.getTime();
+      result = expiresAt.getTime();
     }
   }
 
-  return expiresAtMs;
+  return result;
 }
 
+// Executes a function when the process receives exit signals
 export function executeOnExit(fn: () => void) {
   for (const signal of ["SIGINT", "SIGTERM", "SIGQUIT", "exit"]) {
     process.on(signal, () => {
