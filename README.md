@@ -135,13 +135,15 @@ const db2 = new MiftahDB(":memory:");
 
 // New MiftahDB instance with custom configuration
 const db3 = new MiftahDB("test.db", {
-  journalMode: "DELETE",
-  synchronousMode: "FULL",
-  tempStoreMode: "FILE",
-  cacheSize: -128000,
-  mmapSize: 50000000000,
-  lockingMode: "EXCLUSIVE",
-  autoVacuumMode: "INCREMENTAL",
+  journalMode: "WAL",
+  synchronousMode: "NORMAL",
+  tempStoreMode: "MEMORY",
+  cacheSize: -64000,
+  mmapSize: 30000000000,
+  lockingMode: "NORMAL",
+  autoVacuumMode: "OFF",
+  autoCleanupOnClose: false,
+  autoCloseOnExit: true,
 });
 ```
 
