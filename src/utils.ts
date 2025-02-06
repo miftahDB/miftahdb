@@ -41,7 +41,7 @@ export function expiresAtMs(expiresAt: number | Date | undefined) {
 export function executeOnExit(fn: () => void) {
   for (const signal of ["SIGINT", "SIGTERM", "SIGQUIT", "exit"]) {
     process.on(signal, () => {
-      console.log(fn());
+      fn();
       process.exit(0);
     });
   }
