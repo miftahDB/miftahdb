@@ -454,32 +454,18 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
 /*
  Represents the PRAGMA statements that can be used to configure the database.
  */
-export type JournalModes = "DELETE" | "TRUNCATE" | "PERSIST" | "WAL" | "MEMORY";
-export type SynchronousModes = "OFF" | "NORMAL" | "FULL" | "EXTRA";
-export type TempStoreModes = "DEFAULT" | "MEMORY" | "FILE";
-export type LockingModes = "NORMAL" | "EXCLUSIVE";
-export type AutoVacuumModes = "OFF" | "FULL" | "INCREMENTAL";
+export type DBOptions = Partial<{
+  [K in keyof typeof defaultDBOptions]: K extends "cacheSize" | "mmapSize"
+    ? number
+    : (typeof defaultDBOptions)[K];
+}>;
 export const defaultDBOptions = {
-  journalMode: "WAL" as JournalModes,
-  synchronousMode: "NORMAL" as SynchronousModes,
-  tempStoreMode: "MEMORY" as TempStoreModes,
+  journalMode: "WAL" as "DELETE" | "TRUNCATE" | "PERSIST" | "WAL" | "MEMORY",
+  synchronousMode: "NORMAL" as "OFF" | "NORMAL" | "FULL" | "EXTRA",
+  tempStoreMode: "MEMORY" as "DEFAULT" | "MEMORY" | "FILE",
   cacheSize: -64000,
   mmapSize: 30000000000,
-  lockingMode: "NORMAL" as LockingModes,
-  autoVacuumMode: "OFF" as AutoVacuumModes,
+  lockingMode: "NORMAL" as "NORMAL" | "EXCLUSIVE",
+  autoVacuumMode: "OFF" as "OFF" | "FULL" | "INCREMENTAL",
+  cleanUpOnClose: false as boolean,
 } as const;
-export type DBOptions = {
-  [K in keyof typeof defaultDBOptions]?: K extends "cacheSize" | "mmapSize"
-    ? number
-    : K extends "journalMode"
-    ? JournalModes
-    : K extends "synchronousMode"
-    ? SynchronousModes
-    : K extends "tempStoreMode"
-    ? TempStoreModes
-    : K extends "lockingMode"
-    ? LockingModes
-    : K extends "autoVacuumMode"
-    ? AutoVacuumModes
-    : never;
-};
