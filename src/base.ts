@@ -7,7 +7,7 @@ import { writeFile, readFile } from "node:fs/promises";
 
 import { SQL_STATEMENTS } from "./statements";
 import { encodeValue, decodeValue } from "./encoding";
-import { SafeExecution, getExpireDate } from "./utils";
+import { SafeExecution, executeOnExit, getExpireDate } from "./utils";
 
 import { defaultDBOptions } from "./types";
 import type {
@@ -43,6 +43,8 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     this.db.exec(SQL_STATEMENTS.CREATE_INDEX);
 
     this.statements = this.prepareStatements();
+
+    executeOnExit(() => this.close());
   }
 
   protected prepareStatements(): Record<string, Statement> {
