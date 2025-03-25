@@ -7,7 +7,7 @@ import { writeFile, readFile } from "node:fs/promises";
 
 import { SQL_STATEMENTS } from "./statements";
 import { encodeValue, decodeValue } from "./encoding";
-import { SafeExecution, executeOnExit, expiresAtMs } from "./utils";
+import { OK, SafeExecution, executeOnExit, expiresAtMs } from "./utils";
 
 import { defaultDBOptions } from "./types";
 import type {
@@ -108,10 +108,8 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       throw new Error("Key expired");
     }
 
-    return {
-      success: true,
-      data: decodeValue(result.value) as T,
-    };
+    const value = decodeValue(result.value) as T;
+    return OK(value);
   }
 
   @SafeExecution
@@ -126,7 +124,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       expiresAtMs(expiresAt)
     );
 
-    return { success: true, data: true };
+    return OK(true);
   }
 
   @SafeExecution
@@ -138,14 +136,14 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     const doExists = Boolean(Object.values(result)[0]);
     if (!doExists) throw Error("Key not found");
 
-    return { success: true, data: doExists };
+    return OK(doExists);
   }
 
   @SafeExecution
   delete(key: string): Result<number> {
     const result = this.statements.delete.run(this.addNamespacePrefix(key));
 
-    return { success: true, data: result.changes };
+    return OK(result.changes);
   }
 
   @SafeExecution
@@ -155,7 +153,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       this.addNamespacePrefix(oldKey)
     );
 
-    return { success: true, data: true };
+    return OK(true);
   }
 
   @SafeExecution
@@ -165,7 +163,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       this.addNamespacePrefix(key)
     );
 
-    return { success: true, data: true };
+    return OK(true);
   }
 
   @SafeExecution
@@ -179,7 +177,9 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     if (!result) throw Error("Key not found");
     if (!result.expires_at) throw Error("Key has no expiration");
 
-    return { success: true, data: new Date(result.expires_at) };
+    const expiresAt = new Date(result.expires_at);
+
+    return OK(expiresAt);
   }
 
   @SafeExecution
@@ -193,10 +193,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     if (result.length === 0) throw Error("No keys found");
     const resultArray = result.map((r) => this.removeNamespacePrefix(r.key));
 
-    return {
-      success: true,
-      data: resultArray,
-    };
+    return OK(resultArray);
   }
 
   @SafeExecution
@@ -211,10 +208,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     if (result.length === 0) throw Error("No keys found");
     const resultArray = result.map((r) => this.removeNamespacePrefix(r.key));
 
-    return {
-      success: true,
-      data: resultArray,
-    };
+    return OK(resultArray);
   }
 
   @SafeExecution
@@ -235,10 +229,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     if (result.length === 0) throw Error("No keys found");
     const resultArray = result.map((r) => this.removeNamespacePrefix(r.key));
 
-    return {
-      success: true,
-      data: resultArray,
-    };
+    return OK(resultArray);
   }
 
   @SafeExecution
@@ -247,7 +238,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       this.nameSpacePrefix ? `${this.nameSpacePrefix}:${pattern}` : pattern
     ) as { count: number };
 
-    return { success: true, data: result.count };
+    return OK(result.count);
   }
 
   @SafeExecution
@@ -259,7 +250,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       count: number;
     };
 
-    return { success: true, data: result.count };
+    return OK(result.count);
   }
 
   @SafeExecution
@@ -275,10 +266,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     const resultArray = Object.values(result);
     if (resultArray.length === 0) throw Error("No keys found");
 
-    return {
-      success: true,
-      data: resultArray as T[],
-    };
+    return OK(resultArray);
   }
 
   @SafeExecution
@@ -291,10 +279,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       }
     })();
 
-    return {
-      success: true,
-      data: true,
-    };
+    return OK(true);
   }
 
   @SafeExecution
@@ -309,17 +294,14 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       }
     })();
 
-    return {
-      success: true,
-      data: totalDeletedRows,
-    };
+    return OK(totalDeletedRows);
   }
 
   @SafeExecution
   vacuum(): Result<boolean> {
     this.statements.vacuum.run();
 
-    return { success: true, data: true };
+    return OK(true);
   }
 
   @SafeExecution
@@ -330,7 +312,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
     this.db.close();
 
-    return { success: true, data: true };
+    return OK(true);
   }
 
   @SafeExecution
@@ -340,14 +322,14 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       this.addNamespacePrefix("%")
     );
 
-    return { success: true, data: result.changes };
+    return OK(result.changes);
   }
 
   @SafeExecution
   flush(): Result<number> {
     const result = this.statements.flush.run(this.addNamespacePrefix("%"));
 
-    return { success: true, data: result.changes };
+    return OK(result.changes);
   }
 
   @SafeExecution
@@ -357,7 +339,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
     await writeFile(path, uint8Array);
 
-    return { success: true, data: true };
+    return OK(true);
   }
 
   @SafeExecution
@@ -367,22 +349,19 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     this.db = new DB(file);
     this.statements = this.prepareStatements();
 
-    return { success: true, data: true };
+    return OK(true);
   }
 
   @SafeExecution
   execute(sql: string, params: unknown[] = []): Result<unknown[] | RunResult> {
     const stmt = this.db.prepare(sql);
 
-    if (stmt.reader)
-      return {
-        success: true,
-        data: stmt.all(...params),
-      };
+    if (stmt.reader) {
+      const result = stmt.all(...params);
+      return OK(result);
+    }
 
-    return {
-      success: true,
-      data: stmt.run(...params),
-    };
+    const result = stmt.run(...params);
+    return OK(result);
   }
 }

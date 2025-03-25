@@ -12,10 +12,7 @@ export function SafeExecution<T extends (...args: unknown[]) => R, R>(
     try {
       return originalMethod.apply(this, args);
     } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error : new Error(String(error)),
-      };
+      return ERR(error instanceof Error ? error : new Error(String(error)));
     }
   };
 
@@ -45,4 +42,12 @@ export function executeOnExit(fn: () => void) {
       process.exit(0);
     });
   }
+}
+
+export function OK<T>(data: T): Result<T> {
+  return { success: true, data };
+}
+
+function ERR<T>(error: Error): Result<T> {
+  return { success: false, error };
 }

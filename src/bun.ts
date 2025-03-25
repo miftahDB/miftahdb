@@ -2,8 +2,8 @@ import DB from "bun:sqlite";
 import { readFile } from "node:fs/promises";
 
 import { BaseMiftahDB } from "./base";
+import { OK, SafeExecution } from "./utils";
 import type { Result, PromiseResult } from "./types.ts";
-import { SafeExecution } from "./utils";
 
 // Intentionally using a type assertion here to align `bun:sqlite`'s `Database` type with `better-sqlite3`.
 // Although `bun:sqlite` and `better-sqlite3` have different implementations, their API is similar enough for our purposes.
@@ -34,11 +34,9 @@ export class MiftahDB extends BaseMiftahDB {
   @SafeExecution
   override execute(sql: string, params: unknown[] = []): Result<unknown[]> {
     const stmt = this.db.prepare(sql);
+    const result = stmt.all(...params);
 
-    return {
-      success: true,
-      data: stmt.all(...params),
-    };
+    return OK(result);
   }
 
   // Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
@@ -50,7 +48,7 @@ export class MiftahDB extends BaseMiftahDB {
     this.db = DB.deserialize(file);
     this.statements = this.prepareStatements();
 
-    return { success: true, data: true };
+    return OK(true);
   }
 
   // Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
@@ -65,10 +63,12 @@ export class MiftahDB extends BaseMiftahDB {
 
     this.db.close();
 
-    return { success: true, data: true };
+    return OK(true);
   }
 }
 
 export type { MiftahValue } from "./types";
 export type { Result } from "./types";
 export type { PromiseResult } from "./types";
+
+const db = new MiftahDB(":memory:");
