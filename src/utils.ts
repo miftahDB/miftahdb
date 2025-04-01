@@ -44,7 +44,7 @@ export function executeOnExit(fn: () => void) {
   }
 }
 
-export function OK<T>(data: T): Result<T> {
+export function OK<T>(data: T = true as T): Result<T> {
   return { success: true, data };
 }
 

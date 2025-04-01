@@ -48,7 +48,7 @@ export class MiftahDB extends BaseMiftahDB {
     this.db = DB.deserialize(file);
     this.statements = this.prepareStatements();
 
-    return OK(true);
+    return OK();
   }
 
   // Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
@@ -63,12 +63,10 @@ export class MiftahDB extends BaseMiftahDB {
 
     this.db.close();
 
-    return OK(true);
+    return OK();
   }
 }
 
 export type { MiftahValue } from "./types";
 export type { Result } from "./types";
 export type { PromiseResult } from "./types";
-
-const db = new MiftahDB(":memory:");

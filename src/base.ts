@@ -124,7 +124,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       expiresAtMs(expiresAt)
     );
 
-    return OK(true);
+    return OK();
   }
 
   @SafeExecution
@@ -153,7 +153,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       this.addNamespacePrefix(oldKey)
     );
 
-    return OK(true);
+    return OK();
   }
 
   @SafeExecution
@@ -163,7 +163,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       this.addNamespacePrefix(key)
     );
 
-    return OK(true);
+    return OK();
   }
 
   @SafeExecution
@@ -279,7 +279,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       }
     })();
 
-    return OK(true);
+    return OK();
   }
 
   @SafeExecution
@@ -301,7 +301,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   vacuum(): Result<boolean> {
     this.statements.vacuum.run();
 
-    return OK(true);
+    return OK();
   }
 
   @SafeExecution
@@ -312,7 +312,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
     this.db.close();
 
-    return OK(true);
+    return OK();
   }
 
   @SafeExecution
@@ -339,7 +339,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
     await writeFile(path, uint8Array);
 
-    return OK(true);
+    return OK();
   }
 
   @SafeExecution
@@ -349,7 +349,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     this.db = new DB(file);
     this.statements = this.prepareStatements();
 
-    return OK(true);
+    return OK();
   }
 
   @SafeExecution
