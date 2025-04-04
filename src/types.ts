@@ -39,14 +39,7 @@ export type Result<TData, TError extends Error = Error> =
  * Represents the result of a function that returns a value or an error asynchronously.
  */
 export type PromiseResult<TData, TError extends Error = Error> = Promise<
-  | {
-      success: true;
-      data: TData;
-    }
-  | {
-      success: false;
-      error: TError;
-    }
+  Result<TData, TError>
 >;
 
 /**
