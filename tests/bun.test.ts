@@ -191,6 +191,30 @@ test("TTL", () => {
   }
 });
 
+test("Increment", () => {
+  const db = createDB();
+  db.set("key1", 1);
+  db.increment("key1");
+  const result = db.get("key1");
+  if (result.success) {
+    expect(result.data).toBe(2);
+  } else {
+    throw new Error(result.error.message);
+  }
+});
+
+test("Decrement", () => {
+  const db = createDB();
+  db.set("key1", 2);
+  db.decrement("key1");
+  const result = db.get("key1");
+  if (result.success) {
+    expect(result.data).toBe(1);
+  } else {
+    throw new Error(result.error.message);
+  }
+});
+
 test("Multi Set & Get", () => {
   const db = createDB();
   db.multiSet([

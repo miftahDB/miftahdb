@@ -201,6 +201,48 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
   persist(key: string): Result<boolean>;
 
   /**
+   * Atomically increments the numeric value of a key by a given amount.
+   * If the key does not exist, it is set to the increment amount.
+   * If the current value is not a number, an error is returned.
+   * @param key - The key whose numeric value to increment.
+   * @param [amount=1] - The amount to increment by. Defaults to 1.
+   * @returns The result of the operation. If successful, `data` contains the new numeric value.
+   *          An error is returned if the key's value is not a number or another issue occurs.
+   * @example
+   * db.set("counter", 10);
+   * const incResult = db.inc("counter", 5);
+   * if (incResult.success) {
+   *   console.log(`New counter value: ${incResult.data}`); // Output: 15
+   * }
+   * const newKeyInc = db.inc("new_counter");
+   * if (newKeyInc.success) {
+   *   console.log(`New counter value: ${newKeyInc.data}`); // Output: 1
+   * }
+   */
+  increment(key: string, amount?: number): Result<number>;
+
+  /**
+   * Atomically decrements the numeric value of a key by a given amount.
+   * If the key does not exist, it is set to the negative of the decrement amount.
+   * If the current value is not a number, an error is returned.
+   * @param key - The key whose numeric value to decrement.
+   * @param [amount=1] - The amount to decrement by. Defaults to 1.
+   * @returns The result of the operation. If successful, `data` contains the new numeric value.
+   *          An error is returned if the key's value is not a number or another issue occurs.
+   * @example
+   * db.set("points", 100);
+   * const decResult = db.dec("points", 10);
+   * if (decResult.success) {
+   *   console.log(`New points value: ${decResult.data}`); // Output: 90
+   * }
+   * const newKeyDec = db.dec("new_score");
+   * if (newKeyDec.success) {
+   *    console.log(`New score value: ${newKeyDec.data}`); // Output: -1
+   * }
+   */
+  decrement(key: string, amount?: number): Result<number>;
+
+  /**
    * Retrieves keys matching a pattern.
    * @param {string} [pattern="%"] - Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
    *                                 Use "%" to match any sequence of characters and "_" to match any single character.

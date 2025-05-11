@@ -210,6 +210,30 @@ describe("MiftahDB Node Tests", () => {
     }
   });
 
+  it("Increment", () => {
+    const db = createDB();
+    db.set("key1", 1);
+    db.increment("key1");
+    const result = db.get("key1");
+    if (result.success) {
+      assert.strictEqual(result.data, 2);
+    } else {
+      throw new Error(result.error.message);
+    }
+  });
+
+  it("Decrement", () => {
+    const db = createDB();
+    db.set("key1", 2);
+    db.decrement("key1");
+    const result = db.get("key1");
+    if (result.success) {
+      assert.strictEqual(result.data, 1);
+    } else {
+      throw new Error(result.error.message);
+    }
+  });
+
   it("Multi Delete", () => {
     const db = createDB();
     db.multiSet([

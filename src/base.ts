@@ -88,6 +88,71 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       : key;
   }
 
+  private _modifyNumericValue(
+    key: string,
+    amount: number,
+    operation: "increment" | "decrement"
+  ): Result<number> {
+    const prefixedKey = this.addNamespacePrefix(key);
+    let newValue: number;
+
+    try {
+      const transaction = this.db.transaction(() => {
+        const getResult = this.statements.get.get(
+          prefixedKey
+        ) as MiftahDBItem | null;
+        let currentValue: number;
+        let expiresAt: number | null = null;
+
+        if (getResult) {
+          // Key exists
+          if (getResult.expires_at && getResult.expires_at <= Date.now()) {
+            // Key has expired, treat as non-existent for inc/dec logic
+            currentValue = 0;
+            // When setting new value, it won't have an expiration unless explicitly set later
+          } else {
+            const decoded = decodeValue(getResult.value);
+            if (typeof decoded !== "number" || isNaN(decoded)) {
+              throw new Error(
+                `Value for key "${this.removeNamespacePrefix(
+                  prefixedKey
+                )}" is not a number.`
+              );
+            }
+            currentValue = decoded;
+            expiresAt = getResult.expires_at; // Preserve original expiration
+          }
+        } else {
+          currentValue = 0;
+        }
+
+        if (operation === "increment") {
+          newValue = currentValue + amount;
+        } else {
+          // decrement
+          newValue = currentValue - amount;
+        }
+
+        const setOpResult = this.statements.set.run(
+          prefixedKey,
+          encodeValue(newValue),
+          expiresAt
+        );
+
+        if (setOpResult.changes === 0 && getResult) {
+          throw new Error("Failed to update the key during numeric operation.");
+        }
+      });
+
+      transaction(); // Execute the transaction
+
+      // @ts-ignore newValue will be assigned if transaction is successful
+      return OK(newValue);
+    } catch (error) {
+      throw error instanceof Error ? error : new Error(String(error));
+    }
+  }
+
   namespace(name: string): IMiftahDB {
     const namespacedDB = Object.create(this);
     namespacedDB.nameSpacePrefix = this.nameSpacePrefix
@@ -95,6 +160,24 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       : name;
 
     return namespacedDB;
+  }
+
+  @SafeExecution
+  increment(key: string, amount = 1): Result<number> {
+    if (typeof amount !== "number" || isNaN(amount)) {
+      throw new Error("Increment amount must be a valid number.");
+    }
+
+    return this._modifyNumericValue(key, amount, "increment");
+  }
+
+  @SafeExecution
+  decrement(key: string, amount = 1): Result<number> {
+    if (typeof amount !== "number" || isNaN(amount)) {
+      throw new Error("Decrement amount must be a valid number.");
+    }
+
+    return this._modifyNumericValue(key, amount, "decrement");
   }
 
   @SafeExecution

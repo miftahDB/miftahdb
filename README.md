@@ -354,6 +354,48 @@ if (db.persist("user:1234").success) {
 
 ---
 
+### `Increment`
+
+Atomically increments the numeric value of a key by a given amount.
+
+- **Parameters**:
+  - `key`: The key to increment.
+  - `amount`: The amount to increment by. Defaults to 1.
+- **Returns**:
+  - The result of the operation, includes the new numeric value or an error if the operation failed.
+
+```javascript
+const result = db.increment("counter", 5);
+if (result.success) {
+  console.log(`New counter value: ${result.data}`);
+} else {
+  console.log(result.error.message);
+}
+```
+
+---
+
+### `Decrement`
+
+Atomically decrements the numeric value of a key by a given amount.
+
+- **Parameters**:
+  - `key`: The key to decrement.
+  - `amount`: The amount to decrement by. Defaults to 1.
+- **Returns**:
+  - The result of the operation, includes the new numeric value or an error if the operation failed.
+
+```javascript
+const result = db.decrement("counter", 5);
+if (result.success) {
+  console.log(`New counter value: ${result.data}`);
+} else {
+  console.log(result.error.message);
+}
+```
+
+---
+
 ### `Keys`
 
 Retrieves keys matching a pattern.
