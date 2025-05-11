@@ -168,6 +168,29 @@ test("Set & Get Expiration", () => {
   }
 });
 
+test("Persist", () => {
+  const db = createDB();
+  db.set("key1", "value1", new Date("2020-01-01"));
+  db.persist("key1");
+  const result = db.get("key1");
+  if (result.success) {
+    expect(result.data).toBe("value1");
+  } else {
+    throw new Error(result.error.message);
+  }
+});
+
+test("TTL", () => {
+  const db = createDB();
+  db.set("key1", "value1", new Date("2020-01-01"));
+  const result = db.ttl("key1");
+  if (result.success) {
+    throw new Error("TTL should be undefined");
+  } else {
+    expect(result.error.message).toBe("Key expired");
+  }
+});
+
 test("Multi Set & Get", () => {
   const db = createDB();
   db.multiSet([

@@ -56,6 +56,9 @@ export const SQL_STATEMENTS = {
   // Updates the expiration date for the given key
   SET_EXPIRE: "UPDATE miftahDB SET expires_at = ? WHERE key = ?",
 
+  // Removes the expiration date for the given key
+  PERSIST: "UPDATE miftahDB SET expires_at = NULL WHERE key = ?",
+
   // Returns all keys that match the given pattern
   KEYS: "SELECT key FROM miftahDB WHERE key LIKE ?",
 

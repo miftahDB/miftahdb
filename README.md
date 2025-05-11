@@ -307,6 +307,53 @@ if (db.setExpire("user:1234", 90000).success) {
 
 ---
 
+### `TTL`
+
+Gets the time-to-live (TTL) of a key in milliseconds.
+
+- **Parameters**:
+  - `key`: The key to check.
+- **Returns**:
+  - The result of the operation, includes the TTL of the key or an error if the operation failed.
+
+```javascript
+const result = db.ttl("session:5678");
+if (result.success) {
+  console.log(`TTL: ${result.data}`);
+} else {
+  console.log(result.error.message);
+}
+
+// Get TTL in seconds
+const result = db.ttl("session:5678");
+if (result.success) {
+  console.log(`TTL: ${result.data / 1000}`);
+} else {
+  console.log(result.error.message);
+}
+```
+
+---
+
+### `Persist`
+
+Removes the expiration date of a key.
+
+- **Parameters**:
+  - `key`: The key to remove the expiration date from.
+- **Returns**:
+  - The result of the operation, includes a boolean indicating whether the operation was successful or an error if the operation failed.
+
+```javascript
+if (db.persist("user:1234").success) {
+  console.log("Expiration date removed successfully");
+} else {
+  console.log(result.error.message);
+}
+```
+
+---
+
 ### `Keys`
 
 Retrieves keys matching a pattern.

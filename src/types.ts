@@ -165,6 +165,42 @@ export interface IMiftahDB<T extends MiftahValue = MiftahValue> {
   getExpire(key: string): Result<Date>;
 
   /**
+   * Gets the time-to-live (TTL) of a key in milliseconds.
+   * @param key - The key to check.
+   * @returns The result of the operation. If successful, `data` contains:
+   *          - The remaining TTL in milliseconds if the key has an expiration.
+   *          - `null` if the key exists but has no expiration (i.e., it persists).
+   *          An error is returned if the key is not found, is already expired, or another issue occurs.
+   * @example
+   * const ttlResult = db.ttl("session:123");
+   * if (ttlResult.success) {
+   *   if (ttlResult.data === null) {
+   *     console.log("Key persists indefinitely.");
+   *   } else {
+   *     console.log(`Key expires in ${ttlResult.data} ms.`);
+   *   }
+   * } else {
+   *   console.log(ttlResult.error.message); // e.g., "Key not found" or "Key expired"
+   * }
+   */
+  ttl(key: string): Result<number | null>;
+
+  /**
+   * Removes the expiration from a key, making it persist indefinitely.
+   * @param key - The key to make persistent.
+   * @returns The result of the operation. `data` is true if the key now exists and is persistent (or was already persistent).
+   *          An error is returned if the key was not found.
+   * @example
+   * const persistResult = db.persist("user:temp_data");
+   * if (persistResult.success && persistResult.data) {
+   *   console.log("Key now persists.");
+   * } else {
+   *   console.log(persistResult.error.message); // e.g., "Key not found"
+   * }
+   */
+  persist(key: string): Result<boolean>;
+
+  /**
    * Retrieves keys matching a pattern.
    * @param {string} [pattern="%"] - Optional SQL LIKE pattern to match keys. Defaults to "%" which matches all keys.
    *                                 Use "%" to match any sequence of characters and "_" to match any single character.

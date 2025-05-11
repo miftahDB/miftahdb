@@ -58,6 +58,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
       delete: this.db.prepare(SQL_STATEMENTS.DELETE),
       rename: this.db.prepare(SQL_STATEMENTS.RENAME),
       getExpire: this.db.prepare(SQL_STATEMENTS.GET_EXPIRE),
+      persist: this.db.prepare(SQL_STATEMENTS.PERSIST),
       setExpire: this.db.prepare(SQL_STATEMENTS.SET_EXPIRE),
       keys: this.db.prepare(SQL_STATEMENTS.KEYS),
       pagination: this.db.prepare(SQL_STATEMENTS.PAGINATION),
@@ -180,6 +181,46 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     const expiresAt = new Date(result.expires_at);
 
     return OK(expiresAt);
+  }
+
+  @SafeExecution
+  ttl(key: string): Result<number | null> {
+    const prefixedKey = this.addNamespacePrefix(key);
+    const result = this.statements.getExpire.get(prefixedKey) as {
+      expires_at: number | null;
+    } | null;
+
+    if (!result) {
+      throw new Error("Key not found");
+    }
+
+    if (result.expires_at === null) {
+      return OK(null);
+    }
+
+    const now = Date.now();
+    if (result.expires_at <= now) {
+      this.delete(prefixedKey);
+      throw new Error("Key expired");
+    }
+
+    return OK(result.expires_at - now);
+  }
+
+  @SafeExecution
+  persist(key: string): Result<boolean> {
+    const prefixedKey = this.addNamespacePrefix(key);
+
+    const existsCheck = this.statements.exists.get(prefixedKey) as {
+      [key: string]: number;
+    };
+    if (!Object.values(existsCheck)[0]) {
+      throw new Error("Key not found, cannot persist.");
+    }
+
+    this.statements.persist.run(prefixedKey);
+
+    return OK(true);
   }
 
   @SafeExecution
