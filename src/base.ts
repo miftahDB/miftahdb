@@ -255,6 +255,8 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   multiGet<T>(keys: string[]): Result<T[]> {
+    if (keys.length === 0) throw Error("No keys provided");
+
     const result: Record<string, T> = {};
     this.db.transaction(() => {
       for (const k of keys) {
@@ -284,6 +286,8 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   multiDelete(keys: string[]): Result<number> {
+    if (keys.length === 0) throw Error("No keys provided");
+
     let totalDeletedRows = 0;
     this.db.transaction(() => {
       for (const k of keys) {
