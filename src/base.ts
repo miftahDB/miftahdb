@@ -22,8 +22,8 @@ import type {
 export abstract class BaseMiftahDB implements IMiftahDB {
   protected declare db: Database;
   protected statements: Record<string, Statement>;
-  private nameSpacePrefix: string | null = null;
-  private autoCleanupOnClose: boolean;
+  private readonly nameSpacePrefix: string | null = null;
+  private readonly autoCleanupOnClose: boolean;
 
   constructor(path = ":memory:", options: DBOptions = defaultDBOptions) {
     this.initDatabase(path);
@@ -182,14 +182,13 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   get<T>(key: string): Result<T> {
-    const result = this.statements.get.get(
-      this.addNamespacePrefix(key)
-    ) as MiftahDBItem | null;
+    const prefixedKey = this.addNamespacePrefix(key);
+    const result = this.statements.get.get(prefixedKey) as MiftahDBItem | null;
 
-    if (!result) throw Error("Key not found");
+    if (!result) throw Error("Key not found, cannot get.");
     if (result.expires_at && result.expires_at <= Date.now()) {
-      this.delete(this.addNamespacePrefix(key));
-      throw new Error("Key expired");
+      this.delete(prefixedKey);
+      throw new Error("Key expired, cannot get.");
     }
 
     const value = decodeValue(result.value) as T;
@@ -202,8 +201,9 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     value: T,
     expiresAt?: Date | number
   ): Result<boolean> {
+    const prefixedKey = this.addNamespacePrefix(key);
     this.statements.set.run(
-      this.addNamespacePrefix(key),
+      prefixedKey,
       encodeValue(value),
       expiresAtMs(expiresAt)
     );
@@ -213,12 +213,12 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   exists(key: string): Result<boolean> {
-    const result = this.statements.exists.get(this.addNamespacePrefix(key)) as {
+    const prefixedKey = this.addNamespacePrefix(key);
+    const result = this.statements.exists.get(prefixedKey) as {
       [key: string]: number;
     };
-
     const doExists = Boolean(Object.values(result)[0]);
-    if (!doExists) throw Error("Key not found");
+    if (!doExists) throw Error("Key not found, cannot check exists.");
 
     return OK(doExists);
   }
@@ -252,14 +252,14 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   getExpire(key: string): Result<Date> {
-    const result = this.statements.getExpire.get(
-      this.addNamespacePrefix(key)
-    ) as {
+    const prefixedKey = this.addNamespacePrefix(key);
+    const result = this.statements.getExpire.get(prefixedKey) as {
       expires_at: number | null;
     } | null;
 
-    if (!result) throw Error("Key not found");
-    if (!result.expires_at) throw Error("Key has no expiration");
+    if (!result) throw Error("Key not found, cannot getExpire.");
+    if (!result.expires_at)
+      throw Error("Key has no expiration, cannot getExpire.");
 
     const expiresAt = new Date(result.expires_at);
 
@@ -274,7 +274,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     } | null;
 
     if (!result) {
-      throw new Error("Key not found");
+      throw new Error("Key not found, cannot ttl.");
     }
 
     if (result.expires_at === null) {
@@ -284,7 +284,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     const now = Date.now();
     if (result.expires_at <= now) {
       this.delete(prefixedKey);
-      throw new Error("Key expired");
+      throw new Error("Key expired, cannot ttl.");
     }
 
     return OK(result.expires_at - now);
@@ -293,10 +293,10 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   @SafeExecution
   persist(key: string): Result<boolean> {
     const prefixedKey = this.addNamespacePrefix(key);
-
     const existsCheck = this.statements.exists.get(prefixedKey) as {
       [key: string]: number;
     };
+
     if (!Object.values(existsCheck)[0]) {
       throw new Error("Key not found, cannot persist.");
     }
@@ -308,13 +308,12 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   keys(pattern = "%"): Result<string[]> {
-    const result = this.statements.keys.all(
-      this.addNamespacePrefix(pattern)
-    ) as {
+    const prefixedKey = this.addNamespacePrefix(pattern);
+    const result = this.statements.keys.all(prefixedKey) as {
       key: string;
     }[];
 
-    if (result.length === 0) throw Error("No keys found");
+    if (result.length === 0) throw Error("No keys found, cannot get keys.");
     const resultArray = result.map((r) => this.removeNamespacePrefix(r.key));
 
     return OK(resultArray);
@@ -322,14 +321,16 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   pagination(limit: number, page: number, pattern = "%"): Result<string[]> {
+    const prefixedKey = this.addNamespacePrefix(pattern);
     const offset = (page - 1) * limit;
     const result = this.statements.pagination.all(
-      this.addNamespacePrefix(pattern),
+      prefixedKey,
       limit,
       offset
     ) as { key: string }[];
 
-    if (result.length === 0) throw Error("No keys found");
+    if (result.length === 0)
+      throw Error("No keys found, cannot get pagination.");
     const resultArray = result.map((r) => this.removeNamespacePrefix(r.key));
 
     return OK(resultArray);
@@ -341,16 +342,17 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     end: Date | number,
     pattern = "%"
   ): Result<string[]> {
+    const prefixedKey = this.addNamespacePrefix(pattern);
     const startDate = expiresAtMs(start);
     const endDate = expiresAtMs(end);
-
     const result = this.statements.expiredRange.all(
-      this.addNamespacePrefix(pattern),
+      prefixedKey,
       startDate,
       endDate
     ) as { key: string }[];
 
-    if (result.length === 0) throw Error("No keys found");
+    if (result.length === 0)
+      throw Error("No keys found, cannot get expiredRange.");
     const resultArray = result.map((r) => this.removeNamespacePrefix(r.key));
 
     return OK(resultArray);
@@ -358,18 +360,20 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   count(pattern = "%"): Result<number> {
-    const result = this.statements.countKeys.get(
-      this.nameSpacePrefix ? `${this.nameSpacePrefix}:${pattern}` : pattern
-    ) as { count: number };
+    const prefixedKey = this.addNamespacePrefix(pattern);
+    const result = this.statements.countKeys.get(prefixedKey) as {
+      count: number;
+    };
 
     return OK(result.count);
   }
 
   @SafeExecution
   countExpired(pattern = "%"): Result<number> {
+    const prefixedKey = this.addNamespacePrefix(pattern);
     const result = this.statements.countExpired.get(
       Date.now(),
-      this.nameSpacePrefix ? `${this.nameSpacePrefix}:${pattern}` : pattern
+      prefixedKey
     ) as {
       count: number;
     };
@@ -379,7 +383,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   multiGet<T>(keys: string[]): Result<T[]> {
-    if (keys.length === 0) throw Error("No keys provided");
+    if (keys.length === 0) throw Error("No keys provided, cannot multiGet.");
 
     const result: Record<string, T> = {};
     this.db.transaction(() => {
@@ -390,7 +394,8 @@ export abstract class BaseMiftahDB implements IMiftahDB {
     })();
 
     const resultArray = Object.values(result);
-    if (resultArray.length === 0) throw Error("No keys found");
+    if (resultArray.length === 0)
+      throw Error("No keys found, cannot multiGet.");
 
     return OK(resultArray);
   }
@@ -410,7 +415,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
 
   @SafeExecution
   multiDelete(keys: string[]): Result<number> {
-    if (keys.length === 0) throw Error("No keys provided");
+    if (keys.length === 0) throw Error("No keys provided, cannot multiDelete.");
 
     let totalDeletedRows = 0;
     this.db.transaction(() => {
@@ -435,9 +440,7 @@ export abstract class BaseMiftahDB implements IMiftahDB {
   @SafeExecution
   close(): Result<boolean> {
     this.beforeClose();
-
     this.db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
-
     this.db.close();
 
     return OK();

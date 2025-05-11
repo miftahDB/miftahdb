@@ -54,7 +54,7 @@ describe("MiftahDB Node Tests", () => {
     if (result.success) {
       throw new Error("Key should not exist");
     }
-    assert.strictEqual(result.error.message, "Key expired");
+    assert.strictEqual(result.error.message, "Key expired, cannot get.");
   });
 
   it("Pagination", () => {
@@ -136,7 +136,10 @@ describe("MiftahDB Node Tests", () => {
     if (result.success) {
       throw new Error("Key should not exist");
     }
-    assert.strictEqual(result.error.message, "Key not found");
+    assert.strictEqual(
+      result.error.message,
+      "Key not found, cannot check exists."
+    );
   });
 
   it("Execute", () => {
@@ -192,7 +195,7 @@ describe("MiftahDB Node Tests", () => {
     if (result.success) {
       throw new Error("TTL should be undefined");
     } else {
-      assert.strictEqual(result.error.message, "Key expired");
+      assert.strictEqual(result.error.message, "Key expired, cannot ttl.");
     }
   });
 
@@ -245,7 +248,7 @@ describe("MiftahDB Node Tests", () => {
     if (result.success) {
       throw new Error("No keys found should be an error");
     }
-    assert.strictEqual(result.error.message, "No keys found");
+    assert.strictEqual(result.error.message, "No keys found, cannot multiGet.");
   });
 
   it("Backup", async () => {
@@ -325,7 +328,7 @@ describe("MiftahDB Node Tests", () => {
     if (result.success) {
       throw new Error("Key should not exist");
     }
-    assert.strictEqual(result.error.message, "Key not found");
+    assert.strictEqual(result.error.message, "Key not found, cannot get.");
 
     const result2 = db.get("123");
     if (result2.success) {
@@ -362,7 +365,10 @@ describe("MiftahDB Node Tests", () => {
     if (result.success) {
       throw new Error("User should not exist");
     }
-    assert.strictEqual(result.error.message, "Key not found");
+    assert.strictEqual(
+      result.error.message,
+      "Key not found, cannot check exists."
+    );
     users.set("123", "value1");
     const result2 = users.exists("123");
     if (result2.success) {
@@ -374,7 +380,10 @@ describe("MiftahDB Node Tests", () => {
     if (result3.success) {
       throw new Error("User should not exist");
     }
-    assert.strictEqual(result3.error.message, "Key not found");
+    assert.strictEqual(
+      result3.error.message,
+      "Key not found, cannot check exists."
+    );
   });
 
   it("Namespace Keys/Pagination", () => {
@@ -475,7 +484,10 @@ describe("MiftahDB Node Tests", () => {
     if (result.success) {
       throw new Error("User should not exist");
     }
-    assert.strictEqual(result.error.message, "Key not found");
+    assert.strictEqual(
+      result.error.message,
+      "Key not found, cannot check exists."
+    );
     const result2 = db.exists("123");
     if (result2.success) {
       assert.strictEqual(result2.data, true);
@@ -494,7 +506,10 @@ describe("MiftahDB Node Tests", () => {
     if (result.success) {
       throw new Error("User should not exist");
     }
-    assert.strictEqual(result.error.message, "Key not found");
+    assert.strictEqual(
+      result.error.message,
+      "Key not found, cannot check exists."
+    );
     const result2 = db.exists("123");
     if (result2.success) {
       assert.strictEqual(result2.data, true);

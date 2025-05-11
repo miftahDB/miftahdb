@@ -52,7 +52,7 @@ test("Get Expired", () => {
   if (result.success) {
     throw new Error("Key should not exist");
   }
-  expect(result.error.message).toBe("Key expired");
+  expect(result.error.message).toBe("Key expired, cannot get.");
 });
 
 test("Pagination", () => {
@@ -187,7 +187,7 @@ test("TTL", () => {
   if (result.success) {
     throw new Error("TTL should be undefined");
   } else {
-    expect(result.error.message).toBe("Key expired");
+    expect(result.error.message).toBe("Key expired, cannot ttl.");
   }
 });
 
@@ -240,7 +240,7 @@ test("Multi Delete", () => {
   if (result.success) {
     throw new Error("No keys found should be an error");
   }
-  expect(result.error.message).toBe("No keys found");
+  expect(result.error.message).toBe("No keys found, cannot multiGet.");
 });
 
 test("Backup", async () => {
@@ -320,7 +320,7 @@ test("Namespace Delete", () => {
   if (result.success) {
     throw new Error("Key should not exist");
   }
-  expect(result.error.message).toBe("Key not found");
+  expect(result.error.message).toBe("Key not found, cannot get.");
 
   const result2 = db.get<string>("123");
   if (result2.success) {
@@ -357,7 +357,7 @@ test("Namespace Exists", () => {
   if (result.success) {
     throw new Error("User should not exist");
   }
-  expect(result.error.message).toBe("Key not found");
+  expect(result.error.message).toBe("Key not found, cannot check exists.");
   users.set("123", "value1");
   const result2 = users.exists("123");
   if (result2.success) {
@@ -369,7 +369,7 @@ test("Namespace Exists", () => {
   if (result3.success) {
     throw new Error("User should not exist");
   }
-  expect(result3.error.message).toBe("Key not found");
+  expect(result3.error.message).toBe("Key not found, cannot check exists.");
 });
 
 test("Namespace Keys/Pagination", () => {
@@ -469,7 +469,7 @@ test("Namespace Flush", () => {
   if (result.success) {
     throw new Error("User should not exist");
   }
-  expect(result.error.message).toBe("Key not found");
+  expect(result.error.message).toBe("Key not found, cannot check exists.");
   const result2 = db.exists("123");
   if (result2.success) {
     expect(result2.data).toBe(true);
@@ -488,7 +488,7 @@ test("Namespace Cleanup", () => {
   if (result.success) {
     throw new Error("User should not exist");
   }
-  expect(result.error.message).toBe("Key not found");
+  expect(result.error.message).toBe("Key not found, cannot check exists.");
 
   const result2 = db.exists("123");
   if (result2.success) {
