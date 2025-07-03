@@ -21,8 +21,6 @@
 <br>
 
 <p>
-  <a href="https://miftahdb.sqlite3.online/docs/intro/"><strong>Documentation</strong></a>
-  &nbsp;&nbsp;•&nbsp;&nbsp;
   <a href="https://www.npmjs.com/package/miftahdb"><strong>NPM</strong></a>
   &nbsp;&nbsp;•&nbsp;&nbsp;
   <a href="https://github.com/miftahDB/benchmarks"><strong>Benchmarks</strong></a>
