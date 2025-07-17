@@ -15,13 +15,11 @@ import { BaseMiftahDB } from "./base";
  * const db = new MiftahDB(":memory:");
  */
 export class MiftahDB extends BaseMiftahDB {
-  protected declare db: Database;
-  protected initDatabase(path = ":memory:") {
-    this.db = new DB(path);
-  }
+	protected declare db: Database;
+	protected initDatabase(path = ":memory:") {
+		this.db = new DB(path);
+	}
 }
 
 export type { RunResult } from "better-sqlite3";
-export type { MiftahValue } from "./types";
-export type { Result } from "./types";
-export type { PromiseResult } from "./types";
+export type { MiftahValue, PromiseResult, Result } from "./types";

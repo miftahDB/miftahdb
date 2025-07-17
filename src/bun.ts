@@ -1,16 +1,14 @@
 import DB from "bun:sqlite";
 import { readFile } from "node:fs/promises";
-
-import { BaseMiftahDB } from "./base";
-import { OK, SafeExecution } from "./utils";
-import type { Result, PromiseResult } from "./types.ts";
-
 // Intentionally using a type assertion here to align `bun:sqlite`'s `Database` type with `better-sqlite3`.
 // Although `bun:sqlite` and `better-sqlite3` have different implementations, their API is similar enough for our purposes.
 // This trick helps avoid TypeScript errors while maintaining compatibility across both environments.
 // Also run `bun run test` for double-checking.
 // import type { Database } from "bun:sqlite";
 import type { Database } from "better-sqlite3";
+import { BaseMiftahDB } from "./base";
+import type { PromiseResult, Result } from "./types.ts";
+import { OK, SafeExecution } from "./utils";
 
 /**
  * MiftahDB is a wrapper around `bun:sqlite`.
@@ -25,47 +23,45 @@ import type { Database } from "better-sqlite3";
  * const db = new MiftahDB(":memory:");
  */
 export class MiftahDB extends BaseMiftahDB {
-  protected declare db: Database;
-  protected initDatabase(path = ":memory:"): void {
-    this.db = new DB(path) as unknown as Database;
-  }
+	protected declare db: Database;
+	protected initDatabase(path = ":memory:"): void {
+		this.db = new DB(path) as unknown as Database;
+	}
 
-  // Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
-  @SafeExecution
-  override execute(sql: string, params: unknown[] = []): Result<unknown[]> {
-    const stmt = this.db.prepare(sql);
-    const result = stmt.all(...params);
+	// Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
+	@SafeExecution
+	override execute(sql: string, params: unknown[] = []): Result<unknown[]> {
+		const stmt = this.db.prepare(sql);
+		const result = stmt.all(...params);
 
-    return OK(result);
-  }
+		return OK(result);
+	}
 
-  // Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
-  @SafeExecution
-  override async restore(path: string): PromiseResult<boolean> {
-    const file = await readFile(path);
+	// Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
+	@SafeExecution
+	override async restore(path: string): PromiseResult<boolean> {
+		const file = await readFile(path);
 
-    // @ts-expect-error `deserialize` exists in `bun:sqlite` but not in `better-sqlite3`.
-    this.db = DB.deserialize(file);
-    this.statements = this.prepareStatements();
+		// @ts-expect-error `deserialize` exists in `bun:sqlite` but not in `better-sqlite3`.
+		this.db = DB.deserialize(file);
+		this.statements = this.prepareStatements();
 
-    return OK();
-  }
+		return OK();
+	}
 
-  // Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
-  @SafeExecution
-  override close(): Result<boolean> {
-    this.beforeClose();
-    this.db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
+	// Overridden due to difference implementation in `bun:sqlite` and `better-sqlite3`
+	@SafeExecution
+	override close(): Result<boolean> {
+		this.beforeClose();
+		this.db.exec("PRAGMA wal_checkpoint(TRUNCATE)");
 
-    // @ts-expect-error `deserialize` exists in `bun:sqlite` but not in `better-sqlite3`.
-    for (const stmt of Object.values(this.statements)) stmt.finalize();
+		// @ts-expect-error `deserialize` exists in `bun:sqlite` but not in `better-sqlite3`.
+		for (const stmt of Object.values(this.statements)) stmt.finalize();
 
-    this.db.close();
+		this.db.close();
 
-    return OK();
-  }
+		return OK();
+	}
 }
 
-export type { MiftahValue } from "./types";
-export type { Result } from "./types";
-export type { PromiseResult } from "./types";
+export type { MiftahValue, PromiseResult, Result } from "./types";
