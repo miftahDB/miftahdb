@@ -16,7 +16,8 @@
 [![Release Workflow](https://img.shields.io/github/actions/workflow/status/miftahDB/miftahDB/release.yml?branch=main&label=Release&style=flat-square)](https://github.com/miftahDB/miftahDB/actions/workflows/release.yml)
 [![Bun Tests](https://img.shields.io/github/actions/workflow/status/miftahDB/miftahDB/test-bun.yml?branch=main&label=Bun%20Tests&style=flat-square)](https://github.com/miftahDB/miftahDB/actions/workflows/test-bun.yml)
 [![Node.js Tests](https://img.shields.io/github/actions/workflow/status/miftahDB/miftahDB/test-node.yml?branch=main&label=Node.js%20Tests&style=flat-square)](https://github.com/miftahDB/miftahDB/actions/workflows/test-node.yml)
-[![TypeScript Lint](https://img.shields.io/github/actions/workflow/status/miftahDB/miftahDB/tsc.yml?branch=main&label=Lint&style=flat-square)](https://github.com/miftahDB/miftahDB/actions/workflows/tsc.yml)
+[![Lint](https://img.shields.io/github/actions/workflow/status/miftahDB/miftahDB/lint.yml?branch=main&label=Lint&style=flat-square)](https://github.com/miftahDB/miftahDB/actions/workflows/lint.yml)
+[![Format](https://img.shields.io/github/actions/workflow/status/miftahDB/miftahDB/format.yml?branch=main&label=Format&style=flat-square)](https://github.com/miftahDB/miftahDB/actions/workflows/format.yml)
 
 <br>
 

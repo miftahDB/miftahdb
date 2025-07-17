@@ -1,4 +1,4 @@
-name: TSC lint
+name: Linter  
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   my-job:
-    name: Run Tests with Bun
+    name: Run Linter with Bun
     runs-on: ubuntu-latest
 
     steps:
